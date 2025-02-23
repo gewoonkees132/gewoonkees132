@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kees Leemeijer Photography</title>
+
+    <!-- CSS (External Stylesheet) -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <!-- Google Fonts (Preconnected for performance) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Icons (Material Symbols and Font Awesome) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <!-- Background Canvas (Hidden from screen readers) -->
+    <canvas id="gradient-background" aria-hidden="true"></canvas>
+
+    <!-- Main Scroll Container -->
+    <div class="scroll-container">
+
+        <!-- Main Content Area -->
+        <main class="main-container">
+
+            <!-- Navigation and Profile -->
+            <aside class="menu">
+                <header>
+                    <nav>
+                        <!-- Dark/Light Mode Toggle (Functionality in JS) -->
+                         
+                        <ul>
+                            <li>
+                                <a href="#project-gallery" data-label="Photo Gallery" aria-label="Project Gallery" role="menuitem">
+                                    <span class="material-symbols-outlined">photo_library</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li>
+                                <a class="dark-light-mode bg-gradient" aria-label="Toggle dark/light mode">
+                                    <span class="material-symbols-outlined">light_mode</span>
+                                </a>
+                            </li>    
+                            <li>
+                                <a id="hue-shift-button" class="bg-gradient" aria-label="Shift hue" role="menuitem">
+                                    <span class="material-symbols-outlined">palette</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </header>
+
+                <!-- User Profile Section -->
+                <div class="profile-container">
+                    <section class="user-profile bg-gradient">  
+                        <div class="user-profile-container">
+                            <!-- Profile Image -->
+                            <figure class="profile-image">  
+                                <img src="images/portraits/9.webp" alt="Portrait of Kees Leemeijer" loading="lazy">
+                            </figure>
+
+                            <!-- Profile Information -->
+                            <div class="profile-info">
+                                <span>Photographer</span>
+                                <h1>Kees Leemeijer</h1>
+                            </div>
+
+                            <!-- Social Media Links  -->
+                            <div class="profile-social-container">
+                                <a href="https://www.linkedin.com/in/kees-leemeijer-5ab76611a/" target="_blank" rel="noopener noreferrer" aria-label="Kees Leemeijer's LinkedIn Profile">
+                                    <span class="fa-brands fa-linkedin"></span>
+                                </a>
+                                <a href="https://www.instagram.com/keesleemeijer/" target="_blank" rel="noopener noreferrer" aria-label="Kees Leemeijer's Instagram Profile">
+                                    <span class="fa-brands fa-instagram"></span>
+                                </a>
+                                <a href="https://www.facebook.com/kees.leemeijer" target="_blank" rel="noopener noreferrer" aria-label="Kees Leemeijer's Facebook Profile">
+                                    <span class="fa-brands fa-facebook"></span>
+                                </a>
+                                <a href="https://twitter.com/keesleemeijer" target="_blank" rel="noopener noreferrer" aria-label="Kees Leemeijer's Twitter Profile">
+                                    <span class="fa-brands fa-twitter"></span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Contact Button (Opens mail client -->
+                        <div class="profile-button">
+                            <a href="mailto:keesdekiter@gmail.com?subject=Let's grab a coffee together!&body=Hello Kees, I would like to request a coffee!" class="bg-gradient">Contact me</a>
+                        </div>
+                    </section>
+                </div>
+            </aside>
+
+            <!-- Main Content Sections -->
+            <div class="content">
+                <!-- About Section -->
+                <section id="about" class="section-container">
+                    <h3>Hello, I'm a <span id="role">robotic fabrication engineer</span></h3>
+                    <h1>Based in Rotterdam, The Netherlands</h1>
+                    <p>In my free time, I am passionate about photography, capturing the beauty of urban landscapes, people, and nature. Photography changes the way I see the world—shifting perspectives, revealing hidden details, and finding extraordinary moments in the everyday. <br><br>Through my images, I hope to share the beauty that surrounds us, encouraging to appreciate the world from a new angles. If you like my pictures, or want moments captured, feel free to reach out.</p>
+                </section>
+
+                <!-- Projects Section -->
+                <section id="projects" class="section-container">
+                    <div class="section-heading">
+                        <h3>Explore portfolio by topic</h3>
+                    </div>
+                    <!-- Project Filter List -->
+                    <ul class="project-list" role="list">  
+                        <li data-filter="Products" role="listitem">Products</li>  
+                        <li data-filter="Architecture" role="listitem">Architecture</li>
+                        <li data-filter="Portraits" role="listitem">Portraits</li>
+                        <li data-filter="3DCP" role="listitem">3DCP</li>
+                        <li data-filter="Animals" role="listitem">Animals</li>
+                        <li data-filter="Plants" role="listitem">Plants</li>
+                        <li data-filter="Industry" role="listitem">Industry</li>
+                        <li data-filter="Urban" role="listitem">Urban</li>
+                    </ul>
+                </section>
+            </div>
+        </main>
+
+        <!-- Project Gallery Section -->
+        <section id="project-gallery" class="project-gallery"> 
+            <div class="project-container">
+                <!-- Project items will be added here by JavaScript -->
+            </div>
+             <ul class="project-list" role="list">  
+                <li data-filter="Products" role="listitem">Products</li>  
+                <li data-filter="Architecture" role="listitem">Architecture</li>
+                <li data-filter="Portraits" role="listitem">Portraits</li>
+                <li data-filter="3DCP" role="listitem">3DCP</li>
+                <li data-filter="Animals" role="listitem">Animals</li>
+                <li data-filter="Plants" role="listitem">Plants</li>
+                <li data-filter="Industry" role="listitem">Industry</li>
+                <li data-filter="Urban" role="listitem">Urban</li>
+                <li data-filter="All" role="listitem">All</li>
+            </ul>
+
+            <!-- Fullscreen Image Viewer -->
+            <div id="fullscreen-container" class="fullscreen-container" role="dialog" aria-modal="true">  
+                <img id="fullscreen-image" class="fullscreen-image" src="" alt="" role="img">  
+                <button id="close-fullscreen" class="close-fullscreen" aria-label="Close fullscreen">×</button>
+                <button id="prev-image" class="nav-button prev-button" aria-label="Previous image">❮</button>
+                <button id="next-image" class="nav-button next-button" aria-label="Next image">❯</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+ // --- JavaScript
+        document.addEventListener('DOMContentLoaded', () => {
+            const hueShiftButton = document.getElementById('hue-shift-button');
+        let hueShift = 0; // Initialize the hue shift
+        const hueShiftAmount = 60; // Change the hue by 30 degrees each click
+
+        hueShiftButton.addEventListener('click', () => {
+            hueShift = (hueShift + hueShiftAmount) % 360;  // Increment and wrap around 360
+            document.documentElement.style.setProperty('--hue-shift', hueShift);
+            initializeDynamicBackground();
+        });
+            // --- Dark/Light Mode Toggle ---
+            const modeToggleBtn = document.querySelector('.dark-light-mode');
+            const modeIcon = modeToggleBtn.querySelector('span');
+            let isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+            function updateMode() {
+                if (isDarkMode) {
+                    document.documentElement.classList.add('dark-mode');
+                    modeIcon.textContent = 'dark_mode';
+                } else {
+                    document.documentElement.classList.remove('dark-mode');
+                    modeIcon.textContent = 'light_mode';
+                }
+                if (typeof initializeDynamicBackground === 'function') {
+                }
+            }
+
+            updateMode(); // Initial mode setup
+            modeToggleBtn.addEventListener('click', () => {
+                isDarkMode = !isDarkMode;
+                localStorage.setItem('darkMode', isDarkMode);
+                updateMode();
+            });
+
+            // --- Helper Functions ---
+            function debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    const context = this;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, args), wait);
+                };
+            }
+
+            // --- Role Transition ---
+            const roles = ["parametric designer", "researcher", "photographer", "robotic fabrication engineer"];
+            const roleElement = document.getElementById('role');
+            let roleIndex = 0;
+            let letterIndex = 0;
+
+            function typeRole() {
+                roleElement.style.opacity = 0;
+                setTimeout(() => {
+                    roleElement.textContent = "";
+                    letterIndex = 0;
+                    function typeNextLetter() {
+                        if (letterIndex < roles[roleIndex].length) {
+                            roleElement.textContent += roles[roleIndex][letterIndex];
+                            letterIndex++;
+                            setTimeout(typeNextLetter, 100);
+                        } else {
+                            setTimeout(() => {
+                                roleIndex = (roleIndex + 1) % roles.length;
+                                typeRole();
+                            }, 1000);
+                        }
+                    }
+                    typeNextLetter();
+                    roleElement.style.opacity = 1;
+                }, 500);
+            }
+
+            typeRole();
+
+            // --- Project Filtering ---
+            const projectListItems = document.querySelectorAll('.project-list li');
+            const projectContainer = document.querySelector(".project-container");
+            const projectsData = [
+                { src: "images/Urban/1.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/2.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/3.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/4.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/5.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/6.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/9.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/7.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/8.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/10.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/11.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/12.webp", category: "Urban", title: "Urban" },
+                { src: "images/Urban/13.webp", category: "Urban", title: "Urban" },
+                { src: "images/Plants/1.webp", category: "Plants", title: "Plants" },
+                { src: "images/Plants/2.webp", category: "Plants", title: "Plants" },
+                { src: "images/Plants/3.webp", category: "Plants", title: "Plants" },
+                { src: "images/Plants/4.webp", category: "Plants", title: "Plants" },
+                { src: "images/Plants/5.webp", category: "Plants", title: "Plants" },
+                { src: "images/Portraits/1.webp", category: "Portraits", title: "Bird" },
+                { src: "images/Portraits/3.webp", category: "Portraits", title: "Swan" },
+                { src: "images/Portraits/4.webp", category: "Portraits", title: "Yellow bird" },
+                { src: "images/Portraits/5.webp", category: "Portraits", title: "Squirrel" },
+                { src: "images/Portraits/6.webp", category: "Portraits", title: "Big bird" },
+                { src: "images/Portraits/7.webp", category: "Portraits", title: "Duck" },
+                { src: "images/Portraits/8.webp", category: "Portraits", title: "Cat" },
+                { src: "images/animals/1.webp", category: "Animals", title: "Bird" },
+                { src: "images/animals/2.webp", category: "Animals", title: "Bird and girl" },
+                { src: "images/animals/3.webp", category: "Animals", title: "Swan" },
+                { src: "images/animals/4.webp", category: "Animals", title: "Yellow bird" },
+                { src: "images/animals/5.webp", category: "Animals", title: "Squirrel" },
+                { src: "images/animals/6.webp", category: "Animals", title: "Big bird" },
+                { src: "images/animals/7.webp", category: "Animals", title: "Duck" },
+                { src: "images/animals/8.webp", category: "Animals", title: "Cat" },
+                { src: "images/animals/9.webp", category: "Animals", title: "Dog" },
+                { src: "images/animals/10.webp", category: "Animals", title: "Dog" },
+                { src: "images/animals/11.webp", category: "Animals", title: "Dog" },
+                { src: "images/animals/12.webp", category: "Animals", title: "Dog" },
+                { src: "images/animals/13.webp", category: "Animals", title: "Dog" },
+                { src: "images/3DCP/1.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/3.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/4.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/5.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/6.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/7.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/8.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/9.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/10.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/12.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/13.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/14.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/15.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/3DCP/17.webp", category: "3DCP", title: "3DCP" },
+                { src: "images/Products/1.webp", category: "Products", title: "Products" },
+                { src: "images/Products/2.webp", category: "Products", title: "Products" },
+                { src: "images/Products/3.webp", category: "Products", title: "Products" },
+                { src: "images/Products/4.webp", category: "Products", title: "Products" },
+                { src: "images/Industry/1.webp", category: "Industry", title: "Industry" },
+                { src: "images/Industry/3.webp", category: "Industry", title: "Industry" },
+                { src: "images/Industry/4.webp", category: "Industry", title: "Industry" },
+                { src: "images/Industry/5.webp", category: "Industry", title: "Industry" },
+                { src: "images/Industry/6.webp", category: "Industry", title: "Industry" },
+                { src: "images/Industry/7.webp", category: "Industry", title: "Industry" },
+                { src: "images/Industry/8.webp", category: "Industry", title: "Industry" },
+                { src: "images/Architecture/1.webp", category: "Architecture", title: "Architecture" },
+                { src: "images/Architecture/2.webp", category: "Architecture", title: "Architecture" },
+                { src: "images/Architecture/3.webp", category: "Architecture", title: "Architecture" },
+                { src: "images/Architecture/4.webp", category: "Architecture", title: "Architecture" },
+                { src: "images/Architecture/5.webp", category: "Architecture", title: "Architecture" },
+                { src: "images/Architecture/6.webp", category: "Architecture", title: "Architecture" },
+                { src: "images/Architecture/7.webp", category: "Architecture", title: "Architecture" },
+                { src: "images/Architecture/8.webp", category: "Architecture", title: "Architecture" },
+                { src: "images/Architecture/9.webp", category: "Architecture", title: "Architecture" },
+                { src: "images/Architecture/10.webp", category: "Architecture", title: "Architecture" },
+                { src: "images/Architecture/11.webp", category: "Architecture", title: "Architecture" },
+                { src: "images/Architecture/12.webp", category: "Architecture", title: "Architecture" },
+            ];
+
+            projectsData.forEach((project, index) => {
+                const projectBox = document.createElement("div");
+                projectBox.classList.add("project-box");
+                projectBox.dataset.category = project.category;
+
+                const img = document.createElement("img");
+                img.src = project.src;
+                img.alt = project.title;
+                img.loading = "lazy";
+
+                const titleBox = document.createElement("div");
+                titleBox.classList.add("title-box");
+                titleBox.textContent = project.title;
+
+                projectBox.appendChild(img);
+                projectBox.appendChild(titleBox);
+                projectContainer.appendChild(projectBox);
+
+                img.addEventListener("click", () => {
+                    currentImageIndex = index;
+                    fullscreenImage.src = project.src;
+                    fullscreenImage.alt = project.title;
+                    fullscreenContainer.classList.add("active");
+                });
+            });
+
+            const projectBoxes = document.querySelectorAll('.project-box');
+
+            const defaultFilter = "Products";
+            projectListItems.forEach(item => item.classList.remove('active'));
+            const defaultFilterElement = document.querySelector(`.project-list li[data-filter="${defaultFilter}"]`);
+
+            if (defaultFilterElement) {
+                defaultFilterElement.classList.add('active');
+                filterProjects(defaultFilter);
+            }
+
+            projectListItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    projectListItems.forEach(li => li.classList.remove('active'));
+                    item.classList.add('active');
+                    const filter = item.dataset.filter;
+                    filterProjects(filter);
+                });
+            });
+
+            function filterProjects(filter) {
+                projectBoxes.forEach(box => {
+                    if (filter === "All" || box.dataset.category === filter) {
+                        box.style.display = 'block';
+                    } else {
+                        box.style.display = 'none';
+                    }
+                });
+            }
+
+            // --- Fullscreen Image Viewer ---
+            const fullscreenContainer = document.getElementById("fullscreen-container");
+            const fullscreenImage = document.getElementById("fullscreen-image");
+            const closeFullscreenBtn = document.getElementById("close-fullscreen");
+            const prevImageBtn = document.getElementById("prev-image");
+            const nextImageBtn = document.getElementById("next-image");
+            let currentImageIndex = 0;
+
+            closeFullscreenBtn.addEventListener("click", () => {
+                fullscreenContainer.classList.remove("active");
+            });
+
+            prevImageBtn.addEventListener("click", () => {
+                currentImageIndex = (currentImageIndex - 1 + projectsData.length) % projectsData.length;
+                fullscreenImage.src = projectsData[currentImageIndex].src;
+                fullscreenImage.alt = projectsData[currentImageIndex].title;
+
+            });
+
+            nextImageBtn.addEventListener("click", () => {
+                currentImageIndex = (currentImageIndex + 1) % projectsData.length;
+                fullscreenImage.src = projectsData[currentImageIndex].src;
+                fullscreenImage.alt = projectsData[currentImageIndex].title;
+            });
+
+            // --- Smooth Scrolling ---
+            document.querySelectorAll('nav a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // --- Snapping Parallax Zoom ---
+            const scrollContainer = document.querySelector('.scroll-container');
+            const mainContainer = document.querySelector('.main-container');
+            const projectgallery = document.querySelector('.project-gallery');
+            const sections = document.querySelectorAll('.main-container, .project-gallery');
+            let lastScrollY = scrollContainer.scrollTop;
+
+             function handleScroll() {
+                const currentScrollY = scrollContainer.scrollTop;
+                let currentSection = null;
+
+                sections.forEach(section => {
+                  const sectionTop = section.offsetTop;
+                  const sectionBottom = sectionTop + section.offsetHeight;
+                  if (currentScrollY >= sectionTop && currentScrollY < sectionBottom) {
+                      currentSection = section;
+                  }
+                });
+
+                sections.forEach(section => {
+                    section.classList.remove('zoomed-in');
+                });
+
+                if (currentSection) {
+                    if (currentSection === mainContainer && currentScrollY < lastScrollY) {
+                        mainContainer.classList.add('zoomed-in');
+                    } else if (currentSection === projectgallery && currentScrollY > lastScrollY) {
+                        projectgallery.classList.add('zoomed-in');
+                    }
+                }
+
+                lastScrollY = currentScrollY;
+            }
+            const debouncedHandleScroll = debounce(handleScroll, 16);
+            scrollContainer.addEventListener('scroll', debouncedHandleScroll);
+            mainContainer.classList.add('zoomed-in');
+
+            // --- Dynamic Background ---
+            let balls = [];
+            let gradientBackground, body, rootStyle;
+            let baseRadius, radiusVariation, numBalls;
+
+            function initializeDynamicBackground() {
+                gradientBackground = document.getElementById('gradient-background');
+                body = document.body;
+                rootStyle = getComputedStyle(document.documentElement);
+                numBalls = 1;
+                balls = []; // Clear existing balls
+                baseRadius = 80;
+                radiusVariation = 60;
+
+                initializeBalls(); // Create the balls
+                animateBackground(); // Start the animation
+            }
+
+            function initializeBalls() {
+                // Get ball colors *inside* initializeBalls, after mode is set
+                const currentBallColors = isDarkMode
+                    ? [
+                        rootStyle.getPropertyValue('--ball-color-light').trim(),
+                        rootStyle.getPropertyValue('--ball-color-medium').trim(),
+                        rootStyle.getPropertyValue('--ball-color-dark').trim(),
+                      ]
+                    : [
+                        rootStyle.getPropertyValue('--ball-color-light').trim(),
+                        rootStyle.getPropertyValue('--ball-color-medium').trim(),
+                        rootStyle.getPropertyValue('--ball-color-dark').trim(),
+                      ];
+
+                for (let i = 0; i < numBalls; i++) {
+                    balls.push({
+                        x: Math.random() * window.innerWidth,
+                        y: Math.random() * window.innerHeight,
+                        radius: baseRadius + Math.random() * radiusVariation,
+                        vx: (Math.random() - 0.5) * 0.22,
+                        vy: (Math.random() - 0.5) * 0.22,
+                        targetX: Math.random() * window.innerWidth,
+                        targetY: Math.random() * window.innerHeight,
+                        driftSpeed: 0.00095 + Math.random() * 0.0005,
+                        colorIndices: [0, 1, 2]
+                    });
+                }
+            }
+
+            function updateBalls(mouseX, mouseY) {
+                const repulsionStrength = 450;
+                const damping = 0.7;
+
+                balls.forEach(ball => {
+                    const dx = ball.x - mouseX;
+                    const dy = ball.y - mouseY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < ball.radius + repulsionStrength) {
+                        const angle = Math.atan2(dy, dx);
+                        const force = (repulsionStrength - distance + ball.radius) / repulsionStrength;
+                        ball.vx += force * Math.cos(angle) * 5;
+                        ball.vy += force * Math.sin(angle) * 5;
+                    }
+
+                    const toTargetX = ball.targetX - ball.x;
+                    const toTargetY = ball.targetY - ball.y;
+                    ball.vx += toTargetX * ball.driftSpeed;
+                    ball.vy += toTargetY * ball.driftSpeed;
+                    ball.vx *= damping;
+                    ball.vy *= damping;
+                    ball.x += ball.vx;
+                    ball.y += ball.vy;
+
+                    const targetDistance = Math.sqrt(toTargetX * toTargetX + toTargetY * toTargetY);
+                    if (targetDistance < 8) {
+                        ball.targetX = Math.random() * window.innerWidth;
+                        ball.targetY = Math.random() * window.innerHeight;
+                    }
+
+                    // Bounce off walls
+                    if (ball.x + ball.radius > window.innerWidth || ball.x - ball.radius < 0) {
+                        ball.vx = -ball.vx;
+                        ball.x = Math.max(ball.radius, Math.min(ball.x, window.innerWidth - ball.radius));
+                    }
+                    if (ball.y + ball.radius > window.innerHeight || ball.y - ball.radius < 0) {
+                        ball.vy = -ball.vy;
+                        ball.y = Math.max(ball.radius, Math.min(ball.y, window.innerHeight - ball.radius));
+                    }
+                });
+            }
+
+            function drawBalls() {
+                // Get ball colors *inside* drawBalls, for every frame
+                const currentBallColors = isDarkMode
+                    ? [
+                        rootStyle.getPropertyValue('--ball-color-light').trim(),
+                        rootStyle.getPropertyValue('--ball-color-medium').trim(),
+                        rootStyle.getPropertyValue('--ball-color-dark').trim(),
+                      ]
+                    : [
+                        rootStyle.getPropertyValue('--ball-color-light').trim(),
+                        rootStyle.getPropertyValue('--ball-color-medium').trim(),
+                        rootStyle.getPropertyValue('--ball-color-dark').trim(),
+                      ];
+
+                let backgroundString = "";
+                balls.forEach((ball) => {
+                    // Correctly create the radial gradient using the color indices
+                    const gradient = `radial-gradient(circle at ${ball.x}px ${ball.y}px, ${currentBallColors[ball.colorIndices[1]]} 0%, ${currentBallColors[ball.colorIndices[2]]} 50%, ${currentBallColors[ball.colorIndices[0]]} 100%, transparent ${ball.radius * 1.8}px)`;
+                    backgroundString += gradient + ", "; // Add comma for multiple backgrounds
+                });
+
+                gradientBackground.style.background = backgroundString.slice(0, -2); // Remove trailing ", "
+            }
+
+            function updateBackground(mouseX, mouseY) {
+                updateBalls(mouseX, mouseY);
+                drawBalls();
+            }
+
+            function animateBackground() {
+                const mouseX = parseFloat(body.style.getPropertyValue('--mouse-x')) || window.innerWidth / 2;
+                const mouseY = parseFloat(body.style.getPropertyValue('--mouse-y')) || window.innerHeight / 2;
+                updateBackground(mouseX, mouseY);
+                requestAnimationFrame(animateBackground);
+            }
+
+            let lastMouseMoveTime = 0;
+            document.addEventListener('mousemove', (event) => {
+                const now = Date.now();
+                if (now - lastMouseMoveTime > 50) {
+                    body.style.setProperty('--mouse-x', event.clientX);
+                    body.style.setProperty('--mouse-y', event.clientY);
+                    lastMouseMoveTime = now;
+                }
+            });
+            initializeDynamicBackground();
+        });
+    </script>
+</body>
+</html>

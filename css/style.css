@@ -1,0 +1,719 @@
+/* style.css */
+
+/* --- Reset & Basic Styles --- */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif; /* Consistent font */
+}
+
+a {
+    text-decoration: none;
+}
+
+ul {
+    list-style: none;
+}
+
+/* --- CSS Variables (Custom Properties) --- */
+
+
+:root {
+    /*  Store the base HSL values (without hue-shift applied yet) */
+    --base-hue-primary: 210; 
+    --base-saturation-primary: 100%;
+    --base-lightness-primary: 50%;
+
+    --base-hue-secondary: 0;  /* Adjust these base hues as needed */
+    --base-saturation-secondary: 0%;
+    --base-lightness-secondary: 93%;
+
+    /* ... Add base HSL for ALL other colors you want to shift ... */
+    --base-hue-text: 240;
+    --base-saturation-text: 4%;
+    --base-lightness-text: 12%;
+
+    --base-hue-bg: 0;
+    --base-saturation-bg: 0%;
+    --base-lightness-bg: 98%;
+
+    --base-hue-body-bg: 0;
+    --base-saturation-body-bg: 0%;
+    --base-lightness-body-bg: 100%;
+
+     --base-hue-border: 0;
+    --base-saturation-border: 0%;
+    --base-lightness-border: 76%;
+    
+    --base-hue-gradient-start: 0;
+    --base-saturation-gradient-start: 0%;
+    --base-lightness-gradient-start: 100%;
+    --base-opacity-gradient-start: 0.69;
+
+    --base-hue-gradient-end: 0;
+    --base-saturation-gradient-end: 0%;
+    --base-lightness-gradient-end: 97%;
+    --base-opacity-gradient-end: 0.44;
+     
+    --base-hue-bg-gradient-start: 0;
+    --base-saturation-bg-gradient-start: 0%;
+    --base-lightness-bg-gradient-start: 100%;
+    --base-opacity-bg-gradient-start: 0.92;
+
+    --base-hue-bg-gradient-end: 0;
+    --base-saturation-bg-gradient-end: 0%;
+    --base-lightness-bg-gradient-end: 95%;
+    --base-opacity-bg-gradient-end: 0.8;
+
+    --base-hue-ball-color-light: 40;
+    --base-saturation-ball-color-light: 0%;
+    --base-lightness-ball-color-light: 85%;
+
+    --base-hue-ball-color-medium: 25;
+    --base-saturation-ball-color-medium: 60%;
+    --base-lightness-ball-color-medium: 85%;
+
+    --base-hue-ball-color-dark: 0;
+    --base-saturation-ball-color-dark: 0%;
+    --base-lightness-ball-color-dark: 73%;
+
+    /*  Hue shift amount (controlled by JS) */
+    --hue-shift: 0;
+
+    /*  Calculated HSL colors (using the base and shift) */
+    --color-primary: hsl(calc(var(--base-hue-primary)), var(--base-saturation-primary), var(--base-lightness-primary));
+    --secondary-color: hsl(calc(var(--base-hue-secondary) + var(--hue-shift)), var(--base-saturation-secondary), var(--base-lightness-secondary));
+    --text-color: hsl(calc(var(--base-hue-text) + var(--hue-shift)), var(--base-saturation-text), var(--base-lightness-text));
+    --bg-color: hsl(calc(var(--base-hue-bg) + var(--hue-shift)), var(--base-saturation-bg), var(--base-lightness-bg));
+    --body-bg-color: hsl(calc(var(--base-hue-body-bg) + var(--hue-shift)), var(--base-saturation-body-bg), var(--base-lightness-body-bg));
+    --border-color: hsl(calc(var(--base-hue-border) + var(--hue-shift)), var(--base-saturation-border), var(--base-lightness-border));
+    --gradient-start: hsla(calc(var(--base-hue-gradient-start) + var(--hue-shift)), var(--base-saturation-gradient-start), var(--base-lightness-gradient-start), var(--base-opacity-gradient-start));
+    --gradient-end: hsla(calc(var(--base-hue-gradient-end) + var(--hue-shift)), var(--base-saturation-gradient-end), var(--base-lightness-gradient-end), var(--base-opacity-gradient-end));
+    --bg-gradient-start: hsla(calc(var(--base-hue-bg-gradient-start) + var(--hue-shift)), var(--base-saturation-bg-gradient-start), var(--base-lightness-bg-gradient-start), var(--base-opacity-bg-gradient-start));
+    --bg-gradient-end: hsla(calc(var(--base-hue-bg-gradient-end) + var(--hue-shift)), var(--base-saturation-bg-gradient-end), var(--base-lightness-bg-gradient-end), var(--base-opacity-bg-gradient-end));
+    --ball-color-light: hsl(calc(var(--base-hue-ball-color-light) + var(--hue-shift)), var(--base-saturation-ball-color-light), var(--base-lightness-ball-color-light));
+    --ball-color-medium: hsl(calc(var(--base-hue-ball-color-medium) + var(--hue-shift)), var(--base-saturation-ball-color-medium), var(--base-lightness-ball-color-medium));
+    --ball-color-dark: hsl(calc(var(--base-hue-ball-color-dark) + var(--hue-shift)), var(--base-saturation-ball-color-dark), var(--base-lightness-ball-color-dark));
+}
+
+/* Dark Mode Variables */
+:root.dark-mode {
+    --base-hue-primary: 225; /*  Base hue for the blue (adjust if needed) */
+    --base-saturation-primary: 50%;
+    --base-lightness-primary: 42%;
+
+    --base-hue-secondary: 240;  /* Adjust these base hues as needed */
+    --base-saturation-secondary: 7%;
+    --base-lightness-secondary: 18%;
+
+    /* ... Add base HSL for ALL other colors you want to shift ... */
+    --base-hue-text: 45;
+    --base-saturation-text: 14%;
+    --base-lightness-text: 81%;
+
+    --base-hue-bg: 45;
+    --base-saturation-bg: 14%;
+    --base-lightness-bg: 81%;
+
+    --base-hue-body-bg: 0;
+    --base-saturation-body-bg: 0%;
+    --base-lightness-body-bg: 0%;
+
+     --base-hue-border: 240;
+    --base-saturation-border: 0%;
+    --base-lightness-border: 23%;
+    
+    --base-hue-gradient-start: 240;
+    --base-saturation-gradient-start: 7%;
+    --base-lightness-gradient-start: 18%;
+    --base-opacity-gradient-start: 0.9;
+
+    --base-hue-gradient-end: 0;
+    --base-saturation-gradient-end: 0%;
+    --base-lightness-gradient-end: 7%;
+    --base-opacity-gradient-end: 0.6;
+     
+    --base-hue-bg-gradient-start: 240;
+    --base-saturation-bg-gradient-start: 7%;
+    --base-lightness-bg-gradient-start: 0%;
+    --base-opacity-bg-gradient-start: 0.7;
+
+    --base-hue-bg-gradient-end: 0;
+    --base-saturation-bg-gradient-end: 0%;
+    --base-lightness-bg-gradient-end: 0%;
+    --base-opacity-bg-gradient-end: 0.98;
+
+     --base-hue-ball-color-light: 210;
+    --base-saturation-ball-color-light: 100%;
+    --base-lightness-ball-color-light: 95%;
+    --base-opacity-ball-color-light: 0;
+
+    --base-hue-ball-color-medium: 208;
+    --base-saturation-ball-color-medium: 100%;
+    --base-lightness-ball-color-medium: 14%;
+    --base-opacity-ball-color-medium: 0.07;
+
+    --base-hue-ball-color-dark: 197;
+    --base-saturation-ball-color-dark: 18%;
+    --base-lightness-ball-color-dark: 8%;
+     --base-opacity-ball-color-dark: 0.16;
+
+    /*  Hue shift amount (controlled by JS) */
+    --hue-shift: 0;
+
+   /*  Calculated HSL colors (using the base and shift) */
+    --color-primary: hsl(calc(var(--base-hue-primary) + var(--hue-shift)), var(--base-saturation-primary), var(--base-lightness-primary));
+    --secondary-color: hsl(calc(var(--base-hue-secondary) + var(--hue-shift)), var(--base-saturation-secondary), var(--base-lightness-secondary));
+    --text-color: hsl(calc(var(--base-hue-text) + var(--hue-shift)), var(--base-saturation-text), var(--base-lightness-text));
+    --bg-color: hsl(calc(var(--base-hue-bg) + var(--hue-shift)), var(--base-saturation-bg), var(--base-lightness-bg));
+    --body-bg-color: hsl(calc(var(--base-hue-body-bg) + var(--hue-shift)), var(--base-saturation-body-bg), var(--base-lightness-body-bg));
+    --border-color: hsl(calc(var(--base-hue-border) + var(--hue-shift)), var(--base-saturation-border), var(--base-lightness-border));
+    --gradient-start: hsla(calc(var(--base-hue-gradient-start) + var(--hue-shift)), var(--base-saturation-gradient-start), var(--base-lightness-gradient-start), var(--base-opacity-gradient-start));
+    --gradient-end: hsla(calc(var(--base-hue-gradient-end) + var(--hue-shift)), var(--base-saturation-gradient-end), var(--base-lightness-gradient-end), var(--base-opacity-gradient-end));
+    --bg-gradient-start: hsla(calc(var(--base-hue-bg-gradient-start) + var(--hue-shift)), var(--base-saturation-bg-gradient-start), var(--base-lightness-bg-gradient-start), var(--base-opacity-bg-gradient-start));
+    --bg-gradient-end: hsla(calc(var(--base-hue-bg-gradient-end) + var(--hue-shift)), var(--base-saturation-bg-gradient-end), var(--base-lightness-bg-gradient-end), var(--base-opacity-bg-gradient-end));
+    --ball-color-light: hsla(calc(var(--base-hue-ball-color-light) + var(--hue-shift)), var(--base-saturation-ball-color-light), var(--base-lightness-ball-color-light), var(--base-opacity-ball-color-light));
+    --ball-color-medium: hsla(calc(var(--base-hue-ball-color-medium) + var(--hue-shift)), var(--base-saturation-ball-color-medium), var(--base-lightness-ball-color-medium), var(--base-opacity-ball-color-medium));
+    --ball-color-dark: hsla(calc(var(--base-hue-ball-color-dark) + var(--hue-shift)), var(--base-saturation-ball-color-dark), var(--base-lightness-ball-color-dark),  var(--base-opacity-ball-color-dark));
+}
+
+body {
+    color: var(--text-color);
+    background-image: linear-gradient(120deg, var(--bg-gradient-start), var(--bg-gradient-end));
+    background-attachment: fixed; /* Fixed background */
+}
+
+/* --- Utility Classes --- */
+
+.bg-gradient {
+    background: linear-gradient(120deg, var(--gradient-start), var(--gradient-end));
+}
+
+/* --- Dynamic Background --- */
+
+#gradient-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: #f2f2f7;  /* Initial background (updated by JS) */
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px); /* For Safari */
+}
+
+/* Fallback for browsers that don't support backdrop-filter */
+@supports not (backdrop-filter: blur(14px)) {
+    .section-container {
+        background-color: rgba(255, 255, 255, 0.9);
+    }
+}
+
+/* --- Scroll Container (For Snapping) --- */
+
+.scroll-container {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth; /* Smooth scrolling between snap points */
+    transition: transform 1s ease;
+}
+
+/* --- Main Container --- */
+
+.main-container {
+    display: grid;
+    grid-template-columns: 425px 1fr; /* Two-column layout */
+    grid-gap: 10px;
+    align-items: flex-start;
+    max-width: 100vh; /* Limit width */
+    padding-top: 200px;
+    margin: 0 auto;       /* Center horizontally */
+    margin-bottom: 600px;
+    scroll-snap-align: start; /* Snap to the start of this container */
+    transition: transform 0.5s ease;
+    transform-origin: center center;
+}
+
+.main-container.zoomed-in {
+    transform: scale(1.5); /* Zoom effect */
+}
+
+/* --- Menu & Navigation --- */
+
+.menu {
+    display: grid;
+    grid-template-columns: 65px 2fr;
+    grid-gap: 10px;
+    z-index: 5;
+}
+
+header {
+    width: 100%;
+}
+
+header ul {
+    display: grid;
+    justify-content: center;
+    background: linear-gradient(120deg, var(--gradient-start), var(--gradient-end));
+    padding: 8px;
+    border-radius: 35px;
+    margin-bottom: 10px;
+}
+
+header ul li a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.03rem;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    transition: color 0.2s ease;
+    position: relative;
+    z-index: 50;
+}
+
+header ul li a::after {
+    content: attr(data-label);
+    position: absolute;
+    top: 50%;
+    left: 130%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    background-color: var(--color-primary);
+    color: var(--bg-color);
+    padding: 10px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 100;
+}
+
+header ul li a:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dark-light-mode {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    cursor: pointer;
+    border: none;
+    outline: none; 
+    transition: color 0.3s ease;
+}
+
+.dark-light-mode:hover,
+header ul li a:hover {
+    color: var(--color-primary);
+}
+
+/* --- Profile Container --- */
+
+.profile-container {
+    height: 100%;
+    position: relative;
+}
+
+.user-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 30px 0px 30px 30px;
+}
+
+.user-profile-container {
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    width: 100%;
+}
+
+.profile-image {
+    width: 100%;
+    height: 280px;
+    display: flex;
+    opacity: 95%;
+    border-radius: 30px 0px 30px 30px;
+    background-color: var(--text-color); 
+    overflow: hidden; 
+}
+
+.user-profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    border-radius: 30px 0px 30px 30px;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.profile-info span {
+    color: var(--color-primary);
+    letter-spacing: 4px;
+    font-size: 0.9rem;
+}
+
+.profile-info h1 {
+    font-size: 2.2rem;
+    margin-top: 10px;
+}
+
+.profile-social-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; 
+    margin-top: 10px;
+}
+
+.profile-social-container a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+.profile-social-container a:hover {
+    color: var(--color-primary);
+}
+
+.profile-button {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: 70px;
+    border-top: 1px solid var(--border-color);
+    width: 100%;
+}
+
+.profile-button a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    border-radius: 0px 0px 30px 30px;
+}
+
+/* --- Content Area --- */
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.section-container {
+    background: linear-gradient(120deg, var(--gradient-start), var(--gradient-end));
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0px 0px 30px 30px;
+}
+
+/* --- About Section --- */
+
+#about {
+    border-radius: 0px 30px 0px 0px; /* Specific border-radius */
+    padding: 40px 50px;
+}
+#about h3 {
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 1.3rem;
+}
+
+#about h3 span {
+    color: var(--color-primary);
+}
+#about #role {
+    opacity: 1;
+    white-space: nowrap;
+    transition: opacity 0.5s ease;
+    border-right: 2px solid var(--color-primary);
+    display: inline-block; /* Needed for the border */
+    padding-right: 5px;
+}
+
+#about h1 {
+    color: var(--text-color);
+    font-size: 2.6rem;
+    margin: 8px 0px;
+    font-weight: 500;
+    max-width: 700px;
+}
+#about p {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    margin-top: 8px;
+    font-weight: 400;
+    max-width: 750px;
+    line-height: 1.5;
+}
+
+/* --- Section Headings --- */
+.section-heading {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+}
+
+.section-heading h3 {
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 2rem;
+    margin-top: 6px;
+}
+
+/* --- Project List (Filter) --- */
+.project-list {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 20px;
+    margin: 42px 0px;
+}
+
+.project-list li {
+    color: var(--text-color);
+    padding: 0px 10px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    user-select: none; /* Prevent text selection */
+    transition: color 0.3s ease;
+}
+.project-list li.active {
+  border: none;
+  color: var(--text-color);
+  background-color: var(--gradient-end);
+}
+
+.project-list li:hover {
+    color: var(--color-primary);
+}
+
+/* --- Project Gallery --- */
+.project-gallery {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 1s ease; /* Smooth zoom */
+    scroll-snap-align: start; /* Snap to gallery */
+}
+
+.project-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
+    gap: 20px;
+    padding: 50px 50px;
+    border-radius: 30px;
+    width: 80%;
+    margin-bottom: 400px;
+    background: linear-gradient(120deg, var(--gradient-start), var(--gradient-end)); /* Gradient background */
+
+}
+
+.project-box {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-box img {
+    width: 100%;
+    height: 200px; /* Consistent height */
+    object-fit: cover; /* Maintain aspect ratio */
+    display: block; /* Remove extra space below image */
+    transition: transform 0.3s ease; /* Smooth scaling on hover */
+}
+
+.project-box:hover {
+    transform: translateY(-5px) scale(1.02); /* Slight lift and scale */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+}
+
+.project-box:hover img {
+    transform: scale(1.05); /* Slightly zoom image on hover */
+}
+.title-box {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: auto;
+    text-align: center;
+    padding: 10px 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    border-radius: 10px;
+    color: var(--bg-color);
+    transition: background 0.3s ease, transform 0.3s ease, color 0.3s ease;
+}
+
+.project-box:hover .title-box {
+    color: var(--text-color);
+    background: var(--secondary-color);
+    transform: translateY(-5px); /* Slight lift */
+}
+
+/* --- Fullscreen Image Viewer --- */
+.fullscreen-container {
+    display: none; /* Initially hidden */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9); /* Dark overlay */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* High z-index to be on top */
+    transition: opacity 0.3s ease;
+}
+
+.fullscreen-container.active {
+    display: flex;
+    opacity: 1; /* Fade in */
+}
+
+.fullscreen-image {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+     transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fullscreen-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+}
+.close-fullscreen {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-fullscreen:hover {
+    color: var(--color-primary);
+}
+
+.nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    user-select: none;
+}
+
+.nav-button:hover {
+    color: var(--color-primary);
+}
+
+.prev-button {
+    left: 20px;
+}
+
+.next-button {
+    right: 20px;
+}
+
+/* --- Media Queries (Responsive Adjustments) --- */
+
+@media (max-width: 992px) {
+    .scroll-container {
+        overflow-y: auto; /* Disable scroll snapping */
+        scroll-snap-type: none;
+        scroll-behavior: smooth;
+        /*justify-content: center; /* Consider removing or adjusting */
+    }
+
+    .main-container {
+        grid-template-columns: 1fr; /* Single column layout */
+        padding-top: 25px;
+        margin-bottom: 5px;
+        /*justify-content: center; /* Consider removing or adjusting */
+
+    }
+    .main-container.zoomed-in {
+        transform: scale(1.0);
+    }
+
+    .menu {
+        grid-template-columns: 1fr; /* Full width menu */
+        /*justify-content: center;  Consider removing or adjusting */
+    }
+
+    header ul {
+        flex-direction: row; /* Horizontal menu items */
+        justify-content: space-around; /* Space out items */
+    }
+    .menu nav{
+        display: none;
+    }
+
+    .profile-container {
+        margin-bottom: 20px;
+    }
+
+    .project-container {
+        grid-template-columns: 1fr; /* Single column for projects */
+        padding: 20px;
+        margin: 80px;
+    }
+    .project-box {
+        height: auto; /* Allow height to adjust */
+    }
+    .project-box img {
+        height: auto; /* Allow image height to adjust */
+    }
+}
