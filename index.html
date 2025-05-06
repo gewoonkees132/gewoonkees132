@@ -1,22 +1,30 @@
 <!DOCTYPE html>
+<!-- Added lang attribute for accessibility and SEO -->
 <html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kees Leemeijer Photography</title>
+    <title>Kees Leemeijer Photography & Design</title>
+    <meta name="description" content="Online portfolio showcasing photography, parametric design, research, and robotic fabrication projects by Kees Leemeijer, based in Rotterdam.">
+    <!-- Main Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="images/favicon.png" type="image/png">
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.png" type="image/png"> <!-- Ensure path is correct -->
 
+    <!-- Preconnect hints for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Google Fonts: Inter -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
       rel="stylesheet"
     >
+    <!-- Google Fonts: Material Symbols Outlined -->
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
       rel="stylesheet"
     >
+    <!-- Font Awesome (CDN) -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -27,113 +35,134 @@
   </head>
 
   <body>
-    <!-- Canvas for background effect (JS controlled) -->
+    <!-- Canvas for JS-driven background effect -->
     <canvas id="gradient-background" aria-hidden="true"></canvas>
 
-    <!-- Main container using Grid for layout on larger screens -->
-    <main class="main-container">
-      <!-- Aside element for sidebar content (menu, profile) -->
+    <!-- Main layout container -->
+    <main class="main-container" id="main-content">
+
+      <!-- Sidebar / Aside Section -->
       <aside class="menu">
-        <!-- Header contains primary navigation and theme controls -->
+        <!-- Navigation Header (within sidebar on desktop) -->
         <header>
-          <!-- Navigation landmark -->
-          <nav aria-label="Main Navigation">
+           <!-- Added role="navigation" for clarity -->
+          <nav aria-label="Main Navigation" role="navigation">
              <ul>
                <li>
-                 <!-- Link to project gallery section -->
-                 <a href="#project-gallery" data-label="Photo Gallery" aria-label="Project Gallery">
+                 <!-- Link to gallery section -->
+                 <a href="#project-gallery" data-label="Photo Gallery" aria-label="View Project Gallery">
                    <span class="material-symbols-outlined" aria-hidden="true">photo_library</span>
                  </a>
                </li>
                <li>
-                 <!-- Toggle button for dark/light mode -->
-                 <button type="button" class="dark-light-mode" aria-label="Toggle dark/light mode" aria-pressed="false">
-                   <span class="material-symbols-outlined" aria-hidden="true">light_mode</span> <!-- Icon changes via JS -->
+                 <!-- Dark/Light Mode Toggle Button -->
+                 <!-- data-label provides tooltip text -->
+                 <button type="button" class="dark-light-mode" data-label="Toggle Theme" aria-label="Toggle dark/light mode" aria-pressed="false">
+                   <!-- Icon text (light_mode/dark_mode) updated by JS -->
+                   <span class="material-symbols-outlined" aria-hidden="true">light_mode</span>
                  </button>
                </li>
                <li>
-                 <!-- Button to cycle through color themes -->
-                 <button type="button" id="hue-shift-button" class="theme-control-button" aria-label="Cycle color theme">
+                 <!-- Hue Shift Button -->
+                 <!-- data-label provides tooltip text -->
+                 <button type="button" id="hue-shift-button" class="theme-control-button" data-label="Cycle Colors" aria-label="Cycle color theme">
                    <span class="material-symbols-outlined" aria-hidden="true">palette</span>
                  </button>
                </li>
              </ul>
            </nav>
         </header>
-        <!-- Container for the profile card -->
-        <div class="profile-container">
-          <!-- Section for user profile information -->
-          <section class="user-profile bg-gradient" aria-labelledby="profile-heading">
-            <div class="user-profile-container">
-              <!-- Figure element for the profile image -->
-              <figure class="profile-image">
-                <img
-                  src="images/portraits/Kees-Leemeijer_web.webp"
-                  alt="Headshot portrait of Kees Leemeijer"
-                  loading="lazy"
-                  decoding="async"
-                >
+        <!-- Profile Container (within sidebar on desktop) -->
+        <!-- Updated classes: profile instead of profile-container -->
+        <div class="profile"> <!-- BEM Block -->
+          <!-- Updated classes: profile instead of user-profile -->
+          <section class="profile bg-gradient" aria-labelledby="profile-heading">
+             <!-- Updated classes: profile__container -->
+            <div class="profile__container">
+              <!-- Profile Image -->
+              <!-- Updated classes: profile__image -->
+              <figure class="profile__image">
+                <picture>
+                    <!-- Corrected 300w to 320w descriptor, added sizes attribute -->
+                    <source srcset="images/Portraits/Kees-Leemeijer_web-240w.webp 240w, images/Portraits/Kees-Leemeijer_web-320w.webp 320w"
+                            sizes="(min-width: 62rem) 280px, 300px"
+                            type="image/webp">
+                    <img
+                      src="images/Portraits/Kees-Leemeijer_web.webp"
+                      alt="Headshot portrait of Kees Leemeijer"
+                      loading="lazy"
+                      decoding="async"
+                      width="300" height="300">
+                </picture>
               </figure>
-              <div class="profile-info">
-                <!-- Main heading for the page (user's name) -->
-                <h1 id="profile-heading" class="profile-name">Kees Leemeijer</h1>
-                <!-- User's primary role -->
-                <span class="profile-role">Photographer</span> <!-- Static role, dynamic one is in #about -->
+              <!-- Profile Info -->
+              <!-- Updated classes: profile__info -->
+              <div class="profile__info">
+                <!-- Updated classes: profile__name (matches CSS) -->
+                <h1 id="profile-heading" class="profile__name">Kees Leemeijer</h1>
               </div>
-              <!-- Container for social media links -->
-              <div class="profile-social-container" aria-label="Social Media Links">
-                <a href="https://www.linkedin.com/in/kees-leemeijer-5ab76611a/" target="_blank" rel="noopener noreferrer" aria-label="Kees Leemeijer on LinkedIn">
-                  <span class="fa-brands fa-linkedin" aria-hidden="true"></span>
-                </a>
-                <!-- NOTE: Update placeholder URL -->
-                <a href="https://www.flickr.com/photos/yourusername/" target="_blank" rel="noopener noreferrer" aria-label="Kees Leemeijer on Flickr">
-                  <span class="fa-brands fa-flickr" aria-hidden="true"></span>
-                </a>
-                <!-- NOTE: Update placeholder URL -->
-                <a href="https://500px.com/p/yourusername" target="_blank" rel="noopener noreferrer" aria-label="Kees Leemeijer on 500px">
-                  <span class="fa-brands fa-500px" aria-hidden="true"></span>
-                </a>
-                <a href="https://vasecreator.com/" target="_blank" rel="noopener noreferrer" aria-label="Vase Creator Website" class="social-link-svg">
-                    <!-- Inlined SVG for specific icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 255.76 238.85" aria-hidden="true" focusable="false">
-                        <path fill="currentColor" d="M203.04,108.76c-7.14.68-1.74.75-9.95,1.09-9.18.43-18.5-.44-25.77-5.44-11.69-8.97-12.39-24.31-6.16-35.79,3.21-6.51,9.29-10.77,15.7-14.47,6-3.33,11.24-4.24,17.37-7.13,2.95-1.28,1.82-4.14-4.12-6.61-5.02-1.55-10.24-.6-15.23.39-12.16,2.7-23.25,10.22-30.29,20.03-6.36,9-10.46,19.51-9.7,30.44.75,22.17,20.95,31.99,41.78,31.79,6.91.08,13.6-.67,19.05-1.65,8.31-1.79,13.84-2.15,18.1-8.59l.06-.12c2.26-4.82-4.48-4.56-10.84-3.95h.02ZM122.02,145.46l.12-.05c2.9-1.2,5.1-6.08,6.39-9.31,1.19-2.88,2.51-5.74,3.97-8.45,2.12-4.17,3.76-7.69.22-6.83-7.31,2.73-14.39,10.52-15.89,17.48-.98,3.35.79,8.76,5.18,7.17h0Z"/>
-                        <path fill="currentColor" d="M252.09,74.5c-.45-1.59-2.98-3.36-5.08-4.34-2.6-1.27-5.64-2.42-8.69-3.57-19.03-7.73-47.49-10.62-59.6-2.47-2.71,1.66-5,3.87-6.76,6.64-1.96,3.03-2.48,6.6,2.36,5.52,1.97-.38,4.54-1.4,7.04-2.29,9.23-3.3,19.15-5.4,29.05-5.58,1.97-.13,15.63.34,15.48,2.13-2.92,1.2-7.58,1.02-10.92,1.71-12.56,1.89-24.15,7.41-33.59,14.56-2.07,1.68-5.2,4.21-4.54,6.98,2.23,6.04,23.88,5.09,29.62,4.31l.18-.03c10.16-1.35,20.78-5.44,30.15-10.28,4.26-2.55,17.15-8.14,15.31-13.31h0ZM154.85,144.32c-2.39-1.34-5.08-1.23-7.76-1.26h-11.86c.79-.94,1.58-1.86,2.39-2.74,3.09-3.52,5.54-6.53,1.89-6.56-6.2.68-13.04,4.53-17.16,9.3h-.68c-1.81-5.44-5.32-10.74-8.95-13.98-2.14-1.79-4.66-3.97-6.48-2.19-1.6,2.41-.04,10.53,1.23,16.17h-7.16c-3.62.03-5.98-.12-8.32.78l-.11.04c-3,1.2-5.55,4.75-6.42,8.17-.89,4.01.12,7.69.57,11.81.59,4.39,1.38,10.23,2.19,16.23.83,6.17,1.68,12.5,2.37,17.62,1.29,6.65.27,12.84,5.37,17.37,5.55,4.55,13.37,2.3,20.3,2.35,7.65-.3,15.55.02,23.14.44,5.71.46,11.87-1.96,13.8-7.47.94-2.61,1.09-5.27,1.69-9.45,1.33-10.1,3.03-22.73,4.42-33.24.51-4.62,1.66-10.3,1.36-13.8-.32-3.78-2.59-7.64-5.83-9.58l.02-.02ZM64.37,78.33c4.88,3.17,11.58,5.83,10.33-2.98-3.34-18.31-9.64-36.99-23.13-49.56-.56-.6-4.08-3.81-2.11-3.56,15.46,6.98,25.51,22.94,33.72,38.67.93,1.62,2.14,4.72,3.68,5.31.27.04.48-.12.61-.36.66-1.03.55-4.6.2-7.75-.59-5.83-1.98-11.85-4.18-17.19l-.07-.17C75.06,20.26,53.35,5.76,30.42,6.51c-5.02.67-5.05,5.81-4.06,9.8,5.52,25.05,18.34,49.84,38.01,62.02h0Z"/>
-                        <path fill="currentColor" d="M102.8,123.86l2.59-2.59c1.89-4.42,1.51-4.73,3.06-9.78.5-1.97,1.06-4.23,1.5-6.34,2.28-12.7,3.01-22.25,2.72-30.87-.23-6.99-.46-14.66-3.12-24.4,0,0-4.44-16.33-17.9-29.98-.88-.89-3.22-3.21-5.43-2.66-.25.06-.87.23-1.3.81-.9,1.2-.37,3.3.31,4.79,3.1,7.11,6.14,15.82,7.97,26.12,1.75,9.34,2.16,20.62,1.22,29.73-.36,3.75-.78,9.3-1.93,12.37-4.55,10.1-25.74-.66-37.25-10.08-7.24-6.21-13.74-13.09-22.73-16.83-1.03-.37-2.15-.79-3.15-.58-2.46.86,2.01,6.41,2.79,7.92,3.06,4.72,5.85,8.82,9.3,12.91,9.8,11.42,28.82,28.58,42.17,35.42,4.95,2.09,13.66,6.66,19.18,4.07h0Z"/>
-                    </svg>
-                </a>
-              </div>
+              <!-- Social Media Links -->
+              <!-- Updated element/classes: ul and profile__social, profile__social-link -->
+              <ul class="profile__social" aria-label="Social Media Links">
+                <li>
+                  <a href="https://www.linkedin.com/in/kees-leemeijer-5ab76611a/" target="_blank" rel="noopener noreferrer" aria-label="Kees Leemeijer on LinkedIn" class="profile__social-link">
+                    <span class="fa-brands fa-linkedin" aria-hidden="true"></span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.flickr.com/photos/keesleemeijer/" target="_blank" rel="noopener noreferrer" aria-label="Kees Leemeijer on Flickr" class="profile__social-link">
+                    <span class="fa-brands fa-flickr" aria-hidden="true"></span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://500px.com/p/keesleemeijer" target="_blank" rel="noopener noreferrer" aria-label="Kees Leemeijer on 500px" class="profile__social-link">
+                    <span class="fa-brands fa-500px" aria-hidden="true"></span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://vasecreator.com/" target="_blank" rel="noopener noreferrer" aria-label="Vase Creator Website" class="profile__social-link social-link-svg">
+                      <!-- Added focusable="false" to prevent redundant focus stop -->
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 255.76 238.85" aria-hidden="true" focusable="false">
+                          <!-- SVG paths remain unchanged -->
+                          <path fill="currentColor" d="M203.04,108.76c-7.14.68-1.74.75-9.95,1.09-9.18.43-18.5-.44-25.77-5.44-11.69-8.97-12.39-24.31-6.16-35.79,3.21-6.51,9.29-10.77,15.7-14.47,6-3.33,11.24-4.24,17.37-7.13,2.95-1.28,1.82-4.14-4.12-6.61-5.02-1.55-10.24-.6-15.23.39-12.16,2.7-23.25,10.22-30.29,20.03-6.36,9-10.46,19.51-9.7,30.44.75,22.17,20.95,31.99,41.78,31.79,6.91.08,13.6-.67,19.05-1.65,8.31-1.79,13.84-2.15,18.1-8.59l.06-.12c2.26-4.82-4.48-4.56-10.84-3.95h.02ZM122.02,145.46l.12-.05c2.9-1.2,5.1-6.08,6.39-9.31,1.19-2.88,2.51-5.74,3.97-8.45,2.12-4.17,3.76-7.69.22-6.83-7.31,2.73-14.39,10.52-15.89,17.48-.98,3.35.79,8.76,5.18,7.17h0Z"/>
+                          <path fill="currentColor" d="M252.09,74.5c-.45-1.59-2.98-3.36-5.08-4.34-2.6-1.27-5.64-2.42-8.69-3.57-19.03-7.73-47.49-10.62-59.6-2.47-2.71,1.66-5,3.87-6.76,6.64-1.96,3.03-2.48,6.6,2.36,5.52,1.97-.38,4.54-1.4,7.04-2.29,9.23-3.3,19.15-5.4,29.05-5.58,1.97-.13,15.63.34,15.48,2.13-2.92,1.2-7.58,1.02-10.92,1.71-12.56,1.89-24.15,7.41-33.59,14.56-2.07,1.68-5.2,4.21-4.54,6.98,2.23,6.04,23.88,5.09,29.62,4.31l.18-.03c10.16-1.35,20.78-5.44,30.15-10.28,4.26-2.55,17.15-8.14,15.31-13.31h0ZM154.85,144.32c-2.39-1.34-5.08-1.23-7.76-1.26h-11.86c.79-.94,1.58-1.86,2.39-2.74,3.09-3.52,5.54-6.53,1.89-6.56-6.2.68-13.04,4.53-17.16,9.3h-.68c-1.81-5.44-5.32-10.74-8.95-13.98-2.14-1.79-4.66-3.97-6.48-2.19-1.6,2.41-.04,10.53,1.23,16.17h-7.16c-3.62.03-5.98-.12-8.32.78l-.11.04c-3,1.2-5.55,4.75-6.42,8.17-.89,4.01.12,7.69.57,11.81.59,4.39,1.38,10.23,2.19,16.23.83,6.17,1.68,12.5,2.37,17.62,1.29,6.65.27,12.84,5.37,17.37,5.55,4.55,13.37,2.3,20.3,2.35,7.65-.3,15.55.02,23.14.44,5.71.46,11.87-1.96,13.8-7.47.94-2.61,1.09-5.27,1.69-9.45,1.33-10.1,3.03-22.73,4.42-33.24.51-4.62,1.66-10.3,1.36-13.8-.32-3.78-2.59-7.64-5.83-9.58l.02-.02ZM64.37,78.33c4.88,3.17,11.58,5.83,10.33-2.98-3.34-18.31-9.64-36.99-23.13-49.56-.56-.6-4.08-3.81-2.11-3.56,15.46,6.98,25.51,22.94,33.72,38.67.93,1.62,2.14,4.72,3.68,5.31.27.04.48-.12.61-.36.66-1.03.55-4.6.2-7.75-.59-5.83-1.98-11.85-4.18-17.19l-.07-.17C75.06,20.26,53.35,5.76,30.42,6.51c-5.02.67-5.05,5.81-4.06,9.8,5.52,25.05,18.34,49.84,38.01,62.02h0Z"/>
+                          <path fill="currentColor" d="M102.8,123.86l2.59-2.59c1.89-4.42,1.51-4.73,3.06-9.78.5-1.97,1.06-4.23,1.5-6.34,2.28-12.7,3.01-22.25,2.72-30.87-.23-6.99-.46-14.66-3.12-24.4,0,0-4.44-16.33-17.9-29.98-.88-.89-3.22-3.21-5.43-2.66-.25.06-.87.23-1.3.81-.9,1.2-.37,3.3.31,4.79,3.1,7.11,6.14,15.82,7.97,26.12,1.75,9.34,2.16,20.62,1.22,29.73-.36,3.75-.78,9.3-1.93,12.37-4.55,10.1-25.74-.66-37.25-10.08-7.24-6.21-13.74-13.09-22.73-16.83-1.03-.37-2.15-.79-3.15-.58-2.46.86,2.01,6.41,2.79,7.92,3.06,4.72,5.85,8.82,9.3,12.91,9.8,11.42,28.82,28.58,42.17,35.42,4.95,2.09,13.66,6.66,19.18,4.07h0Z"/>
+                      </svg>
+                  </a>
+                </li>
+              </ul>
             </div>
-            <!-- Contact button area -->
-            <div class="profile-button">
-              <a
-                href="mailto:keesdekiter@gmail.com?subject=Let%27s%20Connect!&body=Hi%20Kees,"
-                class="profile-contact-link bg-gradient"
-              >Contact Me</a>
+            <!-- Contact Button/Link -->
+            <!-- Updated classes: profile__contact-wrapper, profile__contact-link -->
+            <div class="profile__contact-wrapper">
+              <!-- Email link potentially obfuscated by Cloudflare JS -->
+              <a href="/cdn-cgi/l/email-protection#1f747a7a6c7b7a74766b7a6d5f78727e7673317c7072206c6a7d757a7c6b22537a6b3a2d286c3a2d2f5c7071717a7c6b3e397d707b662257763a2d2f547a7a6c33" class="profile__contact-link bg-gradient">Contact Me</a>
             </div>
           </section>
-        </div>
-      </aside>
+        </div> <!-- End .profile -->
+      </aside> <!-- End .menu -->
 
-      <!-- Main content area (sibling to aside on desktop) -->
+      <!-- Main Content Area (About, Filters, Gallery) -->
       <div class="content">
-        <!-- About section -->
+        <!-- About Section -->
         <section id="about" class="section-container" aria-labelledby="about-heading">
-          <!-- Using h2 for section heading, linked by aria-labelledby -->
-          <h2 id="about-heading">Hello, I’m a <span id="role" aria-live="polite"></span></h2> <!-- Role populated by JS -->
+          <h2 id="about-heading">Hello, I’m a <span id="role" aria-live="polite"></span></h2> <!-- Role updated by JS -->
           <h3 class="about-location">Based in Rotterdam, The Netherlands</h3>
           <p>
             In my free time, I am passionate about photography, capturing the beauty of urban landscapes, people, and nature. Photography changes the way I see the world—shifting perspectives, revealing hidden details, and finding extraordinary moments in the everyday. Through my images, I hope to share the beauty that surrounds us, encouraging others to appreciate the world from new angles. If you like my pictures, or want moments captured, feel free to reach out.
           </p>
         </section>
 
-        <!-- Projects filter section -->
+        <!-- Projects Filter Section -->
         <section id="projects" class="section-container" aria-labelledby="projects-heading">
           <header class="section-heading">
             <h2 id="projects-heading">Explore Portfolio by Topic</h2>
           </header>
-          <!-- List of filter buttons -->
-          <ul class="project-filter-list" role="list" aria-label="Filter projects by category">
-            <!-- role="list" is technically redundant on ul but reinforces intent -->
+          <!-- Filter Buttons List -->
+          <!-- Removed role="listbox", aria-labelledby, aria-orientation for simplification -->
+          <!-- Buttons themselves provide semantics -->
+          <ul class="project-filter-list">
+            <!-- Removed role="option", aria-selected -->
             <li><button type="button" class="filter-button" data-filter="Products">Products</button></li>
             <li><button type="button" class="filter-button" data-filter="Architecture">Architecture</button></li>
             <li><button type="button" class="filter-button" data-filter="Portraits">Portraits</button></li>
@@ -142,54 +171,74 @@
             <li><button type="button" class="filter-button" data-filter="Plants">Plants</button></li>
             <li><button type="button" class="filter-button" data-filter="Industry">Industry</button></li>
             <li><button type="button" class="filter-button" data-filter="Urban">Urban</button></li>
-            <li><button type="button" class="filter-button active" data-filter="All" aria-pressed="true">All</button></li> <!-- Default active state -->
+            <!-- JS will toggle 'active' class -->
+            <li><button type="button" class="filter-button active" data-filter="All">All</button></li> <!-- Default active -->
           </ul>
         </section>
 
+        <!-- Project Gallery Section -->
+        <section id="project-gallery" class="project-gallery-section" aria-labelledby="gallery-heading">
+          <!-- Visually hidden heading provides context for screen readers -->
+          <h2 id="gallery-heading" class="visually-hidden">Project Gallery</h2>
 
-      <!-- Project Gallery Section -->
-      <section id="project-gallery" class="project-gallery-section" aria-labelledby="gallery-heading">
-        <!-- Visually hidden heading for screen readers -->
-        <h2 id="gallery-heading" class="visually-hidden">Project Gallery</h2>
-        <!-- Container for the project items, uses CSS Grid -->
-        <div class="project-container">
-          <!--
-          Project boxes populated by JS will look roughly like this:
-          Using a div with role="button" and tabindex="0" makes it focusable and announces intent.
-          An alternative could be wrapping content in <a> or <button> if appropriate.
-          -->
-          <!-- Example structure (JS generates these) -->
-          <!--
-          <div class="project-box" data-category="Category" data-index="0" tabindex="0" role="button" aria-label="View project: Title" data-visible="false">
-             <div class="project-box-shimmer" aria-hidden="true"></div> <--- Loading indicator
-             <img src="..." alt="Title" loading="lazy" decoding="async">
-             <div class="title-box" aria-hidden="true">Title</div>
-          </div>
-          -->
+          <!-- Two-Column Scroll Mode Gallery Structure -->
+          <!-- tabindex makes it focusable for keyboard nav (arrows handled by JS) -->
+          <!-- Added role="region" and aria-label -->
+          <div id="scroll-mode-gallery" class="scroll-mode-container" role="region" aria-label="Scrolling Project Gallery" tabindex="0">
+              <!-- Thumbnail Column (Visually presentational, hidden from AT by CSS on mobile) -->
+              <div id="thumbnail-column" class="thumbnail-column" aria-hidden="true">
+                  <!-- Cursor indicating active thumbnail -->
+                  <div id="active-thumbnail-cursor" class="active-cursor"></div>
+                  <!-- Thumbnails populated by JS (JS will use .scroll-gallery__thumb-item class) -->
+                  <div id="thumbnail-scroller" class="thumbnail-scroller"></div>
+              </div>
+              <!-- Main Image Column (Primary interaction area) -->
+              <div id="main-image-column" class="main-image-column">
+                  <!-- Large images populated by JS (JS will use .scroll-gallery__main-item class) -->
+                  <div id="main-image-scroller" class="main-image-scroller"></div>
+              </div>
+              <!-- Screen reader status updates (e.g., current item announcement) -->
+              <!-- Added aria-atomic="true" for better SR announcement -->
+              <div id="scroll-gallery-status" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+            </div>
+            <!-- END: Two-Column Scroll Mode Gallery Structure -->
+          </section>
+        </div> <!-- End .content -->
+      </main> <!-- End .main-container -->
+
+      <!-- Fullscreen Slideable Gallery Container (Modal Dialog) -->
+      <div id="fullscreen-container" class="fullscreen-container"
+           role="dialog" aria-modal="true" aria-label="Fullscreen Image Gallery"
+           aria-hidden="true" hidden> <!-- Initially hidden for AT and visually -->
+
+        <!-- Wrapper for the scrollable slides -->
+        <!-- Added tabindex="-1" to allow programmatic focus for scrolling if needed -->
+        <div id="fullscreen-slider-wrapper" class="fullscreen-slider-wrapper"
+             role="region" aria-label="Image gallery slider" tabindex="-1">
+          <!-- Slides populated by JS -->
         </div>
-      </section> <!-- End #project-gallery -->
 
-      </div> <!-- End .content --> <!-- This closing div was misplaced in the original, moved it here -->
+        <!-- Close button positioned OVER the slider -->
+        <button type="button" id="close-fullscreen" class="fullscreen-button close-fullscreen" aria-label="Close fullscreen image viewer">
+            <!-- Using icon font for close symbol -->
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
 
+        <!-- Screen reader only status announcement area for the current slide -->
+        <!-- Added aria-atomic="true" for better SR announcement -->
+        <div id="fullscreen-status" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
 
-        <!-- Fullscreen Image Viewer Modal -->
-        <!-- Using role="dialog" and aria-modal="true" for accessibility -->
-        <div id="fullscreen-container" class="fullscreen-container" role="dialog" aria-modal="true" aria-labelledby="fullscreen-image-title" hidden>
-          <img id="fullscreen-image" class="fullscreen-image" src="" alt=""> <!-- Alt text updated by JS -->
-           <!-- Visually hidden heading for the modal dialog -->
-           <h2 id="fullscreen-image-title" class="visually-hidden">Fullscreen Image Viewer</h2>
-          <!-- Close button -->
-          <button type="button" id="close-fullscreen" class="fullscreen-button close-fullscreen" aria-label="Close fullscreen image viewer">×</button>
-          <!-- Navigation buttons -->
-          <button type="button" id="prev-image" class="fullscreen-button nav-button prev-button" aria-label="Previous image">❮</button>
-          <button type="button" id="next-image" class="fullscreen-button nav-button next-button" aria-label="Next image">❯</button>
-        </div>
+      </div> <!-- End #fullscreen-container -->
 
-
-    </main> <!-- End .main-container -->
-
-
-    <script src="script.js" type="module"></script>
-
-  </body>
-</html>
+      <!--
+        Cloudflare Email Decode Script:
+        - This script is injected by Cloudflare on the live server to decode protected email links.
+        - It WILL cause a 404 (Not Found) error during local development, which is expected and can be ignored.
+        - DO NOT REMOVE this script tag if using Cloudflare Email Obfuscation on the deployed site.
+      -->
+      <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script> <!-- Added defer -->
+      <!-- Main Application Script (Module for modern JS features) -->
+      <!-- Added defer for potentially better loading performance -->
+      <script src="script.js" type="module" defer></script>
+    </body>
+    </html>
