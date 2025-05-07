@@ -1,943 +1,1023 @@
 /* ==========================================================================
-   STYLE.CSS - Kees Leemeijer Portfolio - Optimized Version
-   Version: 1.5.3 (Re-validated for Mobile Best Practices)
-   Description: Optimized stylesheet focusing on performance, maintainability (BEM-like),
-                responsiveness, and accessibility.
-   Base font size assumption for rem conversion: 16px.
-   ========================================================================== */
+STYLE.CSS - Kees Leemeijer Portfolio - Optimized Version
+Version: 1.5.5 (Refined FLIP source hiding)
+Description: Optimized stylesheet focusing on performance, maintainability (BEM-like),
+             responsiveness, and accessibility.
+Base font size assumption for rem conversion: 16px.
+========================================================================== */
 
 /* ==========================================================================
-   1. Base Reset & Global Styles
-   ========================================================================== */
+1. Base Reset & Global Styles
+========================================================================== */
 
-   *, *::before, *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*, *::before, *::after {
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
 }
 
 html {
-    scroll-behavior: smooth;
-    /* CSS variable updated by JS to compensate for scrollbar width */
-    --scrollbar-width: 0px; /* JS sets this with 'px' unit */
+ scroll-behavior: smooth;
+ /* CSS variable updated by JS to compensate for scrollbar width */
+ --scrollbar-width: 0px; /* JS sets this with 'px' unit */
 
-    /* --- Base Transition Timings & Easing --- */
-    --transition-duration-base: 0.3s;
-    --transition-easing-base: ease;
-    --transition-duration-filter-item: 0.3s;
+ /* --- Base Transition Timings & Easing --- */
+ --transition-duration-base: 0.3s;
+ --transition-easing-base: ease;
+ --transition-duration-filter-item: 0.3s;
 
-    /* --- Focus Outline --- */
-    --focus-outline-width: 2px;
-    --focus-outline-offset: 2px;
-    /* --focus-outline-color defined per theme */
+ /* --- Focus Outline --- */
+ --focus-outline-width: 2px;
+ --focus-outline-offset: 2px;
+ /* --focus-outline-color defined per theme */
 
-    /* --- Component-Specific Timings & Variables --- */
+ /* --- Component-Specific Timings & Variables --- */
 
-    /* Fullscreen Slider & Zoom (FLIP Animation) */
-    --transition-duration-zoom: 0.6s;
-    --transition-easing-zoom: cubic-bezier(0.65, 0, 0.35, 1);
-    --transition-duration-fade-bg: 0.6s;
-    --transition-easing-fade-bg: ease-out;
-    --fullscreen-bg-color: hsla(0, 0%, 0%, 0.9);
-    --fullscreen-text-color: hsl(0, 0%, 95%);
-    --fullscreen-button-bg: hsla(0, 0%, 100%, 0.08);
-    --fullscreen-button-bg-hover: hsla(0, 0%, 100%, 0.15);
-    --fullscreen-button-color: hsla(0, 0%, 100%, 0.7);
-    --fullscreen-button-color-hover: hsl(0, 0%, 100%);
-    --slide-loading-color: hsla(0, 0%, 100%, 0.1);
-    --slide-error-bg-color: hsla(0, 0%, 15%, 0.8);
-    --slide-error-text-color: hsla(0, 0%, 80%, 0.8);
+ /* Fullscreen Slider & Zoom (FLIP Animation) */
+ --transition-duration-zoom: 0.6s;
+ --transition-easing-zoom: cubic-bezier(0.65, 0, 0.35, 1);
+ --transition-duration-fade-bg: 0.6s;
+ --transition-easing-fade-bg: ease-out;
+ --fullscreen-bg-color: hsla(0, 0%, 0%, 0.9);
+ --fullscreen-text-color: hsl(0, 0%, 95%);
+ --fullscreen-button-bg: hsla(0, 0%, 100%, 0.08);
+ --fullscreen-button-bg-hover: hsla(0, 0%, 100%, 0.15);
+ --fullscreen-button-color: hsla(0, 0%, 100%, 0.7);
+ --fullscreen-button-color-hover: hsl(0, 0%, 100%);
+ --slide-loading-color: hsla(0, 0%, 100%, 0.1);
+ --slide-error-bg-color: hsla(0, 0%, 15%, 0.8);
+ --slide-error-text-color: hsla(0, 0%, 80%, 0.8);
 
-    /* Fullscreen Peeking Slider Effect */
-    --transition-duration-slide-peek: 0.4s;
-    --transition-easing-slide-peek: ease-out;
-    --slide-peek-blur: 5px;
-    --slide-peek-opacity: 0.4;
-    --slide-width-percent: 80%;
-    --slide-wrapper-padding: calc((100% - var(--slide-width-percent)) / 2);
+ /* Fullscreen Peeking Slider Effect */
+ --transition-duration-slide-peek: 0.4s;
+ --transition-easing-slide-peek: ease-out;
+ --slide-peek-blur: 5px;
+ --slide-peek-opacity: 0.4;
+ --slide-width-percent: 80%; /* Width of the main (active) slide */
+ /* Padding on the slider wrapper to achieve peeking effect for first/last items */
+ --slide-wrapper-padding: calc((100% - var(--slide-width-percent)) / 2);
 
-    /* --- Scroll Gallery Cursor --- */
-    --transition-duration-cursor-transform: 0.2s;
-    --transition-easing-cursor-transform: cubic-bezier(0.4, 0, 0.2, 1);
+ /* --- Scroll Gallery Cursor --- */
+ --transition-duration-cursor-transform: 0.2s;
+ --transition-easing-cursor-transform: cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* --- Z-Indexes --- */
-    --z-index-background: -1;
-    --z-index-default: 1;
-    --z-index-content: 2;
-    --z-index-menu: 10;
-    --z-index-tooltip: 20;
-    --z-index-fullscreen-backdrop: 999;
-    --z-index-fullscreen-slider: 1000;
-    --z-index-fullscreen-controls: 1001;
+ /* --- Z-Indexes --- */
+ /* Ensures logical stacking order for components like modals, tooltips, menus. */
+ --z-index-background: -1;      /* Background canvas */
+ --z-index-default: 1;         /* Default stacking context */
+ --z-index-content: 2;         /* Main page content */
+ --z-index-menu: 10;           /* Sidebar/navigation menu */
+ --z-index-tooltip: 20;        /* Tooltips for navigation items */
+ --z-index-fullscreen-backdrop: 999; /* Fullscreen gallery backdrop */
+ --z-index-fullscreen-slider: 1000;  /* Fullscreen gallery slider content */
+ --z-index-fullscreen-controls: 1001;/* Fullscreen gallery controls (close button) */
 }
 
 /* Class added by JS when fullscreen is active */
 html.fullscreen-active {
-    overflow: hidden;
-    /* Corrected: JS sets --scrollbar-width with px unit, so no need for * 1px */
-    padding-right: var(--scrollbar-width);
+ overflow: hidden; /* Prevents scrolling of the body content underneath the modal */
+ /* Corrected: JS sets --scrollbar-width with px unit, so no need for * 1px */
+ /* This padding compensates for the scrollbar disappearing, preventing layout shift. */
+ padding-right: var(--scrollbar-width);
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    color: var(--text-color);
-    background-image: var(--body-background-gradient);
-    background-attachment: fixed;
-    transition: color var(--transition-duration-base) var(--transition-easing-base),
-                background-image var(--transition-duration-base) var(--transition-easing-base);
-    line-height: 1.5;
-    min-height: 100vh;
-    font-size: 1rem; /* Base for rem units */
+ font-family: 'Inter', sans-serif;
+ color: var(--text-color);
+ background-image: var(--body-background-gradient);
+ background-attachment: fixed; /* Gradient stays fixed during scroll */
+ transition: color var(--transition-duration-base) var(--transition-easing-base),
+             background-image var(--transition-duration-base) var(--transition-easing-base);
+ line-height: 1.5;
+ min-height: 100vh;
+ font-size: 1rem; /* Base for rem units, assuming 16px default browser font size */
 }
 
 a { text-decoration: none; color: inherit; }
 ul { list-style: none; }
-img, svg, picture { display: block; max-width: 100%; height: auto; } /* Added picture */
+/* Ensures images and SVGs scale responsively and maintain aspect ratio by default.
+`picture` element added for consistency. */
+img, svg, picture { display: block; max-width: 100%; height: auto; }
 button { font: inherit; cursor: pointer; border: none; background: none; padding: 0; color: inherit; text-align: inherit; }
 
-/* Ensure all interactive elements have a default outline for focus visibility */
+/* Ensure all interactive elements have a default outline for focus visibility.
+This is critical for accessibility. */
 a, button {
-    outline: var(--focus-outline-width) solid transparent;
-    outline-offset: var(--focus-outline-offset);
-    transition: outline-color var(--transition-duration-base) var(--transition-easing-base); /* Transition outline */
+ outline: var(--focus-outline-width) solid transparent; /* Transparent by default */
+ outline-offset: var(--focus-outline-offset);
+ /* Smooth transition for the outline color when it becomes visible. */
+ transition: outline-color var(--transition-duration-base) var(--transition-easing-base);
 }
+/* :focus-visible provides focus styling only for keyboard users, not on mouse click,
+enhancing UX while maintaining accessibility. */
 a:focus-visible, button:focus-visible {
-    outline-color: var(--focus-outline-color);
+ outline-color: var(--focus-outline-color); /* Uses theme-dependent color */
 }
 
 /* ==========================================================================
-   2. Color & Theme Variables (:root & dark-mode)
-   ========================================================================== */
+2. Color & Theme Variables (:root & dark-mode)
+========================================================================== */
 
 :root {
-    /* --- Base HSL Values (Light Mode) --- */
-    --base-hue-primary: 210; --base-saturation-primary: 78%; --base-lightness-primary: 60%;
-    --base-hue-secondary: 0; --base-saturation-secondary: 0%; --base-lightness-secondary: 93%;
-    --base-hue-text: 210; --base-saturation-text: 4%; --base-lightness-text: 12%;
-    --base-hue-bg: 0; --base-saturation-bg: 0%; --base-lightness-bg: 98%; /* Element backgrounds */
-    --base-hue-body-bg: 0; --base-saturation-body-bg: 0%; --base-lightness-body-bg: 100%; /* Body background base */
-    --base-hue-border: 0; --base-saturation-border: 0%; --base-lightness-border: 76%;
-    /* Element gradients */
-    --base-hue-gradient-start: 0; --base-saturation-gradient-start: 0%; --base-lightness-gradient-start: 100%; --base-opacity-gradient-start: 0.69;
-    --base-hue-gradient-end: 0; --base-saturation-gradient-end: 0%; --base-lightness-gradient-end: 97%; --base-opacity-gradient-end: 0.44;
-    /* Body background gradient */
-    --base-hue-bg-gradient-start: 0; --base-saturation-bg-gradient-start: 0%; --base-lightness-bg-gradient-start: 100%; --base-opacity-bg-gradient-start: 0.92;
-    --base-hue-bg-gradient-end: 0; --base-saturation-bg-gradient-end: 0%; --base-lightness-bg-gradient-end: 95%; --base-opacity-bg-gradient-end: 0.8;
-    /* Background animation balls */
-    --base-hue-ball-color-light: 40; --base-saturation-ball-color-light: 0%; --base-lightness-ball-color-light: 85%; --base-opacity-ball-color-light: 1.0;
-    --base-hue-ball-color-medium: 25; --base-saturation-ball-color-medium: 60%; --base-lightness-ball-color-medium: 85%; --base-opacity-ball-color-medium: 1.0;
-    --base-hue-ball-color-dark: 0; --base-saturation-ball-color-dark: 0%; --base-lightness-ball-color-dark: 73%; --base-opacity-ball-color-dark: 1.0;
+ /* --- Base HSL Values (Light Mode) --- */
+ /* Using HSL allows for easy programmatic manipulation (e.g., hue shift). */
+ --base-hue-primary: 210; --base-saturation-primary: 78%; --base-lightness-primary: 60%;
+ --base-hue-secondary: 0; --base-saturation-secondary: 0%; --base-lightness-secondary: 93%;
+ --base-hue-text: 210; --base-saturation-text: 4%; --base-lightness-text: 12%;
+ --base-hue-bg: 0; --base-saturation-bg: 0%; --base-lightness-bg: 98%; /* Element backgrounds */
+ --base-hue-body-bg: 0; --base-saturation-body-bg: 0%; --base-lightness-body-bg: 100%; /* Body background base */
+ --base-hue-border: 0; --base-saturation-border: 0%; --base-lightness-border: 76%;
+ /* Element gradients (e.g., cards, buttons) */
+ --base-hue-gradient-start: 0; --base-saturation-gradient-start: 0%; --base-lightness-gradient-start: 100%; --base-opacity-gradient-start: 0.69;
+ --base-hue-gradient-end: 0; --base-saturation-gradient-end: 0%; --base-lightness-gradient-end: 97%; --base-opacity-gradient-end: 0.44;
+ /* Body background gradient */
+ --base-hue-bg-gradient-start: 0; --base-saturation-bg-gradient-start: 0%; --base-lightness-bg-gradient-start: 100%; --base-opacity-bg-gradient-start: 0.92;
+ --base-hue-bg-gradient-end: 0; --base-saturation-bg-gradient-end: 0%; --base-lightness-bg-gradient-end: 95%; --base-opacity-bg-gradient-end: 0.8;
+ /* Background animation balls (JS-driven canvas background) */
+ --base-hue-ball-color-light: 40; --base-saturation-ball-color-light: 0%; --base-lightness-ball-color-light: 85%; --base-opacity-ball-color-light: 1.0;
+ --base-hue-ball-color-medium: 25; --base-saturation-ball-color-medium: 60%; --base-lightness-ball-color-medium: 85%; --base-opacity-ball-color-medium: 1.0;
+ --base-hue-ball-color-dark: 0; --base-saturation-ball-color-dark: 0%; --base-lightness-ball-color-dark: 73%; --base-opacity-ball-color-dark: 1.0;
 
-    /* --- Global Hue Shift --- */
-    --hue-shift: 0; /* Updated by JS */
+ /* --- Global Hue Shift --- */
+ --hue-shift: 0; /* Updated by JS to cycle theme colors. */
 
-    /* --- Calculated Colors --- */
-    --color-primary: hsl(calc(var(--base-hue-primary) + var(--hue-shift)), var(--base-saturation-primary), var(--base-lightness-primary));
-    --color-secondary: hsl(calc(var(--base-hue-secondary) + var(--hue-shift)), var(--base-saturation-secondary), var(--base-lightness-secondary));
-    --text-color: hsl(calc(var(--base-hue-text) + var(--hue-shift)), var(--base-saturation-text), var(--base-lightness-text));
-    --bg-color: hsl(calc(var(--base-hue-bg) + var(--hue-shift)), var(--base-saturation-bg), var(--base-lightness-bg));
-    --body-bg-color: hsl(calc(var(--base-hue-body-bg) + var(--hue-shift)), var(--base-saturation-body-bg), var(--base-lightness-body-bg));
-    --border-color: hsl(calc(var(--base-hue-border) + var(--hue-shift)), var(--base-saturation-border), var(--base-lightness-border));
-    /* Calculated HSLA gradient stops */
-    --gradient-start: hsla(calc(var(--base-hue-gradient-start) + var(--hue-shift)), var(--base-saturation-gradient-start), var(--base-lightness-gradient-start), var(--base-opacity-gradient-start));
-    --gradient-end: hsla(calc(var(--base-hue-gradient-end) + var(--hue-shift)), var(--base-saturation-gradient-end), var(--base-lightness-gradient-end), var(--base-opacity-gradient-end));
-    --bg-gradient-start: hsla(calc(var(--base-hue-bg-gradient-start) + var(--hue-shift)), var(--base-saturation-bg-gradient-start), var(--base-lightness-bg-gradient-start), var(--base-opacity-bg-gradient-start));
-    --bg-gradient-end: hsla(calc(var(--base-hue-bg-gradient-end) + var(--hue-shift)), var(--base-saturation-bg-gradient-end), var(--base-lightness-bg-gradient-end), var(--base-opacity-bg-gradient-end));
-    /* Calculated HSLA background ball colors */
-    --ball-color-light: hsla(calc(var(--base-hue-ball-color-light) + var(--hue-shift)), var(--base-saturation-ball-color-light), var(--base-lightness-ball-color-light), var(--base-opacity-ball-color-light));
-    --ball-color-medium: hsla(calc(var(--base-hue-ball-color-medium) + var(--hue-shift)), var(--base-saturation-ball-color-medium), var(--base-lightness-ball-color-medium), var(--base-opacity-ball-color-medium));
-    --ball-color-dark: hsla(calc(var(--base-hue-ball-color-dark) + var(--hue-shift)), var(--base-saturation-ball-color-dark), var(--base-lightness-ball-color-dark), var(--base-opacity-ball-color-dark));
+ /* --- Calculated Colors --- */
+ /* These colors are derived from the base HSL values and the --hue-shift. */
+ --color-primary: hsl(calc(var(--base-hue-primary) + var(--hue-shift)), var(--base-saturation-primary), var(--base-lightness-primary));
+ --color-secondary: hsl(calc(var(--base-hue-secondary) + var(--hue-shift)), var(--base-saturation-secondary), var(--base-lightness-secondary));
+ --text-color: hsl(calc(var(--base-hue-text) + var(--hue-shift)), var(--base-saturation-text), var(--base-lightness-text));
+ --bg-color: hsl(calc(var(--base-hue-bg) + var(--hue-shift)), var(--base-saturation-bg), var(--base-lightness-bg));
+ --body-bg-color: hsl(calc(var(--base-hue-body-bg) + var(--hue-shift)), var(--base-saturation-body-bg), var(--base-lightness-body-bg));
+ --border-color: hsl(calc(var(--base-hue-border) + var(--hue-shift)), var(--base-saturation-border), var(--base-lightness-border));
+ /* Calculated HSLA gradient stops */
+ --gradient-start: hsla(calc(var(--base-hue-gradient-start) + var(--hue-shift)), var(--base-saturation-gradient-start), var(--base-lightness-gradient-start), var(--base-opacity-gradient-start));
+ --gradient-end: hsla(calc(var(--base-hue-gradient-end) + var(--hue-shift)), var(--base-saturation-gradient-end), var(--base-lightness-gradient-end), var(--base-opacity-gradient-end));
+ --bg-gradient-start: hsla(calc(var(--base-hue-bg-gradient-start) + var(--hue-shift)), var(--base-saturation-bg-gradient-start), var(--base-lightness-bg-gradient-start), var(--base-opacity-bg-gradient-start));
+ --bg-gradient-end: hsla(calc(var(--base-hue-bg-gradient-end) + var(--hue-shift)), var(--base-saturation-bg-gradient-end), var(--base-lightness-bg-gradient-end), var(--base-opacity-bg-gradient-end));
+ /* Calculated HSLA background ball colors */
+ --ball-color-light: hsla(calc(var(--base-hue-ball-color-light) + var(--hue-shift)), var(--base-saturation-ball-color-light), var(--base-lightness-ball-color-light), var(--base-opacity-ball-color-light));
+ --ball-color-medium: hsla(calc(var(--base-hue-ball-color-medium) + var(--hue-shift)), var(--base-saturation-ball-color-medium), var(--base-lightness-ball-color-medium), var(--base-opacity-ball-color-medium));
+ --ball-color-dark: hsla(calc(var(--base-hue-ball-color-dark) + var(--hue-shift)), var(--base-saturation-ball-color-dark), var(--base-lightness-ball-color-dark), var(--base-opacity-ball-color-dark));
 
-    /* --- Final Gradients --- */
-    --gradient-main: linear-gradient(120deg, var(--gradient-start), var(--gradient-end));
-    --body-background-gradient: linear-gradient(120deg, var(--bg-gradient-start), var(--bg-gradient-end));
+ /* --- Final Gradients --- */
+ --gradient-main: linear-gradient(120deg, var(--gradient-start), var(--gradient-end));
+ --body-background-gradient: linear-gradient(120deg, var(--bg-gradient-start), var(--bg-gradient-end));
 
-    /* --- Focus Outline Color --- */
-    --focus-outline-color: var(--color-primary);
+ /* --- Focus Outline Color --- */
+ --focus-outline-color: var(--color-primary);
 }
 
 /* --- Dark Mode Variable Overrides --- */
+/* When html.dark-mode is present, these HSL bases are used instead of the light mode ones.
+The --hue-shift mechanism continues to work on top of these dark mode base HSL values. */
 :root.dark-mode {
-    /* Override base HSL values */
-    --base-hue-primary: 225; --base-saturation-primary: 50%; --base-lightness-primary: 42%;
-    --base-hue-secondary: 240; --base-saturation-secondary: 7%; --base-lightness-secondary: 18%;
-    --base-hue-text: 45; --base-saturation-text: 14%; --base-lightness-text: 81%;
-    --base-hue-bg: 240; --base-saturation-bg: 5%; --base-lightness-bg: 15%;
-    --base-hue-body-bg: 0; --base-saturation-body-bg: 0%; --base-lightness-body-bg: 0%;
-    --base-hue-border: 240; --base-saturation-border: 0%; --base-lightness-border: 23%;
-    /* Override gradient base values */
-    --base-hue-gradient-start: 240; --base-saturation-gradient-start: 7%; --base-lightness-gradient-start: 18%; --base-opacity-gradient-start: 0.9;
-    --base-hue-gradient-end: 0; --base-saturation-gradient-end: 0%; --base-lightness-gradient-end: 7%; --base-opacity-gradient-end: 0.6;
-    --base-hue-bg-gradient-start: 240; --base-saturation-bg-gradient-start: 7%; --base-lightness-bg-gradient-start: 0%; --base-opacity-bg-gradient-start: 0.7;
-    --base-hue-bg-gradient-end: 0; --base-saturation-bg-gradient-end: 0%; --base-lightness-bg-gradient-end: 0%; --base-opacity-bg-gradient-end: 0.98;
-    /* Override background ball base values */
-    --base-hue-ball-color-light: 210; --base-saturation-ball-color-light: 100%; --base-lightness-ball-color-light: 95%; --base-opacity-ball-color-light: 0;
-    --base-hue-ball-color-medium: 208; --base-saturation-ball-color-medium: 100%; --base-lightness-ball-color-medium: 14%; --base-opacity-ball-color-medium: 0.07;
-    --base-hue-ball-color-dark: 197; --base-saturation-ball-color-dark: 18%; --base-lightness-ball-color-dark: 8%; --base-opacity-ball-color-dark: 0.16;
+ /* Override base HSL values for dark theme */
+ --base-hue-primary: 225; --base-saturation-primary: 50%; --base-lightness-primary: 42%;
+ --base-hue-secondary: 240; --base-saturation-secondary: 7%; --base-lightness-secondary: 18%;
+ --base-hue-text: 45; --base-saturation-text: 14%; --base-lightness-text: 81%;
+ --base-hue-bg: 240; --base-saturation-bg: 5%; --base-lightness-bg: 15%;
+ --base-hue-body-bg: 0; --base-saturation-body-bg: 0%; --base-lightness-body-bg: 0%;
+ --base-hue-border: 240; --base-saturation-border: 0%; --base-lightness-border: 23%;
+ /* Override gradient base values for dark theme */
+ --base-hue-gradient-start: 240; --base-saturation-gradient-start: 7%; --base-lightness-gradient-start: 18%; --base-opacity-gradient-start: 0.9;
+ --base-hue-gradient-end: 0; --base-saturation-gradient-end: 0%; --base-lightness-gradient-end: 7%; --base-opacity-gradient-end: 0.6;
+ --base-hue-bg-gradient-start: 240; --base-saturation-bg-gradient-start: 7%; --base-lightness-bg-gradient-start: 0%; --base-opacity-bg-gradient-start: 0.7;
+ --base-hue-bg-gradient-end: 0; --base-saturation-bg-gradient-end: 0%; --base-lightness-bg-gradient-end: 0%; --base-opacity-bg-gradient-end: 0.98;
+ /* Override background ball base values for dark theme */
+ --base-hue-ball-color-light: 210; --base-saturation-ball-color-light: 100%; --base-lightness-ball-color-light: 95%; --base-opacity-ball-color-light: 0;
+ --base-hue-ball-color-medium: 208; --base-saturation-ball-color-medium: 100%; --base-lightness-ball-color-medium: 14%; --base-opacity-ball-color-medium: 0.07;
+ --base-hue-ball-color-dark: 197; --base-saturation-ball-color-dark: 18%; --base-lightness-ball-color-dark: 8%; --base-opacity-ball-color-dark: 0.16;
 
-    /* Override fullscreen variables */
-    --fullscreen-bg-color: hsla(0, 0%, 5%, 0.92);
-    --slide-loading-color: hsla(0, 0%, 15%, 0.5);
-    --slide-error-bg-color: hsla(0, 0%, 10%, 0.8);
-    --slide-error-text-color: hsla(0, 0%, 70%, 0.8);
+ /* Override fullscreen variables for dark theme for better contrast/visibility */
+ --fullscreen-bg-color: hsla(0, 0%, 5%, 0.92);
+ --slide-loading-color: hsla(0, 0%, 15%, 0.5);
+ --slide-error-bg-color: hsla(0, 0%, 10%, 0.8);
+ --slide-error-text-color: hsla(0, 0%, 70%, 0.8);
 }
 
 /* ==========================================================================
-   3. Utility Classes
-   ========================================================================== */
+3. Utility Classes
+========================================================================== */
 
-.visually-hidden { /* Standard accessible hiding class */
-    position: absolute !important; width: 1px !important; height: 1px !important;
-    padding: 0 !important; margin: -1px !important; overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important;
+/* Standard accessible hiding class: Hides content visually but keeps it accessible to screen readers. */
+.visually-hidden {
+ position: absolute !important; width: 1px !important; height: 1px !important;
+ padding: 0 !important; margin: -1px !important; overflow: hidden !important;
+ clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important;
 }
-.bg-gradient { /* Reusable gradient background */
-    background: var(--gradient-main);
-    transition: background var(--transition-duration-base) var(--transition-easing-base);
+/* Reusable gradient background for elements like cards, sections. */
+.bg-gradient {
+ background: var(--gradient-main);
+ transition: background var(--transition-duration-base) var(--transition-easing-base);
 }
-.item-error-content { /* Container for error message in gallery items */
-    display: flex; flex-direction: column; align-items: center;
-    font-size: 0.8em; text-align: center; line-height: 1.2;
-    justify-content: center; /* Added for centering in placeholders */
-    width: 100%; height: 100%; /* Added for centering in placeholders */
+/* Container for error message text and icon within gallery items or slides
+when an image fails to load. */
+.item-error-content {
+ display: flex; flex-direction: column; align-items: center;
+ font-size: 0.8em; text-align: center; line-height: 1.2;
+ justify-content: center; /* Added for centering within placeholders */
+ width: 100%; height: 100%; /* Ensure it fills its container */
 }
-.item-error-content::before { /* Error icon */
-    content: "⚠"; display: block;
-    font-size: 1.8em; margin-bottom: 0.3em; line-height: 1;
+.item-error-content::before { /* Error icon (e.g., warning sign) */
+ content: "⚠"; display: block;
+ font-size: 1.8em; margin-bottom: 0.3em; line-height: 1;
 }
-/* Specific error title styles */
+/* Specific error title styles, e.g., for displaying image filename on error. */
 .slide-error-title { font-size: 0.8em; margin-top: 0.3em; opacity: 0.8; }
-/* Hide broken image icon */
-img.image-load-error {
-     display: none; /* Don't show the broken image itself, use the error message container */
+
+/* Hide broken image icon if JS adds this class to the img or picture element.
+The .item-error-content provides a better custom error message. */
+img.image-load-error,
+picture.image-load-error {
+  display: none;
 }
-picture.image-load-error { /* Hide picture element if its img child fails */
-    display: none;
-}
+
+/* Common styling for <picture> elements within gallery components to ensure
+they behave correctly as flex containers for their <img> child.
+This helps with alignment and ensuring the picture takes up allocated space. */
 .scroll-gallery__thumb-item picture,
 .scroll-gallery__main-item picture,
 .fullscreen-slide picture {
-    display: flex; /* Ensure picture takes up space of its content */
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
+ display: flex; /* Makes <picture> a flex container */
+ width: 100%;
+ height: 100%;
+ justify-content: center; /* Centers <img> if it's smaller than <picture> */
+ align-items: center;     /* Centers <img> if it's smaller than <picture> */
 }
+/* Common styling for <img> elements within gallery <picture> contexts. */
 .scroll-gallery__thumb-item img,
 .scroll-gallery__main-item img,
 .fullscreen-slide img {
-    /* Ensure img within picture behaves as expected */
-    width: 100%; height: 100%;
-    object-fit: cover; /* For thumbs and main gallery items */
+ width: 100%; height: 100%; /* Makes <img> fill its <picture> container */
+ /* object-fit determines how the image's content box is fitted into its allocated space. */
+ object-fit: cover; /* For thumbs and main gallery: Cover bounds, may crop. */
 }
 .fullscreen-slide img {
-    object-fit: contain; /* For fullscreen, preserve aspect ratio within bounds */
+ object-fit: contain; /* For fullscreen: Fit within bounds, preserve aspect ratio, no cropping. */
 }
 
 
 /* ==========================================================================
-   4. Background Canvas
-   ========================================================================== */
+4. Background Canvas
+========================================================================== */
 
+/* Canvas element used for the JS-driven animated gradient background. */
 #gradient-background {
-    position: fixed; inset: 0;
-    width: 100%; height: 100%;
-    z-index: var(--z-index-background);
-    background: transparent; /* JS draws the background */
-    pointer-events: none;
+ position: fixed; inset: 0; /* Covers the entire viewport */
+ width: 100%; height: 100%;
+ z-index: var(--z-index-background); /* Sits behind all other content */
+ background: transparent; /* JS draws the gradient/balls directly onto the canvas */
+ pointer-events: none; /* Canvas does not intercept mouse events */
 }
 
 /* ==========================================================================
-   5. Layout: Main Container & Content Structure
-   ========================================================================== */
+5. Layout: Main Container & Content Structure
+========================================================================== */
 
+/* Main grid container for the page layout (sidebar and content area). */
 .main-container {
-    display: grid;
-    grid-template-columns: 1fr; /* Mobile first */
-    align-items: start;
-    max-width: 100rem; /* 1600px */
-    padding-block-start: 3.125rem; /* 50px */
-    padding-inline: 1.25rem; /* 20px */
-    margin-inline: auto;
-    margin-block-end: 1.25rem; /* 20px */
-    transform-origin: center center;
-    opacity: 1; filter: none;
-    transition: none; /* Transition handled on .content for blur effect */
+ display: grid;
+ grid-template-columns: 1fr; /* Mobile first: Single column layout */
+ align-items: start; /* Align items to the start of their grid cell */
+ max-width: 100rem; /* 1600px, maximum width of the layout */
+ padding-block-start: 3.125rem; /* 50px, top padding */
+ padding-inline: 1.25rem; /* 20px, side padding */
+ margin-inline: auto; /* Center the container */
+ margin-block-end: 1.25rem; /* 20px, bottom margin */
+ transform-origin: center center;
+ opacity: 1; filter: none;
+ transition: none; /* Transition for blur effect is handled on .content */
 }
 
+/* Wrapper for the main content sections (About, Filters, Gallery). */
 .content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem; /* 20px */
-    width: 100%;
-    z-index: var(--z-index-content);
-    /* Transition for focus pull effect */
-    transition: opacity var(--transition-duration-fade-bg) var(--transition-easing-fade-bg),
-                filter var(--transition-duration-fade-bg) var(--transition-easing-fade-bg);
-    will-change: opacity, filter;
-    opacity: 1;
-    filter: blur(0px);
+ display: flex;
+ flex-direction: column;
+ gap: 1.25rem; /* 20px, spacing between content sections */
+ width: 100%;
+ z-index: var(--z-index-content); /* Ensures content is above background elements */
+ /* Transition for focus pull effect (blur/fade when fullscreen gallery opens).
+    `will-change` hints to the browser about upcoming transformations for optimization. */
+ transition: opacity var(--transition-duration-fade-bg) var(--transition-easing-fade-bg),
+             filter var(--transition-duration-fade-bg) var(--transition-easing-fade-bg);
+ will-change: opacity, filter;
+ opacity: 1; /* Default state */
+ filter: blur(0px); /* Default state */
 }
 
 /* ==========================================================================
-   6. Component: Sidebar / Menu (.menu)
-   ========================================================================== */
+6. Component: Sidebar / Menu (.menu)
+========================================================================== */
 
-.menu { /* Main sidebar block */
-    display: flex;
-    flex-direction: column;
-    gap: 0.9375rem; /* 15px */
-    position: static; /* Mobile */
-    z-index: var(--z-index-menu);
-    align-self: stretch;
-    margin-block-end: 1.25rem; /* 20px */
+/* Main sidebar block. Contains navigation and profile card. */
+.menu {
+ display: flex;
+ flex-direction: column; /* Stack items vertically on mobile */
+ gap: 0.9375rem; /* 15px, spacing between menu items */
+ position: static; /* Mobile: part of normal document flow */
+ z-index: var(--z-index-menu); /* Stacks above content if overlapping (unlikely in this layout) */
+ align-self: stretch; /* Stretches to fill grid cell height if parent is a grid/flex container */
+ margin-block-end: 1.25rem; /* 20px, bottom margin on mobile */
 }
-/* Reorder elements for mobile layout */
-.menu .profile { order: 1; height: auto; } /* Updated class */
-.menu header { order: 2; width: auto; display: flex; justify-content: center; }
+/* Reorder elements for mobile layout using flex order. */
+.menu .profile { order: 1; height: auto; } /* Profile card appears first */
+.menu header { order: 2; width: auto; display: flex; justify-content: center; } /* Nav appears second, centered */
 
 /* -----------------------------------------
-   6.1 Component: Navigation (.menu header nav)
-   ----------------------------------------- */
+6.1 Component: Navigation (.menu header nav)
+----------------------------------------- */
 .menu header nav { display: block; width: auto; }
 .menu header nav ul {
-    display: flex;
-    flex-direction: row; /* Mobile */
-    justify-content: center;
-    gap: 0.9375rem; /* 15px */
-    background: var(--gradient-main);
-    padding-block: 0.625rem; /* 10px */
-    padding-inline: 1.25rem; /* 20px */
-    border-radius: 2.1875rem; /* 35px */
-    margin-block-end: 0;
-    transition: background var(--transition-duration-base) var(--transition-easing-base);
+ display: flex;
+ flex-direction: row; /* Horizontal layout for nav items on mobile */
+ justify-content: center;
+ gap: 0.9375rem; /* 15px, spacing between nav buttons */
+ background: var(--gradient-main); /* Themed gradient background */
+ padding-block: 0.625rem; /* 10px, vertical padding */
+ padding-inline: 1.25rem; /* 20px, horizontal padding */
+ border-radius: 2.1875rem; /* 35px, pill shape */
+ margin-block-end: 0; /* Reset bottom margin */
+ transition: background var(--transition-duration-base) var(--transition-easing-base);
 }
-/* Common styles for nav links and buttons */
+/* Common styles for navigation links (<a>) and buttons (<button>) */
 .menu header nav ul li a,
 .menu header nav ul li button {
-    display: flex; justify-content: center; align-items: center;
-    width: 3.125rem; /* 50px */
-    height: 3.125rem; /* 50px */
-    border-radius: 50%;
-    font-size: 1.03rem; /* Icon size */
-    color: var(--text-color);
-    background-color: var(--bg-color);
-    transition: color var(--transition-duration-base) var(--transition-easing-base),
-                background-color var(--transition-duration-base) var(--transition-easing-base),
-                outline-color var(--transition-duration-base) var(--transition-easing-base); /* Added outline */
-    position: relative;
-    z-index: var(--z-index-default);
-    border: none; /* Reset default button border */
-    /* Focus styles handled globally and via :is(:hover, :focus-visible) */
+ display: flex; justify-content: center; align-items: center; /* Center icon */
+ width: 3.125rem; /* 50px, ensures adequate tap target size */
+ height: 3.125rem; /* 50px */
+ border-radius: 50%; /* Circular shape */
+ font-size: 1.03rem; /* Icon size */
+ color: var(--text-color);
+ background-color: var(--bg-color); /* Background matching element backgrounds */
+ transition: color var(--transition-duration-base) var(--transition-easing-base),
+             background-color var(--transition-duration-base) var(--transition-easing-base),
+             outline-color var(--transition-duration-base) var(--transition-easing-base); /* Smooth outline transition */
+ position: relative; /* For tooltip positioning */
+ z-index: var(--z-index-default);
+ border: none; /* Reset default button border */
+ /* Focus styles handled globally (a:focus-visible) and via :is(:hover, :focus-visible) below. */
 }
 
-/* Tooltip (appears on hover/focus) */
+/* Tooltip that appears on hover/focus of nav items.
+Uses data-label attribute from HTML for content. */
 .menu header nav ul li a[data-label]::after,
 .menu header nav ul li button[data-label]::after {
-    content: attr(data-label);
-    position: absolute;
-    top: 50%;
-    inset-inline-start: 130%; /* Position relative to button */
-    transform: translateY(-50%);
-    white-space: nowrap;
-    background-color: var(--color-primary);
-    color: var(--bg-color);
-    padding: 0.5rem 0.75rem; /* 8px 12px */
-    border-radius: 0.3125rem; /* 5px */
-    font-size: 0.875rem; /* 14px */
-    font-weight: 500;
-    opacity: 0; visibility: hidden;
-    transition: opacity var(--transition-duration-base) var(--transition-easing-base),
-                visibility var(--transition-duration-base) var(--transition-easing-base);
-    z-index: var(--z-index-tooltip);
-    pointer-events: none;
+ content: attr(data-label); /* Get text from data-label attribute */
+ position: absolute;
+ top: 50%; /* Vertically center relative to parent */
+ inset-inline-start: 130%; /* Position to the right of the button (LTR) */
+ transform: translateY(-50%);
+ white-space: nowrap; /* Prevent tooltip text from wrapping */
+ background-color: var(--color-primary); /* Themed background */
+ color: var(--bg-color); /* Contrasting text color */
+ padding: 0.5rem 0.75rem; /* 8px 12px */
+ border-radius: 0.3125rem; /* 5px */
+ font-size: 0.875rem; /* 14px */
+ font-weight: 500;
+ opacity: 0; visibility: hidden; /* Hidden by default */
+ transition: opacity var(--transition-duration-base) var(--transition-easing-base),
+             visibility var(--transition-duration-base) var(--transition-easing-base); /* Smooth fade-in/out */
+ z-index: var(--z-index-tooltip); /* Ensure tooltip is above other elements */
+ pointer-events: none; /* Tooltip itself is not interactive */
 }
 
-/* Combined Hover/Focus states for nav items */
+/* Combined Hover/Focus states for nav items using :is() pseudo-class for conciseness.
+Ensures consistent styling for both hover and keyboard focus. */
 .menu header nav ul li a:is(:hover, :focus-visible),
 .menu header nav ul li button:is(:hover, :focus-visible) {
-    color: var(--color-primary);
-    outline-color: var(--focus-outline-color); /* Show outline */
+ color: var(--color-primary); /* Change icon color to primary theme color */
+ outline-color: var(--focus-outline-color); /* Show focus outline (matches global focus style) */
 }
-.menu header nav ul li a:is(:hover, :focus-visible)::after, /* Show tooltip */
+/* Show tooltip on hover/focus. */
+.menu header nav ul li a:is(:hover, :focus-visible)::after,
 .menu header nav ul li button:is(:hover, :focus-visible)::after {
-    opacity: 1; visibility: visible;
+ opacity: 1; visibility: visible;
 }
 
 /* -----------------------------------------
-   6.2 Component: Profile Card (.profile)
-   ----------------------------------------- */
-.profile { /* Updated class: Main profile block */
-    display: flex;
-    flex-direction: column;
-    border-radius: 1.875rem; /* 30px */
-    overflow: hidden;
-    height: 100%;
-    background: var(--gradient-main);
-    transition: background var(--transition-duration-base) var(--transition-easing-base);
+6.2 Component: Profile Card (.profile)
+----------------------------------------- */
+/* Main profile card block. Using BEM-like naming. */
+.profile {
+ display: flex;
+ flex-direction: column;
+ border-radius: 1.875rem; /* 30px */
+ overflow: hidden; /* Clips content to rounded corners */
+ height: 100%; /* Takes full height of its container (important for desktop layout) */
+ background: var(--gradient-main); /* Themed gradient background */
+ transition: background var(--transition-duration-base) var(--transition-easing-base);
 }
-.profile__container { /* Updated class: Inner container for padding */
-    display: flex; flex-direction: column; align-items: center;
-    padding: 2.5rem; /* 40px */
-    width: 100%;
-    flex-grow: 1;
+.profile__container { /* Inner container for padding and content alignment */
+ display: flex; flex-direction: column; align-items: center;
+ padding: 2.5rem; /* 40px */
+ width: 100%;
+ flex-grow: 1; /* Allows container to grow and push contact button to bottom */
 }
-.profile__image { /* Updated class: Image container */
-    width: 100%; aspect-ratio: 1 / 1;
-    max-height: 18.75rem; /* 300px */
-    flex-shrink: 0;
-    opacity: 0.95;
-    border-radius: 1.25rem; /* 20px */
-    background-color: var(--color-secondary);
-    overflow: hidden;
-    margin-block-end: 2.5rem; /* 40px */
+.profile__image { /* Container for the profile picture */
+ width: 100%; aspect-ratio: 1 / 1; /* Square aspect ratio */
+ max-height: 18.75rem; /* 300px, limits image size */
+ flex-shrink: 0; /* Prevents image from shrinking in flex layout */
+ opacity: 0.95; /* Slight transparency effect */
+ border-radius: 1.25rem; /* 20px */
+ background-color: var(--color-secondary); /* Placeholder background */
+ overflow: hidden; /* Clips image to rounded corners */
+ margin-block-end: 2.5rem; /* 40px, spacing below image */
 }
-.profile__image picture, /* Ensure picture fills container */
+.profile__image picture, /* Ensure <picture> and <img> fill the container */
 .profile__image img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    object-position: center;
-    border-radius: inherit;
+ width: 100%; height: 100%;
+ object-fit: cover; /* Cover bounds, may crop, maintains aspect ratio */
+ object-position: center; /* Centers the image within its frame */
+ border-radius: inherit; /* Inherits border-radius from .profile__image */
 }
-.profile__info { /* Updated class: Text info container */
-    display: flex; flex-direction: column; align-items: center; text-align: center;
-    margin-block-end: 1.25rem; /* 20px */
-    flex-shrink: 0;
+.profile__info { /* Container for text information (name, etc.) */
+ display: flex; flex-direction: column; align-items: center; text-align: center;
+ margin-block-end: 1.25rem; /* 20px, spacing below info */
+ flex-shrink: 0; /* Prevents shrinking */
 }
-.profile__name { /* Updated class (was profile-name) */
-    font-size: 2.2rem; font-weight: 600; margin: 0;
+.profile__name { /* Styling for the main name/heading */
+ font-size: 2.2rem; font-weight: 600; margin: 0;
 }
 
 /* -----------------------------------------
-   6.3 Component: Social Links (.profile__social)
-   ----------------------------------------- */
-.profile__social { /* Updated class: UL container for social links */
-    display: flex; justify-content: center; align-items: center;
-    flex-wrap: wrap;
-    gap: 0.625rem; /* 10px */
-    margin-block-start: 0.625rem; /* 10px */
-    margin-block-end: 2.5rem; /* 40px */
-    flex-shrink: 0;
+6.3 Component: Social Links (.profile__social)
+----------------------------------------- */
+.profile__social { /* UL container for social media links */
+ display: flex; justify-content: center; align-items: center;
+ flex-wrap: wrap; /* Allows links to wrap on smaller screens if needed */
+ gap: 0.625rem; /* 10px, spacing between links */
+ margin-block-start: 0.625rem; /* 10px */
+ margin-block-end: 2.5rem; /* 40px */
+ flex-shrink: 0;
 }
-.profile__social-link { /* Updated class: Individual link */
-    display: flex; justify-content: center; align-items: center;
-    width: 3rem; /* 48px */
-    height: 3rem; /* 48px */
-    border-radius: 50%;
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    transition: color var(--transition-duration-base) var(--transition-easing-base),
-                border-color var(--transition-duration-base) var(--transition-easing-base),
-                transform 0.2s var(--transition-easing-base), /* Match cursor transform */
-                outline-color var(--transition-duration-base) var(--transition-easing-base); /* Added outline */
-    font-size: 1.2rem; /* Icon size */
-    /* Focus styles handled globally and via :is() */
+.profile__social-link { /* Individual social link (<a> tag) */
+ display: flex; justify-content: center; align-items: center; /* Center icon */
+ width: 3rem; /* 48px, good tap target size */
+ height: 3rem; /* 48px */
+ border-radius: 50%; /* Circular shape */
+ border: 1px solid var(--border-color);
+ color: var(--text-color);
+ transition: color var(--transition-duration-base) var(--transition-easing-base),
+             border-color var(--transition-duration-base) var(--transition-easing-base),
+             transform 0.2s var(--transition-easing-base), /* Subtle lift effect on hover */
+             outline-color var(--transition-duration-base) var(--transition-easing-base);
+ font-size: 1.2rem; /* Icon size */
+ /* Focus styles handled globally and via :is() below. */
 }
-.profile__social-link svg { /* SVG icon styles */
-    width: 1.5rem; /* 24px */
-    height: 1.5rem; /* 24px */
-    display: block;
-    transition: fill var(--transition-duration-base) var(--transition-easing-base);
-    fill: currentColor;
-    pointer-events: none; /* Let the parent link handle events */
+.profile__social-link svg { /* SVG icon styles within links */
+ width: 1.5rem; /* 24px */
+ height: 1.5rem; /* 24px */
+ display: block;
+ transition: fill var(--transition-duration-base) var(--transition-easing-base);
+ fill: currentColor; /* SVG inherits color from parent <a> */
+ pointer-events: none; /* Ensures link is clickable, not the SVG path itself */
 }
+/* Hover/focus state for social links */
 .profile__social-link:is(:hover, :focus-visible) {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-    transform: translateY(-0.125rem); /* -2px */
-    outline-color: var(--focus-outline-color); /* Show outline */
+ color: var(--color-primary);
+ border-color: var(--color-primary);
+ transform: translateY(-0.125rem); /* -2px, subtle lift effect */
+ outline-color: var(--focus-outline-color); /* Show themed focus outline */
 }
 
 /* -----------------------------------------
-   6.4 Component: Contact Button (.profile__contact-wrapper)
-   ----------------------------------------- */
-.profile__contact-wrapper { /* Updated class: Wrapper div */
-    border-block-start: 1px solid var(--border-color);
-    width: 100%;
-    margin-block-start: auto; /* Push to bottom */
-    flex-shrink: 0;
-    transition: border-color var(--transition-duration-base) var(--transition-easing-base);
+6.4 Component: Contact Button (.profile__contact-wrapper)
+----------------------------------------- */
+.profile__contact-wrapper { /* Wrapper div for the contact link/button */
+ border-block-start: 1px solid var(--border-color); /* Top border separator */
+ width: 100%;
+ margin-block-start: auto; /* Pushes this section to the bottom of the profile card */
+ flex-shrink: 0;
+ transition: border-color var(--transition-duration-base) var(--transition-easing-base);
 }
-.profile__contact-link { /* Updated class: Actual link */
-    display: flex; justify-content: center; align-items: center;
-    height: 4.375rem; /* 70px */
-    width: 100%;
-    color: var(--text-color); background: transparent;
-    letter-spacing: 0.0313rem; /* 0.5px */
-    font-weight: 500;
-    border-end-start-radius: 1.875rem; /* 30px */
-    border-end-end-radius: 1.875rem; /* 30px */
-    transition: color var(--transition-duration-base) var(--transition-easing-base),
-                background var(--transition-duration-base) var(--transition-easing-base),
-                outline-color var(--transition-duration-base) var(--transition-easing-base); /* Added outline */
-    outline-offset: calc(-1 * var(--focus-outline-width)); /* Inset outline */
-    /* Focus styles handled globally and via :is() */
+.profile__contact-link { /* The actual contact link (<a> tag) */
+ display: flex; justify-content: center; align-items: center; /* Center text */
+ height: 4.375rem; /* 70px, large tap target */
+ width: 100%;
+ color: var(--text-color); background: transparent; /* Transparent by default */
+ letter-spacing: 0.0313rem; /* 0.5px */
+ font-weight: 500;
+ /* Rounds bottom corners to match profile card's border-radius */
+ border-end-start-radius: 1.875rem; /* 30px */
+ border-end-end-radius: 1.875rem; /* 30px */
+ transition: color var(--transition-duration-base) var(--transition-easing-base),
+             background var(--transition-duration-base) var(--transition-easing-base),
+             outline-color var(--transition-duration-base) var(--transition-easing-base);
+ /* Inset outline for a cleaner look on filled buttons. */
+ outline-offset: calc(-1 * var(--focus-outline-width));
+ /* Focus styles handled globally and via :is() below. */
 }
+/* Hover/focus state for contact link */
 .profile__contact-link:is(:hover, :focus-visible) {
-    color: var(--bg-color);
-    background: var(--color-primary);
-    outline-color: var(--focus-outline-color); /* Show outline */
+ color: var(--bg-color); /* Text color changes for contrast against new background */
+ background: var(--color-primary); /* Fills with primary theme color */
+ outline-color: var(--focus-outline-color); /* Show themed focus outline */
 }
 
 /* ==========================================================================
-   7. Content Sections (About, Filters)
-   ========================================================================== */
+7. Content Sections (About, Filters)
+========================================================================== */
 
-/* --- General Section Container --- */
+/* General container style for content sections like "About" and "Projects Filters". */
 .section-container {
-    background: var(--gradient-main);
-    padding: 2.5rem 3.125rem; /* 40px 50px */
-    display: flex; flex-direction: column;
-    border-radius: 1.875rem; /* 30px */
-    transition: background var(--transition-duration-base) var(--transition-easing-base);
+ background: var(--gradient-main); /* Themed gradient background */
+ padding: 2.5rem 3.125rem; /* 40px 50px, generous padding */
+ display: flex; flex-direction: column;
+ border-radius: 1.875rem; /* 30px */
+ transition: background var(--transition-duration-base) var(--transition-easing-base);
 }
 
 /* -----------------------------------------
-   7.1 Component: About Section (#about)
-   ----------------------------------------- */
+7.1 Component: About Section (#about)
+----------------------------------------- */
 #about h2 { color: var(--text-color); font-weight: 500; font-size: 1.3rem; margin-block-end: 0.5rem; /* 8px */ }
-#about #role { /* Typing animation element */
-    color: var(--color-primary);
-    white-space: nowrap;
-    transition: opacity 0.5s var(--transition-easing-base);
-    border-inline-end: 2px solid var(--color-primary);
-    display: inline-block;
-    padding-inline-end: 0.3125rem; /* 5px */
-    min-height: 1.3rem; /* Match line height */
-    vertical-align: bottom;
-    animation: blink-caret 0.75s step-end infinite;
+#about #role { /* Span element for the JS typing animation */
+ color: var(--color-primary);
+ white-space: nowrap; /* Prevents text from wrapping during animation */
+ transition: opacity 0.5s var(--transition-easing-base); /* For potential fade effects */
+ border-inline-end: 2px solid var(--color-primary); /* Simulates typing caret */
+ display: inline-block; /* Necessary for border and layout */
+ padding-inline-end: 0.3125rem; /* 5px, space for caret */
+ min-height: 1.3rem; /* Matches line height, prevents layout jump */
+ vertical-align: bottom; /* Aligns with surrounding text */
+ /* CSS animation for the blinking caret effect. */
+ animation: blink-caret 0.75s step-end infinite;
 }
-@keyframes blink-caret {
-    from, to { border-inline-end-color: transparent; }
-    50% { border-inline-end-color: var(--color-primary); }
+@keyframes blink-caret { /* Caret blinking animation */
+ from, to { border-inline-end-color: transparent; } /* Caret invisible */
+ 50% { border-inline-end-color: var(--color-primary); } /* Caret visible */
 }
 #about h3.about-location { color: var(--text-color); font-size: 1.7rem; margin-block: 0.5rem; /* 8px */ font-weight: 500; }
 #about p { color: var(--text-color); font-size: 0.9rem; margin-block-start: 1rem; /* 16px */ font-weight: 400; max-width: 62.5rem; /* 1000px */ line-height: 1.6; }
 
 /* -----------------------------------------
-   7.2 Component: Section Heading (Used for Filters #projects)
-   ----------------------------------------- */
+7.2 Component: Section Heading (Used for Filters #projects)
+----------------------------------------- */
 .section-heading { display: flex; flex-direction: column; align-items: flex-start; margin-block-end: 1.25rem; /* 20px */ }
 .section-heading h2 { color: var(--text-color); font-weight: 500; font-size: 2.2rem; margin-block-start: 0.375rem; /* 6px */ margin-block-end: 0; }
 
 /* -----------------------------------------
-   7.3 Component: Project Filter List (.project-filter-list)
-   ----------------------------------------- */
-.project-filter-list { /* UL element */
-    display: flex; justify-content: center; align-items: center;
-    flex-wrap: wrap;
-    gap: 0.625rem 1.25rem; /* 10px 20px */
-    margin-block: 2.625rem; /* 42px */
-    padding-inline-start: 0; /* Reset default UL padding */
+7.3 Component: Project Filter List (.project-filter-list)
+----------------------------------------- */
+.project-filter-list { /* UL element containing filter buttons */
+ display: flex; justify-content: center; align-items: center;
+ flex-wrap: wrap; /* Allows buttons to wrap on smaller screens */
+ gap: 0.625rem 1.25rem; /* 10px vertical, 20px horizontal spacing */
+ margin-block: 2.625rem; /* 42px, top/bottom margin */
+ padding-inline-start: 0; /* Reset default UL padding */
 }
-.filter-button { /* Actual button element */
-    color: var(--text-color); padding: 0.5rem 0.9375rem; /* 8px 15px */
-    border-radius: 1.25rem; /* 20px */
-    font-weight: 500; font-size: 0.8rem;
-    letter-spacing: 0.0625rem; /* 1px */
-    cursor: pointer; user-select: none;
-    transition: color var(--transition-duration-base) var(--transition-easing-base),
-                background-color var(--transition-duration-base) var(--transition-easing-base),
-                border-color var(--transition-duration-base) var(--transition-easing-base),
-                outline-color var(--transition-duration-base) var(--transition-easing-base); /* Added outline */
-    border: 1px solid transparent;
-    background-color: transparent;
-    min-height: 2.75rem; /* ~44px tap target */
-    display: inline-flex; /* Align text nicely */
-    align-items: center;
-    justify-content: center;
-    /* Focus styles handled globally and via :is() */
+.filter-button { /* Individual filter button styling */
+ color: var(--text-color); padding: 0.5rem 0.9375rem; /* 8px 15px */
+ border-radius: 1.25rem; /* 20px */
+ font-weight: 500; font-size: 0.8rem;
+ letter-spacing: 0.0625rem; /* 1px */
+ cursor: pointer; user-select: none; /* Prevents text selection on click */
+ transition: color var(--transition-duration-base) var(--transition-easing-base),
+             background-color var(--transition-duration-base) var(--transition-easing-base),
+             border-color var(--transition-duration-base) var(--transition-easing-base),
+             outline-color var(--transition-duration-base) var(--transition-easing-base);
+ border: 1px solid transparent; /* Transparent border by default */
+ background-color: transparent;
+ min-height: 2.75rem; /* ~44px tap target, good for mobile accessibility */
+ display: inline-flex; /* Helps align text vertically */
+ align-items: center;
+ justify-content: center;
+ /* Focus styles handled globally and via :is() below. */
 }
+/* Hover/focus state for filter buttons */
 .filter-button:is(:hover, :focus-visible) {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-    outline-color: var(--focus-outline-color); /* Show outline */
+ color: var(--color-primary);
+ border-color: var(--color-primary); /* Border becomes visible with theme color */
+ outline-color: var(--focus-outline-color); /* Show themed focus outline */
 }
-.filter-button.active { /* Active state class added by JS */
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+/* Active state class added by JS when a filter is selected. */
+.filter-button.active {
+ border-color: var(--color-primary);
+ color: var(--color-primary);
 }
-.filter-button.active:is(:hover, :focus-visible) { /* Slight background on hover/focus when active */
-    background-color: hsla(var(--base-hue-primary), var(--base-saturation-primary), var(--base-lightness-primary), 0.1);
+/* Slight background on hover/focus when the button is already active, for subtle feedback. */
+.filter-button.active:is(:hover, :focus-visible) {
+ background-color: hsla(var(--base-hue-primary), var(--base-saturation-primary), var(--base-lightness-primary), 0.1); /* Semi-transparent primary color */
 }
 
 /* ==========================================================================
-   8. Component: Project Gallery Section & Scroll Mode Gallery
-   ========================================================================== */
+8. Component: Project Gallery Section & Scroll Mode Gallery
+========================================================================== */
 
-#project-gallery { /* Target for smooth scrolling */
-    scroll-margin-block-start: 3.125rem; /* 50px */
+/* Target for smooth scrolling when navigating from main menu links.
+scroll-margin-block-start provides offset from top of viewport. */
+#project-gallery {
+ scroll-margin-block-start: 3.125rem; /* 50px */
 }
-.project-gallery-section { /* Wrapper section */
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    padding-block-start: 0;
-    width: 100%; box-sizing: border-box;
-    padding-block-end: 0;
+/* Wrapper section for the entire project gallery display area. */
+.project-gallery-section {
+ display: flex; flex-direction: column; justify-content: center; align-items: center;
+ padding-block-start: 0;
+ width: 100%; box-sizing: border-box;
+ padding-block-end: 0;
 }
 
 /* -----------------------------------------
-   8.1 Component: Scroll Mode Gallery (.scroll-mode-container)
-   ----------------------------------------- */
-.scroll-mode-container { /* Main container for the two columns */
-    display: flex;
-    width: 100%;
-    max-width: 112.5rem; /* 1800px */
-    height: 85vh; /* Keep vh */
-    margin: 1.875rem auto 3.125rem; /* 30px auto 50px */
-    overflow: hidden; /* Clip scrolling content */
-    position: relative;
-    background: var(--gradient-main);
-    border-radius: 1.875rem; /* 30px */
-    box-shadow: 0 0.5rem 1.5625rem hsla(0, 0%, 0%, 0.1); /* 8px 25px */
-    outline: none; /* Remove default focus outline, JS handles focus */
+8.1 Component: Scroll Mode Gallery (.scroll-mode-container)
+----------------------------------------- */
+/* Main container for the two-column scroll gallery (thumbnails and main images). */
+.scroll-mode-container {
+ display: flex; /* Arranges thumbnail and main image columns side-by-side */
+ width: 100%;
+ max-width: 112.5rem; /* 1800px, max width of the gallery component itself */
+ height: 85vh; /* Gallery takes up 85% of viewport height */
+ margin: 1.875rem auto 3.125rem; /* 30px auto 50px, centering and spacing */
+ overflow: hidden; /* Clips scrolling content within its bounds (critical for JS scroll) */
+ position: relative; /* Establishes positioning context for children */
+ background: var(--gradient-main); /* Themed gradient background */
+ border-radius: 1.875rem; /* 30px */
+ box-shadow: 0 0.5rem 1.5625rem hsla(0, 0%, 0%, 0.1); /* 8px 25px, subtle shadow */
+ outline: none; /* Remove default focus outline; JS manages focus for keyboard nav */
 }
-.thumbnail-column { /* Left column for thumbnails */
-    flex: 0 0 10rem; /* 160px */
-    height: 100%;
-    overflow: hidden; /* Clip thumbnail scrolling */
-    position: relative;
-    padding: 0.625rem 0.3125rem; /* 10px 5px */
-    box-sizing: border-box;
-    border-right: 1px solid var(--border-color);
-    transition: border-color var(--transition-duration-base) var(--transition-easing-base);
+/* Left column for thumbnails (visible on desktop). */
+.thumbnail-column {
+ flex: 0 0 10rem; /* 160px, fixed width, does not grow or shrink */
+ height: 100%;
+ overflow: hidden; /* Clips thumbnail scrolling */
+ position: relative;
+ padding: 0.625rem 0.3125rem; /* 10px 5px */
+ box-sizing: border-box;
+ border-right: 1px solid var(--border-color); /* Separator line */
+ transition: border-color var(--transition-duration-base) var(--transition-easing-base);
 }
-.main-image-column { /* Right column for main images */
-    flex: 1; /* Take remaining space */
-    height: 100%;
-    overflow: hidden; /* Clip main image scrolling */
-    position: relative;
-    padding: 1.25rem; /* 20px */
-    box-sizing: border-box;
+/* Right column for main images. */
+.main-image-column {
+ flex: 1; /* Takes remaining available space */
+ height: 100%;
+ overflow: hidden; /* Clips main image scrolling */
+ position: relative;
+ padding: 1.25rem; /* 20px */
+ box-sizing: border-box;
 }
+/* Inner elements that actually scroll, transformed by JS.
+`will-change` hints to the browser for smoother transform animations. */
 .thumbnail-scroller,
-.main-image-scroller { /* Inner elements that actually scroll */
-    width: 100%;
-    position: relative;
-    will-change: transform; /* Performance hint for JS transform */
+.main-image-scroller {
+ width: 100%;
+ position: relative; /* Needed for JS transform-based scrolling */
+ will-change: transform;
 }
 
 /* --- Individual Thumbnail Item --- */
-/* Conceptual class name, applied by JS */
+/* Conceptual class name, applied by JS to dynamically created thumbnail divs. */
 .scroll-gallery__thumb-item {
-    display: block;
-    width: calc(100% - 1.25rem); /* 20px */
-    margin: 0.625rem auto; /* 10px */
-    aspect-ratio: 4 / 3;
-    cursor: pointer;
-    border-radius: 0.5rem; /* 8px */
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 0.125rem 0.3125rem hsla(0, 0%, 0%, 0.1); /* 2px 5px */
-    opacity: 0.5;
-    transform: scale(0.95);
-    transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
-    background-color: var(--color-secondary); /* Placeholder bg */
-    outline: none; /* Focus handled by cursor */
+ display: block;
+ width: calc(100% - 1.25rem); /* 20px, accounts for padding in thumbnail-column */
+ margin: 0.625rem auto; /* 10px, centers and spaces items */
+ aspect-ratio: 4 / 3; /* Maintains 4:3 aspect ratio */
+ cursor: pointer;
+ border-radius: 0.5rem; /* 8px */
+ overflow: hidden; /* Clips image to rounded corners */
+ position: relative;
+ box-shadow: 0 0.125rem 0.3125rem hsla(0, 0%, 0%, 0.1); /* 2px 5px, subtle shadow */
+ opacity: 0.5; /* Non-active thumbnails are semi-transparent */
+ transform: scale(0.95); /* Slightly scaled down when not active/hovered */
+ transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
+ background-color: var(--color-secondary); /* Placeholder bg before image loads */
+ outline: none; /* Focus is visual via active-cursor or main image area */
 }
-.scroll-gallery__thumb-item img {
-    display: block;
-    transition: transform 0.4s ease;
-    opacity: 1;
+.scroll-gallery__thumb-item img { /* Image within thumbnail */
+ display: block;
+ transition: transform 0.4s ease; /* For hover zoom effect */
+ opacity: 1; /* Ensure image is fully opaque by default */
 }
-.scroll-gallery__thumb-item:hover { /* Subtle hover effect */
-    opacity: 0.75; transform: scale(1);
-    box-shadow: 0 0.25rem 0.625rem hsla(0, 0%, 0%, 0.15); /* 4px 10px */
+/* Subtle hover effect for thumbnails. */
+.scroll-gallery__thumb-item:hover {
+ opacity: 0.75; transform: scale(1); /* Becomes more opaque and scales to full size */
+ box-shadow: 0 0.25rem 0.625rem hsla(0, 0%, 0%, 0.15); /* 4px 10px, slightly larger shadow */
 }
-.scroll-gallery__thumb-item:hover img { transform: scale(1.05); }
+.scroll-gallery__thumb-item:hover img { transform: scale(1.05); } /* Image zooms slightly on hover */
 
-.scroll-gallery__thumb-item.active { /* Active state class added by JS */
-    opacity: 1; transform: scale(1);
-    box-shadow: 0 0.375rem 0.9375rem hsla(0, 0%, 0%, 0.2); /* 6px 15px */
+/* Active state class added by JS to the current thumbnail. */
+.scroll-gallery__thumb-item.active {
+ opacity: 1; transform: scale(1); /* Fully opaque and normal size */
+ box-shadow: 0 0.375rem 0.9375rem hsla(0, 0%, 0%, 0.2); /* 6px 15px, more prominent shadow */
 }
-/* Error state */
-.scroll-gallery__thumb-item--error { /* Conceptual error class */
-    background-color: var(--slide-error-bg-color);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--slide-error-text-color);
-    box-shadow: none; opacity: 0.8; cursor: default;
-    transform: scale(1); /* Reset transform */
+/* Error state for thumbnail if image fails to load. */
+.scroll-gallery__thumb-item--error {
+ background-color: var(--slide-error-bg-color); /* Themed error background */
+ display: flex; align-items: center; justify-content: center; /* Center error message */
+ color: var(--slide-error-text-color); /* Themed error text color */
+ box-shadow: none; opacity: 0.8; cursor: default; /* Non-interactive */
+ transform: scale(1); /* Reset transform */
 }
-.scroll-gallery__thumb-item--error picture, /* Ensure picture takes error state space */
+/* Ensure picture and error content take up space in error state */
+.scroll-gallery__thumb-item--error picture,
 .scroll-gallery__thumb-item--error .item-error-content {
-    width: 100%; height: 100%;
+ width: 100%; height: 100%;
 }
 
 
 /* --- Individual Main Image Item --- */
-/* Conceptual class name, applied by JS */
+/* Conceptual class name, applied by JS to dynamically created main image divs. */
 .scroll-gallery__main-item {
-    display: block;
-    width: 100%;
-    height: 75vh; /* Keep vh */
-    margin-bottom: 10vh; /* Keep vh, spacing between items */
-    border-radius: 0.9375rem; /* 15px */
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-    box-shadow: 0 0.5rem 1.25rem hsla(0, 0%, 0%, 0.15); /* 8px 20px */
-    background-color: var(--color-secondary); /* Placeholder bg */
-    outline-offset: -3px; /* Inset focus slightly */
+ display: block;
+ width: 100%;
+ height: 75vh; /* Main image takes 75% of viewport height */
+ margin-bottom: 10vh; /* Spacing between main image items (creates parallax effect) */
+ border-radius: 0.9375rem; /* 15px */
+ overflow: hidden; /* Clips image to rounded corners */
+ position: relative;
+ cursor: pointer; /* Indicates it can be clicked (to open fullscreen) */
+ box-shadow: 0 0.5rem 1.25rem hsla(0, 0%, 0%, 0.15); /* 8px 20px */
+ background-color: var(--color-secondary); /* Placeholder bg */
+ outline-offset: -3px; /* Inset focus outline slightly if focused (JS handles focus) */
 }
-.scroll-gallery__main-item:last-child { margin-bottom: 0; }
+.scroll-gallery__main-item:last-child { margin-bottom: 0; } /* No margin for the last item */
 
-.scroll-gallery__main-item img {
-    display: block;
-    opacity: 1;
+.scroll-gallery__main-item img { /* Image within main item */
+ display: block;
+ opacity: 1; /* Ensure image is fully opaque by default */
 }
-/* Error state */
-.scroll-gallery__main-item--error { /* Conceptual error class */
-    background-color: var(--slide-error-bg-color);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--slide-error-text-color);
-    box-shadow: none; cursor: default;
+/* Error state for main image if it fails to load. */
+.scroll-gallery__main-item--error {
+ background-color: var(--slide-error-bg-color);
+ display: flex; align-items: center; justify-content: center;
+ color: var(--slide-error-text-color);
+ box-shadow: none; cursor: default;
 }
-.scroll-gallery__main-item--error picture, /* Ensure picture takes error state space */
+/* Ensure picture and error content take up space in error state */
+.scroll-gallery__main-item--error picture,
 .scroll-gallery__main-item--error .item-error-content {
-    width: 100%; height: 100%;
+ width: 100%; height: 100%;
 }
-.scroll-gallery__main-item--error .item-error-content::before { font-size: 2.5em; } /* Larger icon */
+.scroll-gallery__main-item--error .item-error-content::before { font-size: 2.5em; } /* Larger error icon */
 
 /* --- Active Thumbnail Cursor --- */
+/* Visual indicator highlighting the active thumbnail in the thumbnail column (desktop). */
 .active-cursor {
-    position: absolute;
-    top: 0; /* JS will set top via transform translateY */
-    left: 0.625rem; /* 10px */
-    width: calc(100% - 1.25rem); /* 20px */
-    /* Height set dynamically by JS */
-    margin-block: 0.625rem; /* 10px, align with thumb margin */
-    border: 3px solid var(--color-primary);
-    border-radius: 0.5rem; /* 8px, match thumb radius */
-    pointer-events: none;
-    opacity: 0;
-    /* Use variables for cursor timing */
-    transition: transform var(--transition-duration-cursor-transform) var(--transition-easing-cursor-transform),
-                opacity 0.3s ease,
-                border-color var(--transition-duration-base) var(--transition-easing-base),
-                height 0.3s ease;
-    will-change: transform, opacity, height;
-    box-sizing: border-box;
-    z-index: 10;
+ position: absolute;
+ top: 0; /* JS sets top via transform translateY */
+ left: 0.625rem; /* 10px, aligns with thumbnail padding/margin */
+ width: calc(100% - 1.25rem); /* 20px, matches thumbnail width */
+ /* Height is set dynamically by JS to match active thumbnail's height. */
+ margin-block: 0.625rem; /* 10px, aligns with thumbnail margin */
+ border: 3px solid var(--color-primary); /* Themed border */
+ border-radius: 0.5rem; /* 8px, matches thumbnail radius */
+ pointer-events: none; /* Cursor is purely visual, not interactive */
+ opacity: 0; /* Hidden by default, shown by JS when active */
+ /* Transitions for smooth movement, opacity, and color changes. */
+ transition: transform var(--transition-duration-cursor-transform) var(--transition-easing-cursor-transform),
+             opacity 0.3s ease,
+             border-color var(--transition-duration-base) var(--transition-easing-base),
+             height 0.3s ease;
+ /* Refined will-change: height changes cause reflows, not ideal for will-change.
+    Border-color is also generally cheap. Focus on transform and opacity. */
+ will-change: transform, opacity; 
+ box-sizing: border-box;
+ z-index: 10; /* Ensures cursor is above thumbnails */
 }
 
 /* --- Drag State --- */
-.scroll-mode-container.is-dragging { cursor: grabbing; }
+/* Class added by JS to scroll-mode-container during touch drag. */
+.scroll-mode-container.is-dragging { cursor: grabbing; } /* Changes cursor to indicate dragging */
 
 /* --- Empty Gallery Message --- */
+/* Displayed when no projects match the current filter. */
 .gallery-empty-message {
-    text-align: center;
-    padding: 3.125rem 1.25rem; /* 50px 20px */
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 1.1rem;
-    font-style: italic;
-    width: 100%;
-    display: flex; /* For centering vertically if needed */
-    align-items: center;
-    justify-content: center;
-    min-height: 20vh; /* Ensure it's visible */
+ text-align: center;
+ padding: 3.125rem 1.25rem; /* 50px 20px */
+ color: var(--text-color);
+ opacity: 0.7;
+ font-size: 1.1rem;
+ font-style: italic;
+ width: 100%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ min-height: 20vh; /* Ensures message is visible even if gallery container is short */
 }
-
 /* ==========================================================================
    9. Component: Fullscreen Peeking Slider (#fullscreen-container)
    ========================================================================== */
 
-.fullscreen-container { /* Modal backdrop */
-    display: flex; /* Use flex for alignment */
-    position: fixed; inset: 0;
-    background-color: var(--fullscreen-bg-color);
+/* Modal backdrop for the fullscreen image slider. */
+.fullscreen-container {
+    display: flex; /* Uses flex for centering slider content */
+    position: fixed; inset: 0; /* Covers entire viewport */
+    background-color: var(--fullscreen-bg-color); /* Semi-transparent dark background */
     justify-content: center; align-items: center;
-    z-index: var(--z-index-fullscreen-backdrop);
-    opacity: 0; pointer-events: none;
-    transition: opacity var(--transition-duration-fade-bg) var(--transition-easing-fade-bg);
-    will-change: opacity;
+    z-index: var(--z-index-fullscreen-backdrop); /* High z-index to appear above other content */
+    opacity: 0; pointer-events: none; /* Hidden by default */
+    transition: opacity var(--transition-duration-fade-bg) var(--transition-easing-fade-bg); /* Smooth fade-in/out */
+    will-change: opacity; /* Performance hint */
 }
-.fullscreen-container.active { /* Visible state */
-    opacity: 1; pointer-events: auto;
+/* Visible state for the fullscreen container. */
+.fullscreen-container.active {
+    opacity: 1; pointer-events: auto; /* Becomes visible and interactive */
 }
 
 /* --- Scrollable Wrapper --- */
+/* Contains the horizontally scrollable slides. */
 .fullscreen-slider-wrapper {
     width: 100%; height: 100%;
-    display: flex; /* Arrange slides horizontally */
-    overflow-x: scroll;
+    display: flex; /* Arranges slides horizontally */
+    overflow-x: scroll; /* Enables horizontal scrolling */
     position: relative;
-    z-index: var(--z-index-fullscreen-slider);
-    scroll-snap-type: x mandatory; /* Snap slides */
+    z-index: var(--z-index-fullscreen-slider); /* Above backdrop, below controls */
+    scroll-snap-type: x mandatory; /* Enables CSS scroll snapping for slides */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    overscroll-behavior-x: contain; /* Prevent overscrolling */
-    /* Padding for Peeking Effect */
+    overscroll-behavior-x: contain; /* Prevents overscrolling from affecting page scroll */
+    /* Padding for Peeking Effect: Creates space on sides so first/last slides can center
+       while showing parts of adjacent (non-existent in this setup, but good for visual balance)
+       or allowing the peeking effect by making the scroll area wider than a single slide. */
     padding-inline: var(--slide-wrapper-padding);
-    scroll-padding-inline: var(--slide-wrapper-padding); /* Align snap point with padding */
+    /* scroll-padding-inline aligns the snap point correctly with the padding. */
+    scroll-padding-inline: var(--slide-wrapper-padding);
     box-sizing: border-box;
-    /* Hide Scrollbar Visually */
+    /* Hide Scrollbar Visually (as snap scrolling is primary interaction) */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE/Edge */
 }
-.fullscreen-slider-wrapper::-webkit-scrollbar { display: none; } /* WebKit */
+.fullscreen-slider-wrapper::-webkit-scrollbar { display: none; } /* WebKit (Chrome, Safari) */
 
 /* --- Individual Slide --- */
 .fullscreen-slide {
-    width: var(--slide-width-percent); /* Control slide width */
+    width: var(--slide-width-percent); /* Controls slide width (e.g., 80% of wrapper) */
     height: 100%;
-    flex: 0 0 var(--slide-width-percent); /* Prevent flex shrinking/growing */
-    scroll-snap-align: center; /* Snap center of slide */
+    flex: 0 0 var(--slide-width-percent); /* Prevents flex shrinking/growing, maintains fixed width */
+    scroll-snap-align: center; /* Snaps the center of the slide to the center of the scrollport */
     position: relative;
-    display: flex; justify-content: center; align-items: center;
+    display: flex; justify-content: center; align-items: center; /* Center image within slide */
     box-sizing: border-box;
-    overflow: hidden;
-    cursor: pointer; /* Click non-active slide to navigate */
-    /* Default State (Peeking) */
+    overflow: hidden; /* Clip image if it somehow exceeds slide bounds (unlikely with object-fit:contain) */
+    cursor: pointer; /* Click non-active (peeking) slide to navigate to it */
+    /* Default State (Peeking Slides): Semi-transparent and blurred. */
     opacity: var(--slide-peek-opacity);
     filter: blur(var(--slide-peek-blur));
-    /* Transition for Active State */
+    /* Transition for Active State (when slide becomes centered). */
     transition: opacity var(--transition-duration-slide-peek) var(--transition-easing-slide-peek),
                 filter var(--transition-duration-slide-peek) var(--transition-easing-slide-peek);
-    will-change: opacity, filter;
+    will-change: opacity, filter; /* Performance hint */
 }
-/* Active Slide State */
-.fullscreen-slide.is-active-slide { /* Class added by JS */
-    opacity: 1;
-    filter: none;
-    cursor: default; /* No action on clicking active slide */
+/* Active Slide State: Class added by JS to the currently centered slide. */
+.fullscreen-slide.is-active-slide {
+    opacity: 1; /* Fully opaque */
+    filter: none; /* No blur */
+    cursor: default; /* No action on clicking the already active slide */
 }
 
 /* --- Image within Slide --- */
 .fullscreen-slide img {
     display: block;
-    max-width: 100%; max-height: 100%; /* Ensure image fits within slide */
-    object-fit: contain; /* Scale image while preserving aspect ratio */
-    box-shadow: 0 0.625rem 1.5625rem hsla(0, 0%, 0%, 0.3); /* 10px 25px */
+    max-width: 100%; max-height: 100%; /* Ensure image fits within slide bounds */
+    object-fit: contain; /* Scales image down to fit, preserving aspect ratio, no cropping. */
+    box-shadow: 0 0.625rem 1.5625rem hsla(0, 0%, 0%, 0.3); /* 10px 25px, subtle shadow for depth */
     border-radius: 0.25rem; /* 4px */
-    position: relative; /* Needed for potential stacking contexts if overlayed */
-    transform-origin: 0 0; /* Set by JS for FLIP animation origin */
-    will-change: transform, opacity; /* Performance hint for FLIP */
-    pointer-events: none; /* Image itself is not interactive */
+    position: relative;
+    /* transform-origin is set by JS for FLIP animation for precise origin control. */
+    transform-origin: 0 0;
+    /* will-change hints for FLIP animation performance. */
+    will-change: transform, opacity;
+    pointer-events: none; /* Image itself is not interactive; slide handles clicks. */
 }
-/* Loading State Placeholder Styling */
+/* Loading State Placeholder Styling: Applied when image src is not yet set or loading.
+   Provides visual feedback and prevents layout shifts. */
 .fullscreen-slide img:not([src]), /* Covers case where src is not yet set by JS for <picture> */
 .fullscreen-slide picture:not(:has(img[src]:not([src=""]))) { /* If picture has no loaded img */
-    background-color: var(--slide-loading-color);
-    min-height: 12.5rem; /* 200px */
+    background-color: var(--slide-loading-color); /* Semi-transparent placeholder color */
+    min-height: 12.5rem; /* 200px, ensures placeholder has some size */
     min-width: 12.5rem; /* 200px */
     width: auto; /* Allow intrinsic size if possible for placeholder */
     height: auto;
-    max-width: 80%; /* Don't make placeholder too large */
+    max-width: 80%; /* Don't make placeholder too large relative to slide */
     max-height: 80%;
     box-shadow: none; border-radius: 0.25rem; /* 4px */
-    display: flex;
+    display: flex; /* For potential centering of a loading spinner (not implemented here) */
     align-items: center;
     justify-content: center;
 }
-.fullscreen-slide img:-moz-loading { /* Basic loading state */
+/* Basic loading state for browsers supporting -moz-loading (Firefox). */
+.fullscreen-slide img:-moz-loading {
     background-color: var(--slide-loading-color);
     min-height: 12.5rem; min-width: 12.5rem;
-    box-shadow: none; border-radius: 0.25rem; /* 4px */
+    box-shadow: none; border-radius: 0.25rem;
 }
-@supports selector(:placeholder-shown) { /* More robust loading state */
-  .fullscreen-slide img:placeholder-shown { /* Check if this works with picture */
+/* More robust loading state using :placeholder-shown (conceptual, often for inputs).
+   This specific selector might not be broadly effective for <img> but is an attempt.
+   The :not([src]) and picture check are more reliable. */
+@supports selector(:placeholder-shown) {
+  .fullscreen-slide img:placeholder-shown {
     background-color: var(--slide-loading-color);
     min-height: 12.5rem; min-width: 12.5rem;
     box-shadow: none; border-radius: 0.25rem;
   }
 }
-/* Image Load Error State Styling */
-.fullscreen-slide.slide-load-error { /* Class added by JS on error */
-    background-color: var(--slide-error-bg-color);
+/* Image Load Error State Styling: Applied by JS if an image fails to load. */
+.fullscreen-slide.slide-load-error {
+    background-color: var(--slide-error-bg-color); /* Themed error background */
     border-radius: 0.25rem; /* 4px */
-    color: var(--slide-error-text-color);
+    color: var(--slide-error-text-color); /* Themed error text */
     padding: 1.25rem; /* 20px */
     display: flex; /* Use flex for centering error content */
     justify-content: center; align-items: center;
-    opacity: 1; filter: none; /* Ensure error is fully visible */
-    cursor: default;
-    /* Ensure error message container is visible */
-    min-height: 12.5rem; min-width: 12.5rem;
+    opacity: 1; filter: none; /* Ensure error message is fully visible */
+    cursor: default; /* Non-interactive */
+    min-height: 12.5rem; min-width: 12.5rem; /* Ensure error message container is visible */
 }
-.fullscreen-slide.slide-load-error .item-error-content { display: flex; /* Ensure it's visible */ }
-.fullscreen-slide.slide-load-error picture, /* Hide picture element on error */
-.fullscreen-slide.slide-load-error img { display: none; } /* Hide the broken image */
+/* Ensure error content div is visible inside the error slide. */
+.fullscreen-slide.slide-load-error .item-error-content { display: flex; }
+/* Hide <picture> and broken <img> elements when error state is active on the slide. */
+.fullscreen-slide.slide-load-error picture,
+.fullscreen-slide.slide-load-error img { display: none; }
 
 /* --- Class for FLIP Animation Transition --- */
+/* Added by JS to the image during the FLIP (First, Last, Invert, Play) zoom animation. */
 .fullscreen-image-transition {
     transition: transform var(--transition-duration-zoom) var(--transition-easing-zoom),
-                opacity calc(var(--transition-duration-zoom) * 0.8) ease; /* Fade slightly faster */
-    /* will-change already on base img style */
+                opacity calc(var(--transition-duration-zoom) * 0.8) ease; /* Fade opacity slightly faster than transform */
+    /* will-change is already on the base .fullscreen-slide img style. */
 }
 
 /* -----------------------------------------
    9.1 Component: Fullscreen Controls
    ----------------------------------------- */
-.fullscreen-button { /* Common style for close button */
-    position: absolute;
+/* Common style for fullscreen buttons (e.g., close button). */
+.fullscreen-button {
+    position: absolute; /* Positioned relative to .fullscreen-container */
     background: var(--fullscreen-button-bg); border: none;
     color: var(--fullscreen-button-color);
     font-size: 1.5rem; /* Icon size */
     cursor: pointer;
     transition: color var(--transition-duration-base) var(--transition-easing-base),
                 background-color var(--transition-duration-base) var(--transition-easing-base),
-                transform 0.15s var(--transition-easing-base),
+                transform 0.15s var(--transition-easing-base), /* For hover scale effect */
                 outline-color var(--transition-duration-base) var(--transition-easing-base),
-                opacity 0.3s ease;
+                opacity 0.3s ease; /* For fade-in/out */
     padding: 0;
-    width: 2.75rem; /* 44px */
+    width: 2.75rem; /* 44px, good tap target size */
     height: 2.75rem; /* 44px */
-    border-radius: 50%;
-    display: flex; justify-content: center; align-items: center;
+    border-radius: 50%; /* Circular shape */
+    display: flex; justify-content: center; align-items: center; /* Center icon */
     user-select: none; line-height: 1;
-    outline-offset: calc(-1 * var(--focus-outline-width)); /* Inset focus */
-    z-index: var(--z-index-fullscreen-controls);
+    outline-offset: calc(-1 * var(--focus-outline-width)); /* Inset focus outline */
+    z-index: var(--z-index-fullscreen-controls); /* Above slider content */
     opacity: 0; pointer-events: none; /* Hidden by default */
 }
-/* Show buttons only when fullscreen is active and not zooming */
+/* Show buttons only when fullscreen is active AND not currently zooming.
+   Delay appearance slightly for a smoother entry. */
 .fullscreen-container.active .fullscreen-button {
     opacity: 1;
     pointer-events: auto;
-    transition-delay: calc(var(--transition-duration-fade-bg) * 0.5); /* Delay appearance slightly */
+    transition-delay: calc(var(--transition-duration-fade-bg) * 0.5);
 }
-.fullscreen-container.is-zooming .fullscreen-button { /* Hide during zoom */
+/* Hide buttons immediately during zoom animation to prevent interference. */
+.fullscreen-container.is-zooming .fullscreen-button {
     opacity: 0 !important;
     pointer-events: none !important;
     transition: none !important;
 }
 .fullscreen-button .material-symbols-outlined { font-size: 1.5rem; /* 24px */ display: block; }
 
+/* Hover/focus state for fullscreen buttons. */
 .fullscreen-button:is(:hover, :focus-visible) {
     color: var(--fullscreen-button-color-hover);
     background-color: var(--fullscreen-button-bg-hover);
-    transform: scale(1.08);
-    outline-color: hsla(0, 0%, 100%, 0.7); /* Show outline */
+    transform: scale(1.08); /* Slight scale up */
+    outline-color: hsla(0, 0%, 100%, 0.7); /* Whiteish focus outline for dark bg */
 }
-.fullscreen-button:active { /* Click feedback */
-    transform: scale(0.95);
-    background-color: hsla(0, 0%, 100%, 0.2);
-    transition-duration: 0.05s;
+/* Click feedback for fullscreen buttons. */
+.fullscreen-button:active {
+    transform: scale(0.95); /* Slight scale down */
+    background-color: hsla(0, 0%, 100%, 0.2); /* Slightly more opaque background */
+    transition-duration: 0.05s; /* Quicker transition for active state */
 }
 /* Close Button Specific Position */
 .close-fullscreen {
     top: 1.25rem; /* 20px */
-    inset-inline-end: 1.25rem; /* 20px */
+    inset-inline-end: 1.25rem; /* 20px, positions to top-right (LTR) */
 }
 
 /* ==========================================================================
    10. Focus Pull Effect (Background Blur/Fade)
    ========================================================================== */
 
+/* When fullscreen gallery is active, this class is added to .main-container.
+   It blurs and fades the main page content (.content) underneath. */
 .main-container.fullscreen-effect-active > .content {
     filter: blur(4px);
     opacity: 0.3;
-    pointer-events: none; /* Prevent interaction with blurred content */
+    pointer-events: none; /* Prevent interaction with blurred background content */
 }
 
 /* ==========================================================================
    11. FLIP Animation Source Element Hiding
    ========================================================================== */
 
-/* Class added by JS to the source image container during zoom */
+/* Class added by JS to the source image container (e.g., .scroll-gallery__main-item)
+   during the FLIP zoom-in animation. JS will also set inline styles for opacity,
+   visibility, pointer-events, and transition to ensure immediate and robust hiding. */
 .scroll-gallery__main-item.source-element-zooming {
-    opacity: 0 !important;
-    transition: none !important; /* Ensure immediate hiding */
-    pointer-events: none !important;
-    visibility: hidden !important; /* More robust hiding */
+    /* Base styles for hiding. JS applies inline styles for more forceful override if needed. */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: none; /* Ensure no CSS transition interferes with JS control */
 }
 
 /* ==========================================================================
@@ -947,67 +1027,74 @@ picture.image-load-error { /* Hide picture element if its img child fails */
 /* --- Desktop Layout (Large Screens: 992px / 62rem and up) --- */
 @media (min-width: 62rem) { /* 992px */
     .main-container {
-        grid-template-columns: 26.5625rem 1fr; /* 425px sidebar */
-        gap: 0.625rem; /* 10px */
-        padding-inline: 0.625rem; /* 10px */
-        margin-block-end: 3.125rem; /* 50px */
+        grid-template-columns: 26.5625rem 1fr; /* 425px sidebar, remaining for content */
+        gap: 0.625rem; /* 10px, gap between sidebar and content */
+        padding-inline: 0.625rem; /* 10px, side padding for the whole container */
+        margin-block-end: 3.125rem; /* 50px, bottom margin */
     }
-    /* Minor adjustment for slightly smaller desktops */
+    /* Minor adjustment for slightly smaller desktops (e.g., 1200px width).
+       Reduces sidebar width for better content area on these screens. */
     @media (max-width: 75rem) { /* 1200px */
         .main-container { grid-template-columns: 21.875rem 1fr; /* 350px sidebar */ gap: 0.3125rem; /* 5px */ margin-block-end: 2.5rem; /* 40px */ }
     }
 
-    /* Sidebar/Menu layout */
+    /* Sidebar/Menu layout for desktop */
     .menu {
-        display: grid;
-        grid-template-columns: 4.0625rem 1fr; /* 65px nav column */
-        position: sticky; /* Stick to top */
-        top: 3.125rem; /* 50px */
-        align-self: start; /* Align to top of grid cell */
-        flex-direction: row; /* Reset mobile flex */
+        display: grid; /* Use grid for more complex internal layout if needed */
+        grid-template-columns: 4.0625rem 1fr; /* 65px nav icon column, rest for profile */
+        position: sticky; /* Sidebar sticks to top during scroll */
+        top: 3.125rem; /* 50px, offset from viewport top */
+        align-self: start; /* Align to top of its grid cell in .main-container */
+        flex-direction: row; /* Reset mobile flex-direction */
         gap: 0.625rem; /* 10px */
         margin-block-end: 0; /* Reset mobile margin */
-        height: calc(100vh - 6.25rem); /* 100px */
-        overflow-y: auto; /* Allow profile card to scroll if needed */
+        /* Allow sidebar to take up viewport height minus top offset and some bottom space,
+           and enable internal scrolling if content (profile card) is too long. */
+        height: calc(100vh - 6.25rem); /* 100px (50px top offset + 50px desired bottom space) */
+        overflow-y: auto;
     }
     @media (max-width: 75rem) { /* 1200px */
+        /* Adjust nav column width for smaller desktops */
         .menu { grid-template-columns: 3.75rem 1fr; /* 60px nav column */ gap: 0.625rem; /* 10px */ }
     }
-    /* Reset mobile ordering */
-    .menu .profile { order: initial; height: fit-content; }
+    /* Reset mobile ordering for profile and header within menu */
+    .menu .profile { order: initial; height: fit-content; /* Profile takes natural height */ }
     .menu header { order: initial; width: 100%; display: block; justify-content: initial; }
 
-    /* Vertical Navigation */
+    /* Vertical Navigation for desktop */
     .menu header nav ul {
-        display: grid; /* Stack vertically */
+        display: grid; /* Stack nav items vertically */
         justify-content: center; align-items: center;
         gap: 0.625rem; /* 10px */
         padding: 0.5rem; /* 8px */
         margin-block-end: 0.625rem; /* 10px */
         background: var(--gradient-main);
         border-radius: 2.1875rem; /* 35px */
-        width: fit-content;
-        margin-inline: auto;
-        flex-direction: column; /* Explicitly stack items */
+        width: fit-content; /* Shrink-wrap to content */
+        margin-inline: auto; /* Center the nav block within its column */
+        flex-direction: column; /* Explicitly stack items (though grid already does this) */
     }
 
-    /* Profile image size */
+    /* Profile image size adjustment for desktop */
     .profile__image { max-height: 17.5rem; } /* 280px */
-    /* Content area gap */
+    /* Content area gap adjustment for desktop */
     .content { gap: 0.75rem; } /* 12px */
  }
 
 /* --- Tablet & Mobile Layout (Smaller Screens: 991px / 61.9375rem and down) --- */
 @media (max-width: 61.9375rem) { /* 991px */
-    html.fullscreen-active { padding-right: 0; } /* No scrollbar compensation needed on mobile */
+    /* No scrollbar compensation needed on mobile/tablet as scrollbars are often overlay or not present. */
+    html.fullscreen-active { padding-right: 0; }
 
     .main-container { padding-block-start: 1.875rem; /* 30px */ padding-inline: 0.9375rem; /* 15px */ margin-block-end: 1.875rem; /* 30px */ }
     .section-container { padding: 1.875rem 1.5625rem; /* 30px 25px */ border-radius: 1.875rem; /* 30px */ }
-    #about { border-radius: 1.875rem; /* 30px */ }
+    #about { border-radius: 1.875rem; /* 30px */ } /* Ensure consistent border-radius */
 
+    /* Adjust profile image crop for better framing of portrait on smaller/vertical viewports. */
     .profile__image img,
-    .profile__image picture { object-position: center 30%; } /* Adjust portrait crop */
+    .profile__image picture { object-position: center 30%; } /* Shifts focus slightly up */
 
+    /* Font size adjustments for readability on smaller screens */
     .section-heading h2 { font-size: 1.8rem; }
     #about h3.about-location { font-size: 1.4rem; }
     #about p { font-size: 0.85rem; }
@@ -1018,125 +1105,39 @@ picture.image-load-error { /* Hide picture element if its img child fails */
 
     /* Adjust Scroll Mode Gallery for Mobile-First (Single Column) */
     .scroll-mode-container {
-        height: 75vh; /* Slightly smaller height, or 'auto' if content dictates */
+        height: 75vh; /* Slightly smaller height on mobile */
         border-radius: 1.25rem; /* 20px */
     }
     .thumbnail-column {
-        display: none; /* Hide thumbnail column on mobile */
+        display: none; /* Hide thumbnail column entirely on mobile for simpler UX */
     }
     .main-image-column {
-        flex: 1 0 100%; /* Take full width */
+        flex: 1 0 100%; /* Main image column takes full width */
         width: 100%;
-        padding: 0.625rem; /* 10px, or 0 for edge-to-edge */
-        border-right: none; /* No border if thumb col is hidden */
+        padding: 0.625rem; /* 10px, reduced padding */
+        border-right: none; /* No border as thumb column is hidden */
     }
-    .scroll-gallery__main-item { /* Conceptual class */
-        height: 65vh; /* Adjust main image height */
+    .scroll-gallery__main-item { /* Main image items in scroll gallery */
+        height: 65vh; /* Adjust main image height for mobile */
         margin-bottom: 8vh; /* Adjust spacing */
         border-radius: 0.625rem; /* 10px */
     }
     .active-cursor {
-        display: none; /* Hide active cursor on mobile */
+        display: none; /* Hide active thumbnail cursor as thumbnail column is hidden */
     }
-
-    /* Adjust Fullscreen Slider */
+    /* Adjust Fullscreen Slider for Mobile */
     html {
-        --slide-width-percent: 85%; /* Wider slides on smaller screens */
-        --slide-peek-blur: 3px;
+        /* Wider slides on smaller screens to maximize use of space, less peeking. */
+        --slide-width-percent: 85%;
+        --slide-peek-blur: 3px; /* Less blur for peeking slides */
     }
      .fullscreen-slide img {
-         max-height: calc(100% - 2.5rem); /* 40px padding */
+         max-height: calc(100% - 2.5rem); /* 40px vertical padding around image */
          border-radius: 0.25rem; /* 4px */
-         box-shadow: 0 0.5rem 0.9375rem hsla(0, 0%, 0%, 0.25); /* 8px 15px */
+         box-shadow: 0 0.5rem 0.9375rem hsla(0, 0%, 0%, 0.25); /* 8px 15px, adjusted shadow */
     }
+    /* Smaller fullscreen control buttons for mobile */
     .fullscreen-button { width: 2.5rem; height: 2.5rem; } /* 40px */
-    .fullscreen-button .material-symbols-outlined { font-size: 1.25rem; } /* 20px */
-    .close-fullscreen { top: 0.625rem; inset-inline-end: 0.625rem; } /* 10px */
- }
-
-/* ==========================================================================
-   13. Reduced Motion Preferences
-   ========================================================================== */
-
-/* Class added to <html> by JS */
-html.reduced-motion {
-    scroll-behavior: auto !important;
+    .fullscreen-button .material-symbols-outlined { font-size: 1.25rem; } /* 20px icon */
+    .close-fullscreen { top: 0.625rem; inset-inline-end: 0.625rem; } /* 10px from edges */
 }
-
-/* Select all elements with transitions/animations and disable them */
-html.reduced-motion *,
-html.reduced-motion *::before,
-html.reduced-motion *::after
-{
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    transition-delay: 0ms !important;
-    animation-delay: 0ms !important;
-    scroll-behavior: auto !important; /* Ensure smooth scrolling is off */
-}
-
-/* Special cases for reduced motion */
-
-/* Typing caret animation */
-html.reduced-motion #about #role {
-    animation: none !important;
-    border-inline-end-color: var(--color-primary); /* Keep caret visible static */
-}
-
-/* Fullscreen Slider Reduced Motion */
-html.reduced-motion .fullscreen-container {
-    transition: none !important;
-    opacity: 0;
-}
-html.reduced-motion .fullscreen-container.active {
-    opacity: 1 !important; pointer-events: auto !important;
-}
-html.reduced-motion .fullscreen-slide img { /* No zoom effect */
-    transform-origin: center center !important;
-    will-change: auto !important;
-    transform: none !important;
-    opacity: 1 !important;
-    box-shadow: none !important; /* Remove shadow if desired */
-    transition: none !important;
-}
-html.reduced-motion .fullscreen-slide { /* No peeking effect */
-    opacity: 1 !important; filter: none !important;
-    cursor: default !important; transition: none !important;
-}
-html.reduced-motion .main-container.fullscreen-effect-active > .content { /* No background blur */
-    opacity: 1 !important; filter: none !important;
-    pointer-events: auto !important; transition: none !important;
-}
-html.reduced-motion .scroll-gallery__main-item.source-element-zooming { /* Still hide source instantly */
-    opacity: 0 !important; visibility: hidden !important;
-    pointer-events: none !important; transition: none !important;
-}
-html.reduced-motion .fullscreen-button {
-    transition: none !important;
-}
-html.reduced-motion .fullscreen-button:is(:hover, :focus-visible, :active) { /* Remove hover/active transforms */
-    transform: none !important;
-    background-color: var(--fullscreen-button-bg); /* Keep base bg */
-    color: var(--fullscreen-button-color); /* Keep base color */
-    outline-color: transparent !important; /* Keep focus outline consistent */
-}
-html.reduced-motion .fullscreen-container.active .fullscreen-button { /* Show instantly */
-    opacity: 1 !important; transition-delay: 0ms !important;
-}
-
-/* Scroll Mode Gallery Reduced Motion */
-html.reduced-motion .thumbnail-scroller,
-html.reduced-motion .main-image-scroller,
-html.reduced-motion .active-cursor {
-    will-change: auto !important; /* Remove perf hint */
-    transition: none !important; /* Disable smooth scroll */
-}
-html.reduced-motion .scroll-gallery__thumb-item { /* Disable scale/shadow transitions */
-    transform: scale(1) !important;
-    opacity: 0.6; /* Keep some opacity difference */
-    transition: opacity 0.1s ease !important; /* Faster opacity change */
-}
-html.reduced-motion .scroll-gallery__thumb-item.active { opacity: 1; }
-html.reduced-motion .scroll-gallery__thumb-item:hover { opacity: 0.75; }
-html.reduced-motion .scroll-gallery__thumb-item:hover img { transform: none !important; }

@@ -21,7 +21,7 @@
     >
     <!-- Google Fonts: Material Symbols Outlined -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
       rel="stylesheet"
     >
     <!-- Font Awesome (CDN) -->
@@ -45,8 +45,8 @@
       <aside class="menu">
         <!-- Navigation Header (within sidebar on desktop) -->
         <header>
-           <!-- Added role="navigation" for clarity -->
-          <nav aria-label="Main Navigation" role="navigation">
+           <!-- Removed redundant role="navigation" as <nav> has implicit role -->
+          <nav aria-label="Main Navigation">
              <ul>
                <li>
                  <!-- Link to gallery section -->
@@ -84,6 +84,12 @@
               <figure class="profile__image">
                 <picture>
                     <!-- Corrected 300w to 320w descriptor, added sizes attribute -->
+                    <!-- Sizes attribute ensures the browser picks an appropriately sized image source,
+                         crucial for mobile performance (avoiding download of unnecessarily large images)
+                         and visual quality on all devices.
+                         (min-width: 62rem) 280px: On desktop (sidebar active), image is ~280px.
+                         300px: Default/mobile size.
+                    -->
                     <source srcset="images/Portraits/Kees-Leemeijer_web-240w.webp 240w, images/Portraits/Kees-Leemeijer_web-320w.webp 320w"
                             sizes="(min-width: 62rem) 280px, 300px"
                             type="image/webp">
@@ -121,7 +127,7 @@
                 </li>
                 <li>
                   <a href="https://vasecreator.com/" target="_blank" rel="noopener noreferrer" aria-label="Vase Creator Website" class="profile__social-link social-link-svg">
-                      <!-- Added focusable="false" to prevent redundant focus stop -->
+                      <!-- Added focusable="false" to prevent redundant focus stop for SVG icons within links -->
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 255.76 238.85" aria-hidden="true" focusable="false">
                           <!-- SVG paths remain unchanged -->
                           <path fill="currentColor" d="M203.04,108.76c-7.14.68-1.74.75-9.95,1.09-9.18.43-18.5-.44-25.77-5.44-11.69-8.97-12.39-24.31-6.16-35.79,3.21-6.51,9.29-10.77,15.7-14.47,6-3.33,11.24-4.24,17.37-7.13,2.95-1.28,1.82-4.14-4.12-6.61-5.02-1.55-10.24-.6-15.23.39-12.16,2.7-23.25,10.22-30.29,20.03-6.36,9-10.46,19.51-9.7,30.44.75,22.17,20.95,31.99,41.78,31.79,6.91.08,13.6-.67,19.05-1.65,8.31-1.79,13.84-2.15,18.1-8.59l.06-.12c2.26-4.82-4.48-4.56-10.84-3.95h.02ZM122.02,145.46l.12-.05c2.9-1.2,5.1-6.08,6.39-9.31,1.19-2.88,2.51-5.74,3.97-8.45,2.12-4.17,3.76-7.69.22-6.83-7.31,2.73-14.39,10.52-15.89,17.48-.98,3.35.79,8.76,5.18,7.17h0Z"/>
@@ -159,10 +165,7 @@
             <h2 id="projects-heading">Explore Portfolio by Topic</h2>
           </header>
           <!-- Filter Buttons List -->
-          <!-- Removed role="listbox", aria-labelledby, aria-orientation for simplification -->
-          <!-- Buttons themselves provide semantics -->
           <ul class="project-filter-list">
-            <!-- Removed role="option", aria-selected -->
             <li><button type="button" class="filter-button" data-filter="Products">Products</button></li>
             <li><button type="button" class="filter-button" data-filter="Architecture">Architecture</button></li>
             <li><button type="button" class="filter-button" data-filter="Portraits">Portraits</button></li>
@@ -171,8 +174,8 @@
             <li><button type="button" class="filter-button" data-filter="Plants">Plants</button></li>
             <li><button type="button" class="filter-button" data-filter="Industry">Industry</button></li>
             <li><button type="button" class="filter-button" data-filter="Urban">Urban</button></li>
-            <!-- JS will toggle 'active' class -->
-            <li><button type="button" class="filter-button active" data-filter="All">All</button></li> <!-- Default active -->
+            <!-- JS will toggle 'active' class and manage aria-current -->
+            <li><button type="button" class="filter-button active" data-filter="All" aria-current="true">All</button></li> <!-- Default active, aria-current set -->
           </ul>
         </section>
 
@@ -182,26 +185,16 @@
           <h2 id="gallery-heading" class="visually-hidden">Project Gallery</h2>
 
           <!-- Two-Column Scroll Mode Gallery Structure -->
-          <!-- tabindex makes it focusable for keyboard nav (arrows handled by JS) -->
-          <!-- Added role="region" and aria-label -->
           <div id="scroll-mode-gallery" class="scroll-mode-container" role="region" aria-label="Scrolling Project Gallery" tabindex="0">
-              <!-- Thumbnail Column (Visually presentational, hidden from AT by CSS on mobile) -->
               <div id="thumbnail-column" class="thumbnail-column" aria-hidden="true">
-                  <!-- Cursor indicating active thumbnail -->
                   <div id="active-thumbnail-cursor" class="active-cursor"></div>
-                  <!-- Thumbnails populated by JS (JS will use .scroll-gallery__thumb-item class) -->
                   <div id="thumbnail-scroller" class="thumbnail-scroller"></div>
               </div>
-              <!-- Main Image Column (Primary interaction area) -->
               <div id="main-image-column" class="main-image-column">
-                  <!-- Large images populated by JS (JS will use .scroll-gallery__main-item class) -->
                   <div id="main-image-scroller" class="main-image-scroller"></div>
               </div>
-              <!-- Screen reader status updates (e.g., current item announcement) -->
-              <!-- Added aria-atomic="true" for better SR announcement -->
               <div id="scroll-gallery-status" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
             </div>
-            <!-- END: Two-Column Scroll Mode Gallery Structure -->
           </section>
         </div> <!-- End .content -->
       </main> <!-- End .main-container -->
@@ -209,36 +202,22 @@
       <!-- Fullscreen Slideable Gallery Container (Modal Dialog) -->
       <div id="fullscreen-container" class="fullscreen-container"
            role="dialog" aria-modal="true" aria-label="Fullscreen Image Gallery"
-           aria-hidden="true" hidden> <!-- Initially hidden for AT and visually -->
+           aria-hidden="true" hidden>
 
-        <!-- Wrapper for the scrollable slides -->
-        <!-- Added tabindex="-1" to allow programmatic focus for scrolling if needed -->
         <div id="fullscreen-slider-wrapper" class="fullscreen-slider-wrapper"
              role="region" aria-label="Image gallery slider" tabindex="-1">
-          <!-- Slides populated by JS -->
+          <!-- Slides populated by JS. -->
         </div>
 
-        <!-- Close button positioned OVER the slider -->
         <button type="button" id="close-fullscreen" class="fullscreen-button close-fullscreen" aria-label="Close fullscreen image viewer">
-            <!-- Using icon font for close symbol -->
             <span class="material-symbols-outlined" aria-hidden="true">close</span>
         </button>
 
-        <!-- Screen reader only status announcement area for the current slide -->
-        <!-- Added aria-atomic="true" for better SR announcement -->
         <div id="fullscreen-status" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
 
       </div> <!-- End #fullscreen-container -->
 
-      <!--
-        Cloudflare Email Decode Script:
-        - This script is injected by Cloudflare on the live server to decode protected email links.
-        - It WILL cause a 404 (Not Found) error during local development, which is expected and can be ignored.
-        - DO NOT REMOVE this script tag if using Cloudflare Email Obfuscation on the deployed site.
-      -->
-      <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script> <!-- Added defer -->
-      <!-- Main Application Script (Module for modern JS features) -->
-      <!-- Added defer for potentially better loading performance -->
+      <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script>
       <script src="script.js" type="module" defer></script>
     </body>
     </html>
