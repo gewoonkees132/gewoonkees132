@@ -13,8 +13,8 @@
 // ==========================================================================
 
 const AppConfig = {
-    IS_DEVELOPMENT_MODE: true, // Or use environment variable
-    LOG_LEVEL: 'debug', // 'debug', 'info', 'warn', 'error', 'none'
+    IS_DEVELOPMENT_MODE: false, // Or use environment variable
+    LOG_LEVEL: 'none', // 'debug', 'info', 'warn', 'error', 'none'
 };
 
 const Logger = {
