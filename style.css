@@ -667,13 +667,13 @@
    .scroll-gallery__main-item {
     display: block;
     width: 100%;
-    height: 75vh;
-    margin-bottom: 10vh;
+    height: 75vh; /* Default height for desktop */
+    margin-bottom: 10vh; /* Default margin for desktop */
     border-radius: 0.9375rem;
     overflow: hidden;
     position: relative;
     cursor: pointer;
-    box-shadow: 0 0.5rem 1.25rem hsla(0, 0%, 0%, 0.15);
+    box-shadow: 0 0.5rem 1.25rem hsla(0, 0%, 0%, 0.15); /* Default shadow for desktop */
     background-color: var(--color-secondary);
     outline-offset: -3px;
    }
@@ -703,7 +703,7 @@
     top: 0;
     left: 0.625rem;
     width: calc(100% - 1.25rem);
-    margin-block: 0.625rem;
+    /* margin-block: 0.625rem; */ /* Removed to fix positioning */
     border: 3px solid var(--color-primary);
     border-radius: 0.5rem;
     pointer-events: none;
@@ -988,25 +988,31 @@
        .project-gallery-section { padding-block-end: 3.125rem; }
 
        .scroll-mode-container {
-           height: 75vh;
+           height: 75vh; /* Overall container height for mobile gallery */
            border-radius: 1.25rem;
        }
        .thumbnail-column {
-           display: none;
+           display: none; /* Thumbnails are hidden on mobile */
        }
        .main-image-column {
            flex: 1 0 100%;
            width: 100%;
-           padding: 0.625rem;
+           padding: 0.625rem; /* Padding around the main image scroller */
            border-right: none;
        }
        .scroll-gallery__main-item {
-           height: 65vh;
-           margin-bottom: 8vh;
+           /* Mobile Performance Optimization: Use aspect-ratio for height */
+           /* This makes height dependent on width, avoiding vh jumps on mobile browser UI resizes */
+           height: auto;
+           aspect-ratio: 5/6; /* Approximates a portrait feel similar to original 65vh on common viewports */
+           /* Mobile Performance Optimization: Use fixed unit for margin */
+           margin-bottom: 2rem; /* Consistent spacing, not tied to vh */
            border-radius: 0.625rem;
+           /* Mobile Performance Optimization: Reduce box-shadow complexity */
+           box-shadow: 0 0.125rem 0.375rem hsla(0, 0%, 0%, 0.08);
        }
        .active-cursor {
-           display: none;
+           display: none; /* Cursor for thumbnail column is hidden on mobile */
        }
        html {
            --slide-width-percent: 85%;

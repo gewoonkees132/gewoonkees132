@@ -3,7 +3,7 @@
  * @description Main JavaScript file for Kees Leemeijer's portfolio website.
  * Handles theme switching, background animation, project filtering,
  * scroll-driven gallery interaction, and fullscreen image viewing.
- * @version 1.7.6 - Instant background color update on hue shift.
+ * @version 1.7.7 - Mobile performance optimizations for ScrollModeGallery CSS.
  */
 
 "use strict";
@@ -55,8 +55,8 @@ const CONFIG = Object.freeze({
         MIN_SPEED: 0.9,         // Minimum speed of blobs (pixels per frame, scaled by DPR)
         MAX_SPEED: 0.99,          // Maximum speed of blobs
         DAMPING: 1,          // Slows down blobs very gradually (closer to 1 = less damping)
-        BLUR_AMOUNT: '100px',    // CSS-like blur value for the canvas filter
-        GLOBAL_ALPHA: 0.65,      // Global alpha for drawing blobs, affects blend intensity
+        BLUR_AMOUNT: '0px',    // CSS-like blur value for the canvas filter
+        GLOBAL_ALPHA: 0.2,      // Global alpha for drawing blobs, affects blend intensity
     }),
     SELECTORS: Object.freeze({
         CACHEABLE_ELEMENTS: Object.freeze({
@@ -1258,7 +1258,22 @@ class ScrollModeGallery {
 
     _createItemElement(type, project, index) { if (!project || typeof project.src !== 'string') { throw new Error(`Invalid project data for ${type} at index ${index}`); } const div = document.createElement('div'); const isThumb = type === 'thumb'; const CN = CONFIG.SELECTORS.CLASS_NAMES; div.className = isThumb ? CN.scrollGalleryThumbItem : CN.scrollGalleryMainItem; div.dataset.index = String(index); if (typeof project.originalIndex === 'number') { div.dataset.originalIndex = String(project.originalIndex); } const altText = Utils.getSafeAltText(project.title, index); div.setAttribute('aria-label', isThumb ? `Thumbnail: ${altText}` : `View ${altText}`); div.tabIndex = -1; const picture = document.createElement('picture'); const sourceWebp = document.createElement('source'); sourceWebp.type = 'image/webp';
         sourceWebp.srcset = project.computedSrcset || Utils.generateSrcset(project.src, CONFIG.GALLERY.IMAGE_WIDTHS_FOR_SRCSET);
-        if (isThumb) { sourceWebp.sizes = "(max-width: 61.9375rem) 90px, 130px"; } else { sourceWebp.sizes = `(max-width: 61.9375rem) calc(100vw - 3.125rem), (min-width: 62rem) and (max-width: 75rem) calc(100vw - 25.9375rem), (min-width: 75.0625rem) calc(100vw - 30.9375rem)`; } const img = document.createElement('img'); img.alt = altText; img.loading = 'lazy'; img.decoding = 'async'; img.src = project.src; img.onerror = () => { Logger.error(`❌ Failed to load ${type} image: ${project.src}`); div.classList.add(isThumb ? CN.scrollGalleryThumbItemError : CN.scrollGalleryMainItemError); div.replaceChildren(Utils.createErrorNode(altText)); div.setAttribute('aria-label', `Error loading ${type}: ${altText}`); }; picture.appendChild(sourceWebp); picture.appendChild(img); div.appendChild(picture); return div; }
+        // The `sizes` attribute is critical for responsive images.
+        // It tells the browser which image from srcset is best for the current layout width.
+        // For thumbnails (isThumb):
+        // - On mobile (max-width: 61.9375rem), thumbnails are hidden, but sizes are defined in case CSS changes. 90px is a reasonable default.
+        // - On desktop (min-width: 62rem), 130px is used.
+        // For main images (!isThumb):
+        // - On mobile (max-width: 61.9375rem), the image width is `100vw - 3.125rem` (viewport width minus total horizontal padding from .main-container and .main-image-column).
+        // - On desktop, widths vary based on specific breakpoints for .main-container.
+        // These calculations ensure the browser picks an appropriately sized image, crucial for performance.
+        if (isThumb) {
+            sourceWebp.sizes = "(max-width: 61.9375rem) 90px, 130px";
+        } else {
+            sourceWebp.sizes = `(max-width: 61.9375rem) calc(100vw - 3.125rem), (min-width: 62rem) and (max-width: 75rem) calc(100vw - 25.9375rem), (min-width: 75.0625rem) calc(100vw - 30.9375rem)`;
+        }
+        const img = document.createElement('img'); img.alt = altText; img.loading = 'lazy'; img.decoding = 'async'; img.src = project.src; img.onerror = () => { Logger.error(`❌ Failed to load ${type} image: ${project.src}`); div.classList.add(isThumb ? CN.scrollGalleryThumbItemError : CN.scrollGalleryMainItemError); div.replaceChildren(Utils.createErrorNode(altText)); div.setAttribute('aria-label', `Error loading ${type}: ${altText}`); }; picture.appendChild(sourceWebp); picture.appendChild(img); div.appendChild(picture); return div;
+    }
 
     async _fetchDimensionWithRetry(getElementFn, dimensionProp, elementName = 'element') {
         const MAX_RETRIES = this.config.MAX_METRIC_RETRIES;
@@ -1312,9 +1327,9 @@ class ScrollModeGallery {
         const totalVerticalMargin = marginTop + marginBottom;
 
         return {
-            height: heightResult.value + totalVerticalMargin,
-            margin: totalVerticalMargin,
-            marginTop: marginTop,
+            height: heightResult.value + totalVerticalMargin, // Considers total height including margins for layout
+            margin: totalVerticalMargin, // Sum of top and bottom margin
+            marginTop: marginTop, // Specific top margin
             success: true
         };
     }
@@ -1338,23 +1353,25 @@ class ScrollModeGallery {
         let currentMainY = 0;
         this.state.items.forEach(item => {
             item.mainY = currentMainY + mainItemDims.marginTop;
-            currentMainY += mainItemDims.height;
+            currentMainY += mainItemDims.height; // Use height that includes margins
             if (this.isDesktop && thumbItemDims.height > 0) {
                 item.thumbY = currentThumbY + thumbItemDims.marginTop;
-                currentThumbY += thumbItemDims.height;
+                currentThumbY += thumbItemDims.height; // Use height that includes margins
             } else {
                 item.thumbY = 0;
             }
         });
 
-        const mainContentHeight = (this.state.items.length * mainItemDims.height) - (this.state.items.length > 0 ? mainItemDims.margin : 0);
+        // Total content height is sum of all items' heights (including their margins), minus the margin of the last item if it's not needed for scroll extent.
+        // Or, simpler: (number of items * height_of_one_item_including_its_margins) - one_item_margin_bottom (if margin is symmetrical, then - one_item_margin_total / 2, effectively)
+        // The way currentMainY is accumulated, it represents the top of the *next* item. So, the total height is currentMainY - last_item_margin_bottom
+        const mainContentHeight = currentMainY - (this.state.items.length > 0 ? mainItemDims.margin - mainItemDims.marginTop : 0); // Subtract last item's bottom margin
         this.state.maxScroll = Math.max(0, mainContentHeight - this.state.containerHeight);
 
         this.state.parallaxRatio = 0;
         if (this.isDesktop && this.state.maxScroll > 0 && thumbItemDims.height > 0 && this.state.thumbContainerHeight > 0) {
-            const thumbContentHeight = (this.state.items.length * thumbItemDims.height) - (this.state.items.length > 0 ? thumbItemDims.margin : 0);
+            const thumbContentHeight = currentThumbY - (this.state.items.length > 0 ? thumbItemDims.margin - thumbItemDims.marginTop : 0); // Subtract last item's bottom margin
             const totalThumbScrollableHeight = Math.max(0, thumbContentHeight - this.state.thumbContainerHeight);
-            // Robustness: Ensure maxScroll is positive before division
             if (totalThumbScrollableHeight > 0 && this.state.maxScroll > 0) {
                 this.state.parallaxRatio = totalThumbScrollableHeight / this.state.maxScroll;
             }
@@ -1389,7 +1406,7 @@ class ScrollModeGallery {
             this._resetMetrics();
             return false;
         }
-        this.state.mainHeight = mainItemDims.height;
+        this.state.mainHeight = mainItemDims.height; // This is height including margin for layout math
 
         let thumbItemDims = { height: 0, margin: 0, marginTop: 0, success: !this.isDesktop }; // Default for non-desktop or if thumbs fail
         if (this.isDesktop) {
@@ -1444,12 +1461,14 @@ class ScrollModeGallery {
                 if (this.isDesktop && !this.prefersReducedMotion) {
                     this.state.y.curr += delta * this.animationConfig.LERP_FACTOR;
                 } else {
+                    // On mobile or if reduced motion is preferred, snap directly to target.
+                    // This improves performance and respects user preferences.
                     this.state.y.curr = this.state.y.targ;
                 }
                 this.state.y.curr = Math.max(0, Math.min(this.state.y.curr, this.state.maxScroll));
                 this._updateActiveIndexBasedOnScroll(this.state.y.curr);
                 this._applyTransformsDOM(this.state.y.curr);
-                this._updateCursorPositionDOM();
+                this._updateCursorPositionDOM(); // This is internally guarded by isDesktop
             }
 
             // Check if the loop should continue
@@ -1473,6 +1492,8 @@ class ScrollModeGallery {
 
     _startAnimationLoop() {
         if (this.isInitialized && !this.state.rafId && this.state.metricsReady) {
+            // Animation loop is primarily for desktop LERPing or during active interaction (dragging).
+            // On mobile, scrolling is often direct, but the loop is still needed during drag.
             if ((this.isDesktop && !this.prefersReducedMotion && this.state.maxScroll > 0) || this.state.isInteracting) {
                 this.state.rafId = requestAnimationFrame(this.boundHandlers.update);
             }
@@ -1486,7 +1507,20 @@ class ScrollModeGallery {
             if (this.isDesktop && this.dom.cursor) Utils.removeWillChange(this.dom.cursor, CONFIG.SELECTORS.CLASS_NAMES.willChangeTransformOpacity);
         }
     }
-    _applyTransformsDOM(currentY) { if (!this.dom || !this.isInitialized) return; const thumbY = (this.isDesktop && this.dom.thumbScroller && this.state.parallaxRatio > 0) ? currentY * this.state.parallaxRatio : 0; if (this.dom.mainScroller) { this.dom.mainScroller.style.transform = `translateY(-${currentY.toFixed(2)}px)`; } if (this.dom.thumbScroller) { const finalThumbTransformY = (this.isDesktop && this.state.parallaxRatio > 0) ? thumbY : 0; this.dom.thumbScroller.style.transform = `translateY(-${finalThumbTransformY.toFixed(2)}px)`; } }
+    _applyTransformsDOM(currentY) {
+        if (!this.dom || !this.isInitialized) return;
+    
+        // Apply transform to the main image scroller
+        if (this.dom.mainScroller) {
+            this.dom.mainScroller.style.transform = `translateY(-${currentY.toFixed(2)}px)`;
+        }
+    
+        // Apply transform to the thumbnail scroller only if on desktop and it exists
+        if (this.isDesktop && this.dom.thumbScroller) {
+            const thumbY = (this.state.parallaxRatio > 0) ? currentY * this.state.parallaxRatio : 0;
+            this.dom.thumbScroller.style.transform = `translateY(-${thumbY.toFixed(2)}px)`;
+        }
+    }
 
     _updateActiveIndexBasedOnScroll(currentY) {
         if (!this.isInitialized || !this.state.metricsReady) return;
@@ -1502,9 +1536,9 @@ class ScrollModeGallery {
         const viewportCenterScroll = currentY + this.state.containerHeight / 2;
         let closestIndex = 0;
 
-        if (currentY <= this.state.mainHeight / 2) {
+        if (currentY <= this.state.mainHeight / 2) { // If scroll is near the top
             closestIndex = 0;
-        } else if (currentY >= this.state.maxScroll - this.state.mainHeight / 2) {
+        } else if (currentY >= this.state.maxScroll - this.state.mainHeight / 2) { // If scroll is near the bottom
             closestIndex = numItems - 1;
         } else {
             let minDiff = Infinity;
@@ -1517,7 +1551,8 @@ class ScrollModeGallery {
                         minDiff = diff;
                         closestIndex = i;
                     } else if (diff > minDiff && i > closestIndex) {
-                         break; // Optimization: if diff starts increasing, we've passed the closest
+                         // Optimization: if diff starts increasing, we've passed the closest visible item
+                         break;
                     }
                 }
             }
@@ -1557,6 +1592,7 @@ class ScrollModeGallery {
                 this.state.activeIndex = 0;
                 this._updateGalleryStatusText(null, 0);
             }
+            // Cursor update logic is handled by _updateCursorPositionDOM, which checks isDesktop
             if (this.isDesktop && this.dom?.cursor) this.dom.cursor.style.opacity = '0';
             return;
         }
@@ -1568,7 +1604,7 @@ class ScrollModeGallery {
         const newItemData = this.state.items[index];
         const oldItemData = this.state.items[oldIndex];
 
-        if (this.isDesktop) {
+        if (this.isDesktop) { // Thumbnails are desktop-only
             if (oldItemData?.thumb) this._updateThumbItemVisualState(oldItemData.thumb, false);
             if (newItemData?.thumb) this._updateThumbItemVisualState(newItemData.thumb, true);
         }
@@ -1584,11 +1620,45 @@ class ScrollModeGallery {
         }
 
         if (immediate && this.state.metricsReady) { // Only update cursor if metrics are valid
-            this._updateCursorPositionDOM();
+            this._updateCursorPositionDOM(); // This is internally guarded by isDesktop
         }
     }
 
-    _updateCursorPositionDOM() { if (!this.dom?.cursor || !this.isInitialized || !this.isDesktop || !this.state.metricsReady) { if (this.dom?.cursor && this.dom.cursor.style.opacity !== '0') { Object.assign(this.dom.cursor.style, { opacity: '0', transform: 'translateY(0px)', height: '0px' }); } return; } if (this.state.items.length === 0 || this.state.activeIndex < 0 || this.state.activeIndex >= this.state.items.length) { if (this.dom.cursor.style.opacity !== '0') { Object.assign(this.dom.cursor.style, { opacity: '0', transform: 'translateY(0px)', height: '0px' }); } return; } const activeItem = this.state.items[this.state.activeIndex]; if (!activeItem || typeof activeItem.thumbY !== 'number') { if (this.dom.cursor.style.opacity !== '0') { this.dom.cursor.style.opacity = '0'; } return; } const effectiveParallaxRatio = this.state.parallaxRatio > 0 ? this.state.parallaxRatio : 0; const cursorTargetY = activeItem.thumbY - (this.state.y.curr * effectiveParallaxRatio); let currentThumbHeight = 0; const activeThumbElement = activeItem.thumb; if (activeThumbElement instanceof HTMLElement) { currentThumbHeight = activeThumbElement.offsetHeight; } const finalCursorHeight = Math.max(0, currentThumbHeight); this.dom.cursor.style.transform = `translateY(${cursorTargetY.toFixed(2)}px)`; this.dom.cursor.style.height = `${finalCursorHeight}px`; if (finalCursorHeight > 0 && this.dom.cursor.style.opacity !== '1') { this.dom.cursor.style.opacity = '1'; } else if (finalCursorHeight === 0 && this.dom.cursor.style.opacity !== '0') { this.dom.cursor.style.opacity = '0'; } }
+    _updateCursorPositionDOM() {
+        // This entire function is for the desktop thumbnail cursor, so it's guarded by isDesktop.
+        if (!this.dom?.cursor || !this.isInitialized || !this.isDesktop || !this.state.metricsReady) {
+            if (this.dom?.cursor && this.dom.cursor.style.opacity !== '0') {
+                Object.assign(this.dom.cursor.style, { opacity: '0', transform: 'translateY(0px)', height: '0px' });
+            }
+            return;
+        }
+        if (this.state.items.length === 0 || this.state.activeIndex < 0 || this.state.activeIndex >= this.state.items.length) {
+            if (this.dom.cursor.style.opacity !== '0') {
+                Object.assign(this.dom.cursor.style, { opacity: '0', transform: 'translateY(0px)', height: '0px' });
+            }
+            return;
+        }
+        const activeItem = this.state.items[this.state.activeIndex];
+        if (!activeItem || typeof activeItem.thumbY !== 'number') {
+            if (this.dom.cursor.style.opacity !== '0') { this.dom.cursor.style.opacity = '0'; }
+            return;
+        }
+        const effectiveParallaxRatio = this.state.parallaxRatio > 0 ? this.state.parallaxRatio : 0;
+        const cursorTargetY = activeItem.thumbY - (this.state.y.curr * effectiveParallaxRatio);
+        let currentThumbHeight = 0;
+        const activeThumbElement = activeItem.thumb;
+        if (activeThumbElement instanceof HTMLElement) {
+            currentThumbHeight = activeThumbElement.offsetHeight;
+        }
+        const finalCursorHeight = Math.max(0, currentThumbHeight);
+        this.dom.cursor.style.transform = `translateY(${cursorTargetY.toFixed(2)}px)`;
+        this.dom.cursor.style.height = `${finalCursorHeight}px`;
+        if (finalCursorHeight > 0 && this.dom.cursor.style.opacity !== '1') {
+            this.dom.cursor.style.opacity = '1';
+        } else if (finalCursorHeight === 0 && this.dom.cursor.style.opacity !== '0') {
+            this.dom.cursor.style.opacity = '0';
+        }
+    }
     _onWheel(event) { if (!this.isInitialized || !this.state.metricsReady || this.state.maxScroll <= 0) return; event.preventDefault(); this._clearSnapTimeout(); this.state.isInteracting = true; clearTimeout(this.state.interactionTimeout); this.state.interactionTimeout = setTimeout(() => { this.state.isInteracting = false; if (!this.state.isDragging) this._triggerSnap(); }, 150); this._updateTargetScroll(event.deltaY * this.config.WHEEL_MULTIPLIER); this._startAnimationLoop(); }
     _onTouchStart(event) { if (!this.isInitialized || !this.dom || !this.state.metricsReady || this.state.maxScroll <= 0 || !(event.target instanceof Node) || !this.dom.container?.contains(event.target)) return; if (event.touches.length !== 1) { if (this.state.isTouchActive) this._onTouchEnd(event); return; } event.preventDefault(); this._clearSnapTimeout(); Object.assign(this.state, { isDragging: true, isInteracting: true, isTouchActive: true, y: { ...this.state.y, start: event.touches[0].clientY, lastTouchY: event.touches[0].clientY } }); this.dom.container.classList.add(CONFIG.SELECTORS.CLASS_NAMES.isDragging); this._addWindowTouchListeners(); this._startAnimationLoop(); }
     _onTouchMove(event) { if (!this.state.isTouchActive || event.touches.length !== 1) return; event.preventDefault(); const currentY = event.touches[0].clientY; const delta = (this.state.y.lastTouchY - currentY) * this.config.DRAG_MULTIPLIER; this._updateTargetScroll(delta); this.state.y.lastTouchY = currentY; }
@@ -1683,7 +1753,20 @@ class ScrollModeGallery {
     handleResize() { if (this.isInitialized) { this.boundHandlers.debouncedOnResize(); } }
     async _onResizeInternal() { if (!this.isInitialized) return; Logger.debug("%cScrollModeGallery: Resize detected.", "color: blue;"); await this._refreshAndUpdateLayout(this.state.activeIndex, false); }
     _updateTargetScroll(delta) { this.state.y.targ += delta; this.state.y.targ = Math.max(0, Math.min(this.state.y.targ, this.state.maxScroll)); }
-    _onThumbnailClick(event) { if (!this.isInitialized || !(event.currentTarget instanceof HTMLElement) || !this.isDesktop || !this.state.metricsReady) return; try { const index = parseInt(event.currentTarget.dataset.index ?? '-1', 10); if (isNaN(index) || index < 0 || index >= this.state.items.length) { Logger.warn(`⚠️ Invalid index on thumbnail click: ${event.currentTarget.dataset.index}`); return; } if (index !== this.state.activeIndex) { this._clearSnapTimeout(); this._setActiveItem(index); this._snapToIndex(index); this._startAnimationLoop(); } } catch (e) { Logger.error("❌ Error handling thumbnail click:", e); } }
+    _onThumbnailClick(event) {
+        // This interaction is desktop-only as thumbnails are not displayed on mobile.
+        if (!this.isInitialized || !(event.currentTarget instanceof HTMLElement) || !this.isDesktop || !this.state.metricsReady) return;
+        try {
+            const index = parseInt(event.currentTarget.dataset.index ?? '-1', 10);
+            if (isNaN(index) || index < 0 || index >= this.state.items.length) { Logger.warn(`⚠️ Invalid index on thumbnail click: ${event.currentTarget.dataset.index}`); return; }
+            if (index !== this.state.activeIndex) {
+                this._clearSnapTimeout();
+                this._setActiveItem(index);
+                this._snapToIndex(index);
+                this._startAnimationLoop();
+            }
+        } catch (e) { Logger.error("❌ Error handling thumbnail click:", e); }
+    }
     _onMainImageClick(event) {
         if (!this.isInitialized || !(event.currentTarget instanceof HTMLElement) || !this.state.metricsReady) return;
         const clickedElement = event.currentTarget;
@@ -1710,6 +1793,7 @@ class ScrollModeGallery {
                     Logger.warn("⚠️ Fullscreen gallery instance not available or initialized. Cannot open image.");
                 }
             } else {
+                // If a non-active main image is clicked, snap to it.
                 this._clearSnapTimeout();
                 this._setActiveItem(index);
                 this._snapToIndex(index);
@@ -1740,6 +1824,7 @@ class ScrollModeGallery {
             return;
         }
         // Ensure mainHeight and containerHeight are valid before using them for centering
+        // mainHeight here refers to the total height of an item including its margins, as calculated in _calculateMetrics.
         if (this.state.mainHeight <= 0 || this.state.containerHeight <= 0) {
             Logger.warn(`⚠️ Snap failed for index ${index}: mainHeight (${this.state.mainHeight}) or containerHeight (${this.state.containerHeight}) is invalid. Setting target Y to item's mainY or clamping.`);
             // If it's the first item and its Y is 0, target should be 0. Otherwise, clamp to its Y position or maxScroll.
