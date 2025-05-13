@@ -227,21 +227,20 @@
    .fullscreen-slide picture {
     display: flex;
     width: 100%;
-    height: 100%;
+    height: 100%; 
     justify-content: center;
     align-items: center;
    }
    .scroll-gallery__thumb-item img,
-   .scroll-gallery__main-item img,
-   .fullscreen-slide img {
-    width: 100%; height: 100%;
-    object-fit: cover;
+   .scroll-gallery__main-item img {
+    width: 100%; 
+    height: auto; 
+    object-fit: contain; 
    }
    .fullscreen-slide img {
     object-fit: contain;
    }
 
-    /* Utility classes for strategic will-change (Improvement #3) */
     .will-change-opacity-filter { will-change: opacity, filter; }
     .will-change-transform { will-change: transform; }
     .will-change-opacity { will-change: opacity; }
@@ -275,7 +274,7 @@
     margin-block-end: 1.25rem;
     transform-origin: center center;
     opacity: 1; filter: none;
-    transition: none; /* Removed will-change, applied by JS if needed */
+    transition: none; 
    }
 
    .content {
@@ -286,7 +285,6 @@
     z-index: var(--z-index-content);
     transition: opacity var(--transition-duration-fade-bg) var(--transition-easing-fade-bg),
                 filter var(--transition-duration-fade-bg) var(--transition-easing-fade-bg);
-    /* will-change removed, JS will add .will-change-opacity-filter class when needed */
     opacity: 1;
     filter: blur(0px);
    }
@@ -340,7 +338,6 @@
     border: none;
    }
 
-   /* Tooltips are supplementary visual cues; primary info via aria-label */
    .menu header nav ul li a[data-label]::after,
    .menu header nav ul li button[data-label]::after {
     content: attr(data-label);
@@ -505,8 +502,8 @@
     border-inline-end: 2px solid var(--color-primary);
     display: inline-block;
     padding-inline-end: 0.3125rem;
-    min-height: 1.3rem; /* Ensure consistent height */
-    vertical-align: bottom; /* Align with text */
+    min-height: 1.3rem; 
+    vertical-align: bottom; 
     animation: blink-caret 0.75s step-end infinite;
    }
    @keyframes blink-caret {
@@ -567,7 +564,7 @@
    ========================================================================== */
 
    #project-gallery {
-    scroll-margin-block-start: 3.125rem;
+    scroll-margin-block-start: 1.25rem;
    }
    .project-gallery-section {
     display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -583,7 +580,7 @@
     display: flex;
     width: 100%;
     max-width: 112.5rem;
-    height: 85vh;
+    height: 90vh;
     margin: 1.875rem auto 3.125rem;
     overflow: hidden;
     position: relative;
@@ -614,14 +611,12 @@
    .main-image-scroller {
     width: 100%;
     position: relative;
-    /* will-change removed, JS will add .will-change-transform class when needed */
    }
 
    .scroll-gallery__thumb-item {
     display: block;
-    width: calc(100% - 1.25rem);
-    margin: 0.625rem auto;
-    aspect-ratio: 4 / 3;
+    width: calc(100% - 1.25rem); 
+    margin: 0.625rem auto; 
     cursor: pointer;
     border-radius: 0.5rem;
     overflow: hidden;
@@ -654,6 +649,7 @@
     color: var(--slide-error-text-color);
     box-shadow: none; opacity: 0.8; cursor: default;
     transform: scale(1);
+    min-height: 50px; 
    }
    .scroll-gallery__thumb-item--error picture,
    .scroll-gallery__thumb-item--error img {
@@ -667,13 +663,12 @@
    .scroll-gallery__main-item {
     display: block;
     width: 100%;
-    height: 75vh; /* Default height for desktop */
-    margin-bottom: 10vh; /* Default margin for desktop */
+    margin-bottom: 10vh; 
     border-radius: 0.9375rem;
     overflow: hidden;
     position: relative;
     cursor: pointer;
-    box-shadow: 0 0.5rem 1.25rem hsla(0, 0%, 0%, 0.15); /* Default shadow for desktop */
+    box-shadow: 0 0.5rem 1.25rem hsla(0, 0%, 0%, 0.15); 
     background-color: var(--color-secondary);
     outline-offset: -3px;
    }
@@ -688,6 +683,7 @@
     display: flex; align-items: center; justify-content: center;
     color: var(--slide-error-text-color);
     box-shadow: none; cursor: default;
+    min-height: 200px; 
    }
    .scroll-gallery__main-item--error picture,
    .scroll-gallery__main-item--error img {
@@ -700,19 +696,16 @@
 
    .active-cursor {
     position: absolute;
-    top: 0;
-    left: 0.625rem;
-    width: calc(100% - 1.25rem);
-    /* margin-block: 0.625rem; */ /* Removed to fix positioning */
-    border: 3px solid var(--color-primary);
-    border-radius: 0.5rem;
+    left: 0.625rem; /* Corresponds to half of (100% - calc(100% - 1.25rem)) for centering */
+    width: calc(100% - 1.25rem); /* Matches .scroll-gallery__thumb-item width */
+    border: 1px solid var(--color-primary);
+    border-radius: 0.5rem; /* Matches .scroll-gallery__thumb-item border-radius */
     pointer-events: none;
     opacity: 0;
     transition: transform var(--transition-duration-cursor-transform) var(--transition-easing-cursor-transform),
                 opacity 0.3s ease,
                 border-color var(--transition-duration-base) var(--transition-easing-base),
-                height 0.3s ease;
-    /* will-change removed, JS will add .will-change-transform-opacity class when needed */
+                height 0.3s ease; /* Keep height transition for smoothness */
     box-sizing: border-box;
     z-index: 10;
    }
@@ -744,7 +737,6 @@
        z-index: var(--z-index-fullscreen-backdrop);
        opacity: 0; pointer-events: none;
        transition: opacity var(--transition-duration-fade-bg) var(--transition-easing-fade-bg);
-       /* will-change removed, JS will add .will-change-opacity class when needed */
    }
    .fullscreen-container.active {
        opacity: 1; pointer-events: auto;
@@ -781,7 +773,6 @@
        filter: blur(var(--slide-peek-blur));
        transition: opacity var(--transition-duration-slide-peek) var(--transition-easing-slide-peek),
                    filter var(--transition-duration-slide-peek) var(--transition-easing-slide-peek);
-       /* will-change removed, JS will add .will-change-opacity-filter class when needed */
    }
    .fullscreen-slide.is-active-slide {
        opacity: 1;
@@ -792,35 +783,31 @@
    .fullscreen-slide img {
        display: block;
        max-width: 100%; max-height: 100%;
-       object-fit: contain;
+       object-fit: contain; 
        box-shadow: 0 0.625rem 1.5625rem hsla(0, 0%, 0%, 0.3);
        border-radius: 0.25rem;
        position: relative;
        transform-origin: 0 0;
-       /* will-change removed, JS will add .will-change-transform-opacity class when needed */
        pointer-events: none;
    }
 
-   /* Styling for placeholder when image is loading (Item #2) */
    .fullscreen-slide picture.is-loading-placeholder {
        background-color: var(--slide-loading-color);
        min-height: 12.5rem;
        min-width: 12.5rem;
-       width: auto; /* Allow intrinsic sizing if possible, but with min */
+       width: auto; 
        height: auto;
-       max-width: 80%; /* Prevent placeholder from being too large */
+       max-width: 80%; 
        max-height: 80%;
        box-shadow: none;
        border-radius: 0.25rem;
-       display: flex; /* Keep flex for alignment from parent picture */
+       display: flex; 
        align-items: center;
        justify-content: center;
    }
-    /* Hide the actual img tag if its src is not yet set and placeholder is active */
    .fullscreen-slide picture.is-loading-placeholder img {
        display: none;
    }
-   /* Firefox specific loading state - may be redundant with .is-loading-placeholder but kept for wider compatibility */
    .fullscreen-slide img:-moz-loading {
        background-color: var(--slide-loading-color);
        min-height: 12.5rem; min-width: 12.5rem;
@@ -988,31 +975,25 @@
        .project-gallery-section { padding-block-end: 3.125rem; }
 
        .scroll-mode-container {
-           height: 75vh; /* Overall container height for mobile gallery */
+           height: 100vh; 
            border-radius: 1.25rem;
        }
        .thumbnail-column {
-           display: none; /* Thumbnails are hidden on mobile */
+           display: none; 
        }
        .main-image-column {
            flex: 1 0 100%;
            width: 100%;
-           padding: 0.625rem; /* Padding around the main image scroller */
+           padding: 0.625rem; 
            border-right: none;
        }
        .scroll-gallery__main-item {
-           /* Mobile Performance Optimization: Use aspect-ratio for height */
-           /* This makes height dependent on width, avoiding vh jumps on mobile browser UI resizes */
-           height: auto;
-           aspect-ratio: 5/6; /* Approximates a portrait feel similar to original 65vh on common viewports */
-           /* Mobile Performance Optimization: Use fixed unit for margin */
-           margin-bottom: 2rem; /* Consistent spacing, not tied to vh */
+           margin-bottom: 2rem; 
            border-radius: 0.625rem;
-           /* Mobile Performance Optimization: Reduce box-shadow complexity */
            box-shadow: 0 0.125rem 0.375rem hsla(0, 0%, 0%, 0.08);
        }
        .active-cursor {
-           display: none; /* Cursor for thumbnail column is hidden on mobile */
+           display: none; 
        }
        html {
            --slide-width-percent: 85%;
@@ -1023,7 +1004,6 @@
             border-radius: 0.25rem;
             box-shadow: 0 0.5rem 0.9375rem hsla(0, 0%, 0%, 0.25);
        }
-       /* Ensure placeholder respects max-height */
        .fullscreen-slide picture.is-loading-placeholder {
             max-height: calc(100% - 2.5rem);
        }
