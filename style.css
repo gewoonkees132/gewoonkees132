@@ -14,9 +14,9 @@
     --scrollbar-width: 0px; /* JS sets this with 'px' unit */
 
     /* --- Base Transition Timings & Easing --- */
-    --transition-duration-base: 0.3s;
+    --transition-duration-base: 0.8s;
     --transition-easing-base: ease;
-    --transition-duration-filter-item: 0.3s;
+    --transition-duration-filter-item: 0.8s;
 
     /* --- Focus Outline --- */
     --focus-outline-width: 2px;
@@ -27,7 +27,7 @@
 
     /* Fullscreen Slider & Zoom (FLIP Animation) */
     --transition-duration-zoom: 0.6s;
-    --transition-easing-zoom: cubic-bezier(0.65, 0, 0.35, 1);
+    --transition-easing-zoom: cubic-bezier(0.45, 0, 0.35, 1);
     --transition-duration-fade-bg: 0.6s;
     --transition-easing-fade-bg: ease-out;
     --fullscreen-bg-color: hsla(0, 0%, 0%, 0.9);
@@ -390,7 +390,6 @@
     width: 100%; aspect-ratio: 1 / 1;
     max-height: 18.75rem;
     flex-shrink: 0;
-    opacity: 0.95;
     border-radius: 1.25rem;
     background-color: var(--color-secondary);
     overflow: hidden;
@@ -696,16 +695,16 @@
 
    .active-cursor {
     position: absolute;
-    left: 0.625rem; /* Corresponds to half of (100% - calc(100% - 1.25rem)) for centering */
-    width: calc(100% - 1.25rem); /* Matches .scroll-gallery__thumb-item width */
-    border: 1px solid var(--color-primary);
+    left: 0.9375rem; /* Corresponds to half of (100% - calc(100% - 1.25rem)) for centering */
+    width: calc(100% - 1.875rem); /* Matches .scroll-gallery__thumb-item width */
+    border: 2px solid var(--color-primary);
     border-radius: 0.5rem; /* Matches .scroll-gallery__thumb-item border-radius */
     pointer-events: none;
     opacity: 0;
     transition: transform var(--transition-duration-cursor-transform) var(--transition-easing-cursor-transform),
-                opacity 0.3s ease,
+                opacity 0.6s ease,
                 border-color var(--transition-duration-base) var(--transition-easing-base),
-                height 0.3s ease; /* Keep height transition for smoothness */
+                height 0.4s ease; /* Keep height transition for smoothness */
     box-sizing: border-box;
     z-index: 10;
    }

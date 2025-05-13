@@ -3,7 +3,7 @@
  * @description Main JavaScript file for Kees Leemeijer's portfolio website.
  * Handles theme switching, background animation, project filtering,
  * scroll-driven gallery interaction, and fullscreen image viewing.
- * @version 1.7.9 - Debugged thumbnail cursor alignment and tall first image spacing.
+ * @version 1.8.2 - Addressed cursor overshoot due to margin collapse.
  */
 
 "use strict";
@@ -101,7 +101,6 @@ const CONFIG = Object.freeze({
         WHEEL_MULTIPLIER: 0.8, DRAG_MULTIPLIER: 1.5, MAX_METRIC_RETRIES: 3,
         METRIC_RETRY_DELAY_MS: 100,
         DESKTOP_MEDIA_QUERY: '(min-width: 62rem)',
-        // FIXED: Define a threshold for "suspiciously small" offsetHeight
         SUSPICIOUSLY_SMALL_OFFSET_HEIGHT_THRESHOLD: 10, // px
     }),
     GALLERY: Object.freeze({
@@ -343,8 +342,8 @@ const Utils = {
             let fallbackTimer = null;
 
             const onEnd = (event) => {
-                if (event && event.target !== element) return; 
-                if (event && expectedProperties && !expectedProperties.includes(event.propertyName)) return; 
+                if (event && event.target !== element) return;
+                if (event && expectedProperties && !expectedProperties.includes(event.propertyName)) return;
 
                 cleanup();
                 resolve({ timedOut: false });
@@ -481,7 +480,7 @@ class BackgroundAnimation {
         }
     }
 
-    updateColors() { 
+    updateColors() {
         if (!domElements?.root) return false;
         try {
             const computedStyle = getComputedStyle(domElements.root);
@@ -495,12 +494,12 @@ class BackgroundAnimation {
 
             if (this.colors.length === 0) {
                 Logger.warn("⚠️ Background animation colors not found or invalid in CSS variables (--ball-color-*). Using fallbacks.");
-                this.colors = ['hsla(200, 80%, 70%, 0.7)', 'hsla(300, 70%, 60%, 0.7)', 'hsla(50, 80%, 65%, 0.7)']; 
+                this.colors = ['hsla(200, 80%, 70%, 0.7)', 'hsla(300, 70%, 60%, 0.7)', 'hsla(50, 80%, 65%, 0.7)'];
             }
             return true;
         } catch (e) {
             Logger.error("❌ Error reading background color CSS variables:", e);
-            this.colors = ['hsla(200, 80%, 70%, 0.7)', 'hsla(300, 70%, 60%, 0.7)', 'hsla(50, 80%, 65%, 0.7)']; 
+            this.colors = ['hsla(200, 80%, 70%, 0.7)', 'hsla(300, 70%, 60%, 0.7)', 'hsla(50, 80%, 65%, 0.7)'];
             return false;
         }
     }
@@ -510,26 +509,26 @@ class BackgroundAnimation {
             Logger.warn("Cannot refresh visuals: animation not initialized. Attempting full init.");
             this.isInitialized = this._initializeState();
             if (this.isInitialized) {
-                this.start(); 
+                this.start();
             }
             return;
         }
 
-        const colorsSuccessfullyFetched = this.updateColors(); 
+        const colorsSuccessfullyFetched = this.updateColors();
 
         if (colorsSuccessfullyFetched) {
             const wasRunning = !!this.frameId;
-            this.stop(); 
+            this.stop();
             try {
                 if (this.colors && this.colors.length > 0) {
                     this._createBlobs();
                 } else {
-                    this.blobs = []; 
+                    this.blobs = [];
                     Logger.warn("No blobs created as no valid colors after update.");
                 }
             } catch (error) {
                 Logger.error("❌ Error re-creating blobs during visual refresh:", error);
-                this.blobs = []; 
+                this.blobs = [];
             }
             if (wasRunning || (this.blobs.length > 0 && !wasRunning)) {
                 this.start();
@@ -610,7 +609,7 @@ class BackgroundAnimation {
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 color1: this.colors[i % this.colors.length],
-                color2: this.colors[(i + 1 + Math.floor(this.colors.length / 2)) % this.colors.length] 
+                color2: this.colors[(i + 1 + Math.floor(this.colors.length / 2)) % this.colors.length]
             };
             this.blobs.push(blob);
         }
@@ -626,10 +625,10 @@ class BackgroundAnimation {
             this.blobs.forEach(b => {
                 b.x += b.vx;
                 b.y += b.vy;
-                b.vx *= DAMPING; 
+                b.vx *= DAMPING;
                 b.vy *= DAMPING;
 
-                if (b.x - b.radius > w) b.x = -b.radius + (b.x - b.radius - w); 
+                if (b.x - b.radius > w) b.x = -b.radius + (b.x - b.radius - w);
                 else if (b.x + b.radius < 0) b.x = w + b.radius + (b.x + b.radius);
 
                 if (b.y - b.radius > h) b.y = -b.radius + (b.y - b.radius - h);
@@ -645,9 +644,9 @@ class BackgroundAnimation {
         if (!this.ctx || !this.canvasElement || !this.blobs?.length || !this.colors?.length) return;
         try {
             this.ctx.save();
-            this.ctx.globalCompositeOperation = 'lighter'; 
-            this.ctx.filter = `blur(${this.config.BLUR_AMOUNT})`; 
-            this.ctx.globalAlpha = this.config.GLOBAL_ALPHA; 
+            this.ctx.globalCompositeOperation = 'lighter';
+            this.ctx.filter = `blur(${this.config.BLUR_AMOUNT})`;
+            this.ctx.globalAlpha = this.config.GLOBAL_ALPHA;
 
             this.blobs.forEach(b => {
                 if (!b || typeof b.x !== 'number' || typeof b.y !== 'number' || typeof b.radius !== 'number' || !b.color1 || !b.color2) {
@@ -655,16 +654,16 @@ class BackgroundAnimation {
                     return;
                 }
                 const r = Math.max(1, b.radius);
-                const grad = this.ctx.createRadialGradient(b.x, b.y, r * 0.05, b.x, b.y, r); 
-                
+                const grad = this.ctx.createRadialGradient(b.x, b.y, r * 0.05, b.x, b.y, r);
+
                 grad.addColorStop(0, b.color1);
-                let transparentColor2 = 'hsla(0, 0%, 0%, 0)'; 
+                let transparentColor2 = 'hsla(0, 0%, 0%, 0)';
                 try {
                     if (b.color2.match(/hsla?\(.*,\s*([\d\.]+)\)$/) || b.color2.match(/rgba?\(.*,\s*([\d\.]+)\)$/)) {
                          transparentColor2 = b.color2.replace(/,\s*[\d\.]+\)$/, ', 0)');
-                    } else if (b.color2.startsWith('hsl(')) { 
+                    } else if (b.color2.startsWith('hsl(')) {
                         transparentColor2 = b.color2.replace('hsl(', 'hsla(').replace(')', ', 0)');
-                    } else if (b.color2.startsWith('rgb(')) { 
+                    } else if (b.color2.startsWith('rgb(')) {
                         transparentColor2 = b.color2.replace('rgb(', 'rgba(').replace(')', ', 0)');
                     } else {
                         Logger.warn(`Could not make color2 transparent: ${b.color2}. Using default transparent.`);
@@ -680,10 +679,10 @@ class BackgroundAnimation {
                 this.ctx.fillStyle = grad;
                 this.ctx.fill();
             });
-            this.ctx.restore(); 
+            this.ctx.restore();
         } catch (e) {
             Logger.error("❌ Error drawing background blobs:", e);
-            if (this.ctx) this.ctx.restore(); 
+            if (this.ctx) this.ctx.restore();
             this.stop();
         }
     }
@@ -779,7 +778,7 @@ class Gallery {
         const scrollLeftTarget = targetSlide.offsetLeft - (sliderWrapper.offsetWidth - targetSlide.offsetWidth) / 2;
         sliderWrapper.scrollTo({ left: scrollLeftTarget, behavior: 'instant' });
 
-        targetSlideImage.getBoundingClientRect();
+        targetSlideImage.getBoundingClientRect(); // Force reflow to get final position
 
         const lastRect = targetSlideImage.getBoundingClientRect();
         const deltaX = firstRect.left - lastRect.left;
@@ -792,9 +791,9 @@ class Gallery {
         targetSlideImage.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`;
         targetSlideImage.style.opacity = '0';
 
-        await new Promise(resolve => requestAnimationFrame(resolve)); 
+        await new Promise(resolve => requestAnimationFrame(resolve)); // Wait for styles to apply
 
-        if (!this.state.isAnimatingZoom || !this.dom) { Utils.removeWillChange(targetSlideImage, CN.willChangeTransformOpacity); return; }
+        if (!this.state.isAnimatingZoom || !this.dom) { Utils.removeWillChange(targetSlideImage, CN.willChangeTransformOpacity); return; } // Check if aborted
 
         targetSlideImage.classList.add('fullscreen-image-transition');
         targetSlideImage.style.transform = '';
@@ -821,10 +820,11 @@ class Gallery {
         const currentSlideImage = currentSlideElement?.querySelector('img');
         let targetElementContainer = null;
 
+        // Try to find the original source element in the scroll gallery
         if (typeof currentSlideData.originalIndex === 'number') {
             targetElementContainer = document.querySelector(`.${CN.scrollGalleryMainItem}[data-original-index="${currentSlideData.originalIndex}"]`);
         }
-        if (!targetElementContainer) {
+        if (!targetElementContainer) { // Fallback if originalIndex method fails
             targetElementContainer = this.state.lastFocusedElement?.closest(`.${CN.scrollGalleryMainItem}`) || this.state.clickedImageElement?.closest(`.${CN.scrollGalleryMainItem}`);
             Logger.warn("⚠️ Zoom-out using fallback to find targetElementContainer as originalIndex lookup failed or data missing.");
         }
@@ -839,17 +839,19 @@ class Gallery {
         try { firstRect = currentSlideImage.getBoundingClientRect(); }
         catch(e) { Logger.error("❌ Zoom-out Error: Cannot get fullscreen image bounds.", e); this._closeInstantly(); return; }
 
+        // Make target element visible again for FLIP
         Object.assign(targetElementContainer.style, { opacity: '', visibility: '', pointerEvents: '', transition: '' });
         Utils.removeWillChange(targetElementContainer, CN.willChangeOpacity);
         targetElementContainer.classList.remove(CN.sourceElementZooming);
 
+        // Start fading out fullscreen and main content effects
         Utils.removeWillChange(mainContent, CN.willChangeOpacityFilter);
         container.classList.remove(CN.active); mainContainer.classList.remove(CN.fullscreenEffectActive); html.classList.remove(CN.fullscreenActive); container.classList.add(CN.isZooming);
         
-        await new Promise(resolve => requestAnimationFrame(resolve));
-        if (!this.state.isAnimatingZoom || !this.dom) return;
+        await new Promise(resolve => requestAnimationFrame(resolve)); // Wait for UI changes to apply
+        if (!this.state.isAnimatingZoom || !this.dom) return; // Check if aborted
 
-        const lastRect = targetImage.getBoundingClientRect();
+        const lastRect = targetImage.getBoundingClientRect(); // Get target's final position
         const deltaX = lastRect.left - firstRect.left;
         const deltaY = lastRect.top - firstRect.top;
         const scaleX = firstRect.width > 0 ? lastRect.width / firstRect.width : 1;
@@ -874,10 +876,11 @@ class Gallery {
 
             const sourceContainer = this.state.clickedImageElement?.closest(`.${CONFIG.SELECTORS.CLASS_NAMES.scrollGalleryMainItem}`);
             if (sourceContainer) {
-                if (!this.prefersReducedMotion) {
+                if (!this.prefersReducedMotion) { // No need to revert styles if they weren't changed for reduced motion
                     Object.assign(sourceContainer.style, { opacity: '', visibility: '', pointerEvents: '', transition: '' });
                     Utils.removeWillChange(sourceContainer, CONFIG.SELECTORS.CLASS_NAMES.willChangeOpacity);
                 }
+                // sourceContainer.classList.remove(CONFIG.SELECTORS.CLASS_NAMES.sourceElementZooming); // Keep this until close
             }
             this.state.isAnimatingZoom = false;
             this.state.isSliderOpen = true;
@@ -885,19 +888,20 @@ class Gallery {
             this._focusCloseButton();
         } catch(error) {
             Logger.error("❌ Error in _onZoomInComplete:", error);
-            this._closeInstantly();
+            this._closeInstantly(); // Fallback to ensure clean state
         }
     }
     _onZoomOutComplete(transitionedImage) {
-        if (!this.state.isAnimatingZoom && !this.prefersReducedMotion) return; 
+        if (!this.state.isAnimatingZoom && !this.prefersReducedMotion) return; // Ensure still animating or if it was instant close
         try {
             this._resetZoomStyles(transitionedImage);
             this._cleanupUIOnClose();
             this.state.isAnimatingZoom = false;
             this._restoreFocus();
-            this.state.clickedImageElement = null;
+            this.state.clickedImageElement = null; // Clear after use
         } catch(error) {
             Logger.error("❌ Error in _onZoomOutComplete:", error);
+            // Ensure cleanup even if there's an error during the completion logic
             this._cleanupUIOnClose();
             this.state.isAnimatingZoom = false;
             this._restoreFocus();
@@ -914,29 +918,36 @@ class Gallery {
         if (mainContent) { mainContent.setAttribute('aria-hidden', 'false'); Utils.removeWillChange(mainContent, CN.willChangeOpacityFilter); }
         html?.classList.remove(CN.fullscreenActive); mainContainer?.classList.remove(CN.fullscreenEffectActive);
 
+        // Clean up the source element that was hidden/styled for FLIP
         try {
             const sourceContainerSelector = `.${CN.scrollGalleryMainItem}`;
             let sourceElement = null;
-            const currentSlideData = this.visibleImageData?.[this.state.currentIndex];
+            const currentSlideData = this.visibleImageData?.[this.state.currentIndex]; // Use current index at time of closing
 
             if (currentSlideData && typeof currentSlideData.originalIndex === 'number') {
                  sourceElement = document.querySelector(`${sourceContainerSelector}[data-original-index="${currentSlideData.originalIndex}"]`);
             }
-            if (!sourceElement) sourceElement = this.state.lastFocusedElement?.closest(sourceContainerSelector);
-            if (!sourceElement && this.state.clickedImageElement) sourceElement = this.state.clickedImageElement?.closest(sourceContainerSelector);
+            // Fallback to clicked element's parent if current slide data is somehow lost or originalIndex isn't there
+            if (!sourceElement && this.state.clickedImageElement) {
+                sourceElement = this.state.clickedImageElement.closest(sourceContainerSelector);
+            }
+            // Final fallback to last focused element's parent if applicable
+            if (!sourceElement && this.state.lastFocusedElement) {
+                sourceElement = this.state.lastFocusedElement.closest(sourceContainerSelector);
+            }
 
             if (sourceElement) {
                 sourceElement.classList.remove(CN.sourceElementZooming);
-                Object.assign(sourceElement.style, { opacity: '', visibility: '', pointerEvents: '', transition: '' });
+                Object.assign(sourceElement.style, { opacity: '', visibility: '', pointerEvents: '', transition: '' }); // Reset styles
                 Utils.removeWillChange(sourceElement, CN.willChangeOpacity);
             }
         } catch (e) { Logger.warn("⚠️ Minor error removing sourceElementZooming class or styles during cleanup:", e); }
 
-        if (sliderWrapper) sliderWrapper.replaceChildren();
+        if (sliderWrapper) sliderWrapper.replaceChildren(); // Clear slider content
         if (statusLabel) statusLabel.textContent = '';
         this.visibleImageData = [];
         this.state.focusableElementsCache = [];
-        Object.assign(this.state, { totalVisibleImages: 0, currentIndex: 0, scrollTimeoutId: null });
+        Object.assign(this.state, { totalVisibleImages: 0, currentIndex: 0, scrollTimeoutId: null }); // Reset relevant state
         clearTimeout(this.state.scrollTimeoutId);
     }
     _closeInstantly() { if (!this.isInitialized) return; Logger.warn("⚠️ Closing gallery instantly.");  const animatingImage = this.dom?.sliderWrapper?.querySelector('.fullscreen-image-transition'); if (animatingImage instanceof HTMLImageElement) this._resetZoomStyles(animatingImage); this.state.isAnimatingZoom = false; this._cleanupUIOnClose(); this.state.isSliderOpen = false; this._restoreFocus(); this.state.clickedImageElement = null; }
@@ -946,7 +957,7 @@ class Gallery {
     _handleSlideClick(event) { if (!this.isInitialized || !this.dom || this.state.isAnimatingZoom || !this.state.isSliderOpen) return; const clickedSlide = event.target?.closest(`.${CONFIG.SELECTORS.CLASS_NAMES.fullscreenSlide}`); if (!clickedSlide || clickedSlide.classList.contains(CONFIG.SELECTORS.CLASS_NAMES.isActiveSlide)) return; try { const clickedIndex = parseInt(clickedSlide.dataset.slideIndex ?? '-1', 10); if (!isNaN(clickedIndex) && clickedIndex >= 0 && clickedIndex < this.state.totalVisibleImages) { const targetSlide = this.dom.sliderWrapper.children[clickedIndex]; if (targetSlide instanceof HTMLElement) { const scrollBehavior = this.prefersReducedMotion ? 'instant' : 'smooth'; const scrollLeftTarget = targetSlide.offsetLeft - (this.dom.sliderWrapper.offsetWidth - targetSlide.offsetWidth) / 2; this.dom.sliderWrapper.scrollTo({ left: scrollLeftTarget, behavior: scrollBehavior }); if (scrollBehavior === 'instant') this._updateCurrentIndex(clickedIndex); } else Logger.error(`_handleSlideClick: Target slide at index ${clickedIndex} not found.`); } else if (isNaN(clickedIndex)) { Logger.warn("⚠️ Clicked slide missing valid data-slide-index attribute."); } } catch (e) { Logger.error("❌ Error handling slide click navigation:", e); } }
     _updateAccessibilityState() { if (!this.isInitialized || !this.dom) return; const { sliderWrapper, statusLabel } = this.dom; const { currentIndex, totalVisibleImages } = this.state; const imageData = this.visibleImageData; const { isActiveSlide } = CONFIG.SELECTORS.CLASS_NAMES; if (!sliderWrapper || !statusLabel) { Logger.warn("⚠️ Cannot update accessibility state: slider wrapper or status label missing."); return; } if (totalVisibleImages === 0 || !imageData || imageData.length === 0) { statusLabel.textContent = "No images to display."; Array.from(sliderWrapper.children).forEach(slide => slide.classList.remove(isActiveSlide)); return; } const safeCurrentIndex = Math.max(0, Math.min(currentIndex, imageData.length - 1)); const currentSlideData = imageData[safeCurrentIndex]; statusLabel.textContent = currentSlideData?.title ? `${currentSlideData.title}, slide ${safeCurrentIndex + 1} of ${totalVisibleImages}` : `Slide ${safeCurrentIndex + 1} of ${totalVisibleImages}`; Array.from(sliderWrapper.children).forEach((slide, index) => { if (!(slide instanceof HTMLElement)) return; const isActive = index === safeCurrentIndex; slide.classList.toggle(isActiveSlide, isActive);
             if (!this.prefersReducedMotion) {
-                if (isActive || Math.abs(index - safeCurrentIndex) === 1) { 
+                if (isActive || Math.abs(index - safeCurrentIndex) === 1) { // Active and immediate neighbors
                     Utils.addWillChange(slide, CONFIG.SELECTORS.CLASS_NAMES.willChangeOpacityFilter);
                 } else {
                     Utils.removeWillChange(slide, CONFIG.SELECTORS.CLASS_NAMES.willChangeOpacityFilter);
@@ -963,7 +974,7 @@ class Gallery {
             case 'Escape': this._requestClose(); handled = true; break;
             case 'ArrowLeft': case 'Left': this.navigate(-1); handled = true; break;
             case 'ArrowRight': case 'Right': this.navigate(1); handled = true; break;
-            case 'Tab': this._trapFocus(event); break;
+            case 'Tab': this._trapFocus(event); break; // trapFocus will call preventDefault if needed
             case 'Home': if (this.state.currentIndex > 0) { this.navigate(-this.state.currentIndex); handled = true; } break;
             case 'End': if (this.state.currentIndex < this.state.totalVisibleImages - 1) { this.navigate(this.state.totalVisibleImages - 1 - this.state.currentIndex); handled = true; } break;
         }
@@ -993,13 +1004,15 @@ class Gallery {
         const lastElement = focusableElements[focusableElements.length - 1];
         const currentActive = document.activeElement;
 
-        if (event.shiftKey) {
+        if (event.shiftKey) { // Tabbing backwards
             if (currentActive === firstElement || !this.dom.container?.contains(currentActive)) {
-                event.preventDefault(); lastElement.focus();
+                event.preventDefault();
+                lastElement.focus();
             }
-        } else {
+        } else { // Tabbing forwards
             if (currentActive === lastElement || !this.dom.container?.contains(currentActive)) {
-                event.preventDefault(); firstElement.focus();
+                event.preventDefault();
+                firstElement.focus();
             }
         }
     }
@@ -1008,31 +1021,33 @@ class Gallery {
         if (!this.isInitialized || !this.dom) { Logger.error("❌ Cannot populate slider: Not initialized or DOM missing."); return; }
         const wrapper = this.dom.sliderWrapper;
         if (!wrapper) { Logger.error("❌ Cannot populate slider: Wrapper element missing."); return; }
-        wrapper.replaceChildren();
+        wrapper.replaceChildren(); // Clear previous slides
         const fragment = document.createDocumentFragment();
         const CN = CONFIG.SELECTORS.CLASS_NAMES;
 
         if (this.visibleImageData.length === 0) {
             const emptyMsg = document.createElement('div');
             emptyMsg.textContent = "No images to display.";
-            emptyMsg.className = CN.galleryEmptyMessage;
+            emptyMsg.className = CN.galleryEmptyMessage; // Use consistent class
             emptyMsg.setAttribute('role', 'status');
             fragment.appendChild(emptyMsg);
         } else {
             this.visibleImageData.forEach((imageData, index) => {
                 const slide = document.createElement('div');
                 slide.className = CN.fullscreenSlide;
-                slide.setAttribute('role', 'group');
+                slide.setAttribute('role', 'group'); // Role for slide container
                 slide.setAttribute('aria-roledescription', 'slide');
                 slide.dataset.slideIndex = String(index);
-                slide.setAttribute('aria-label', `Loading slide ${index + 1}`);
+                slide.setAttribute('aria-label', `Loading slide ${index + 1}`); // Initial ARIA label
 
                 const picture = document.createElement('picture');
-                picture.classList.add(CN.slideLoadingPlaceholder);
+                picture.classList.add(CN.slideLoadingPlaceholder); // For loading state styling
 
                 const sourceWebp = document.createElement('source');
                 sourceWebp.type = 'image/webp';
+                // Use pre-computed srcset if available, otherwise generate
                 sourceWebp.srcset = imageData.computedSrcset || Utils.generateSrcset(imageData.src, this.galleryConfig.IMAGE_WIDTHS_FOR_SRCSET);
+                // Responsive sizes attribute
                 sourceWebp.sizes = `(max-width: 61.9375rem) 85vw, 80vw`;
 
                 const img = document.createElement('img');
@@ -1045,14 +1060,15 @@ class Gallery {
                     Logger.error(`❌ Failed to load fullscreen image: ${imageData.src}`);
                     slide.classList.add(CN.slideLoadError);
                     picture.classList.remove(CN.slideLoadingPlaceholder);
-                    slide.replaceChildren(Utils.createErrorNode(imgAltText, true));
-                    slide.setAttribute('aria-label', `Error loading slide ${index + 1}: ${imgAltText}`);
+                    slide.replaceChildren(Utils.createErrorNode(imgAltText, true)); // Add error content
+                    slide.setAttribute('aria-label', `Error loading slide ${index + 1}: ${imgAltText}`); // Update ARIA label for error
                 };
                 img.onload = () => {
                     slide.classList.add(CN.slideLoaded);
                     picture.classList.remove(CN.slideLoadingPlaceholder);
+                    // ARIA label will be updated by _updateAccessibilityState once the slide is active
                 };
-                img.src = imageData.src;
+                img.src = imageData.src; // Fallback src
 
                 picture.appendChild(sourceWebp);
                 picture.appendChild(img);
@@ -1061,7 +1077,7 @@ class Gallery {
             });
         }
         wrapper.appendChild(fragment);
-        this._updateAccessibilityState();
+        this._updateAccessibilityState(); // Initial accessibility update
     }
     handleResize() { if (!this.isInitialized || !this.state.isSliderOpen || !this.dom) return; if (this.state.isAnimatingZoom) { Logger.warn("⚠️ Resize detected during zoom animation. Force closing fullscreen gallery."); this._closeInstantly(); return; } const wrapper = this.dom.sliderWrapper; const currentIndex = this.state.currentIndex; if (wrapper && currentIndex >= 0 && currentIndex < wrapper.children.length) { const currentSlide = wrapper.children[currentIndex]; if (currentSlide instanceof HTMLElement) { try { const scrollLeftTarget = currentSlide.offsetLeft - (wrapper.offsetWidth - currentSlide.offsetWidth) / 2; wrapper.scrollTo({ left: scrollLeftTarget, behavior: 'instant' }); this._updateAccessibilityState(); this._cacheFocusableElements(); } catch (error) { Logger.error("❌ Error recentering slider on resize:", error); this._closeInstantly(); } } else { Logger.warn("⚠️ Could not find current slide element during resize recentering."); } } else { Logger.warn("⚠️ Could not recenter slider on resize: Invalid state or elements."); } }
     destroy() { if (!this.isInitialized || !this.dom) { return; } if (this.state.isSliderOpen || this.state.isAnimatingZoom) { this._closeInstantly(); } try { this.dom.closeButton?.removeEventListener('click', this.state.boundHandlers.closeClick); this.dom.container?.removeEventListener('keydown', this.state.boundHandlers.keydown); if (this.state.boundHandlers.scroll) { this.dom.sliderWrapper?.removeEventListener('scroll', this.state.boundHandlers.scroll); } if (this.state.boundHandlers.slideClick) { this.dom.sliderWrapper?.removeEventListener('click', this.state.boundHandlers.slideClick); } } catch (e) { Logger.error("Error removing gallery event listeners during destroy:", e); } this.state.boundHandlers.scroll?.cancel?.(); clearTimeout(this.state.scrollTimeoutId);  this.visibleImageData = []; this.state.focusableElementsCache = []; Object.assign(this.state, { currentIndex: 0, totalVisibleImages: 0, isAnimatingZoom: false, isSliderOpen: false, lastFocusedElement: null, clickedImageElement: null, scrollTimeoutId: null }); this.dom = null; this.isInitialized = false; }
@@ -1076,7 +1092,7 @@ class ScrollModeGallery {
         y: { curr: 0, targ: 0, start: 0, lastTouchY: 0 },
         activeIndex: 0, items: [], filteredItems: [],
         fullscreenImageDataCache: [],
-        maxScroll: 0, parallaxRatio: 0, 
+        maxScroll: 0, parallaxRatio: 0,
         containerHeight: 0, thumbContainerHeight: 0,
         isDragging: false, snapTimeout: null, rafId: null, activeFilter: CONFIG.DEFAULTS.FILTER,
         isInteracting: false, interactionTimeout: null, isTouchActive: false,
@@ -1159,7 +1175,9 @@ class ScrollModeGallery {
             this.state.interactionTimeout = null;
             this.dom?.container?.classList.remove(CONFIG.SELECTORS.CLASS_NAMES.isDragging);
             this._removeWindowTouchListeners();
-            this._applyTransformsDOM(0);
+            
+            this._applyTransformsDOM(0); 
+            
             if (this.dom?.cursor) this.dom.cursor.style.opacity = '0';
             this.state.filteredItems = this.projectsData.filter(p => filterCategory === CONFIG.DEFAULTS.FILTER || p.category === filterCategory );
             this._renderItems(); 
@@ -1191,7 +1209,7 @@ class ScrollModeGallery {
                 mainFragment.appendChild(mainDiv);
                 this.state.items.push({ 
                     thumb: thumbDiv, main: mainDiv, data: project, index: index, 
-                    mainY: 0, thumbY: 0,
+                    mainY: 0, thumbY: 0, thumbBorderY: 0, // Add thumbBorderY
                     mainActualHeight: 0, mainFullHeight: 0, mainMarginTop: 0, mainMarginBottom: 0,
                     thumbActualHeight: 0, thumbFullHeight: 0, thumbMarginTop: 0, thumbMarginBottom: 0,
                 });
@@ -1269,7 +1287,8 @@ class ScrollModeGallery {
             try {
                 dimension = element[dimensionProp];
                 if (dimension > 0) return { value: dimension, success: true };
-                Logger.warn(`⚠️ ${elementName}'s ${dimensionProp} is ${dimension} on attempt ${i + 1}. Retrying... Element:`, element);
+                const img = element.querySelector('img');
+                Logger.warn(`⚠️ ${elementName}'s ${dimensionProp} is ${dimension} on attempt ${i + 1}. Image complete: ${img?.complete}. Retrying... Element:`, element);
             } catch (e) {
                 Logger.error(`❌ Error accessing ${dimensionProp} for ${elementName}:`, element, e);
                 if (i === MAX_RETRIES) return { value: 0, success: false, error: e.message };
@@ -1290,18 +1309,30 @@ class ScrollModeGallery {
         }
         
         const img = element.querySelector('img');
-        if (img && !img.complete && !img.dataset.loadedForMetrics) { 
-            Logger.debug(`Image for ${elementName} not complete when _fetchValidatedItemDimensions called directly. Relying on retries.`);
+        if (img && !img.complete) { 
+            Logger.debug(`Image for ${elementName} not complete when _fetchValidatedItemDimensions called. Relying on image load promises or retries.`);
         }
 
-        const heightResult = await this._fetchDimensionWithRetry(() => element, 'offsetHeight', elementName);
+        let heightResult = await this._fetchDimensionWithRetry(itemElementFn, 'offsetHeight', elementName);
+        
+        if ((!heightResult.success || heightResult.value <= this.config.SUSPICIOUSLY_SMALL_OFFSET_HEIGHT_THRESHOLD) &&
+            img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0 && element.clientWidth > 0) {
+            
+            const aspectRatioHeight = (img.naturalHeight / img.naturalWidth) * element.clientWidth;
+            if (aspectRatioHeight > this.config.SUSPICIOUSLY_SMALL_OFFSET_HEIGHT_THRESHOLD) {
+                Logger.debug(`${elementName}: Using aspect ratio height (${aspectRatioHeight.toFixed(2)}px) as offsetHeight was ${heightResult.value}px (Success: ${heightResult.success}).`);
+                heightResult = { value: aspectRatioHeight, success: true };
+            } else {
+                 Logger.warn(`${elementName}: Aspect ratio height (${aspectRatioHeight.toFixed(2)}px) also suspicious or clientWidth is 0. Sticking with offsetHeight ${heightResult.value}px.`);
+            }
+        }
         
         if (!heightResult.success ) { 
-            Logger.warn(`⚠️ ${elementName} offsetHeight is problematic after retries. Success: ${heightResult.success}, Value: ${heightResult.value}, Error: ${heightResult.error}`);
+            Logger.warn(`⚠️ ${elementName} offsetHeight is problematic after retries and aspect ratio check. Success: ${heightResult.success}, Value: ${heightResult.value}, Error: ${heightResult.error}`);
             if (img && img.complete && img.naturalHeight > 0 && heightResult.value === 0) {
                 Logger.error(`Layout issue: ${elementName} offsetHeight is 0, but its image ${img.src} is loaded with naturalHeight ${img.naturalHeight}. ComputedStyle:`, getComputedStyle(element));
             }
-            return { offsetHeight: heightResult.value, fullHeight: 0, marginTop: 0, marginBottom: 0, success: false, error: heightResult.error || "offsetHeight is 0 or invalid" };
+            return { offsetHeight: heightResult.value, fullHeight: heightResult.value, marginTop: 0, marginBottom: 0, success: false, error: heightResult.error || "offsetHeight is 0 or invalid after all checks" };
         }
         
         const style = getComputedStyle(element);
@@ -1331,36 +1362,79 @@ class ScrollModeGallery {
     }
 
     _updateItemPositionsAndCalculateScrollParameters() {
-        let currentThumbY = 0;
         let currentMainY = 0;
+        // For revised thumb position calculation considering margin collapse
+        let currentThumbBorderY = 0; // Y of the border-top of the current thumb item
 
-        this.state.items.forEach(item => {
-            item.mainY = currentMainY; 
-            currentMainY += item.mainFullHeight; 
+        if (AppConfig.LOG_LEVEL === 'debug') {
+            console.groupCollapsed("ScrollModeGallery: _updateItemPositionsAndCalculateScrollParameters (Revised for Margin Collapse)");
+        }
 
-            if (this.isDesktop && item.thumbFullHeight > 0) {
-                item.thumbY = currentThumbY;
-                currentThumbY += item.thumbFullHeight;
-            } else {
-                item.thumbY = 0; 
+        this.state.items.forEach((item, index) => {
+            item.mainY = currentMainY;
+            currentMainY += item.mainFullHeight;
+
+            if (this.isDesktop && item.thumbActualHeight > 0) { // Use thumbActualHeight as thumbFullHeight might be 0 if margins are 0
+                if (index === 0) {
+                    // Item 0's border is its margin top from scroller origin (0)
+                    item.thumbBorderY = item.thumbMarginTop;
+                } else {
+                    const prevItem = this.state.items[index - 1];
+                    // Margin between border of prevItem and border of current item
+                    const marginBetween = Math.max(prevItem.thumbMarginBottom, item.thumbMarginTop);
+                    item.thumbBorderY = prevItem.thumbBorderY + prevItem.thumbActualHeight + marginBetween;
+                }
+                // For logging or if needed elsewhere, true thumbY (margin box start)
+                item.thumbY = item.thumbBorderY - item.thumbMarginTop;
+
+                if (AppConfig.LOG_LEVEL === 'debug') {
+                    Logger.debug(`Item ${index}: Set item.thumbBorderY = ${item.thumbBorderY.toFixed(2)}. item.thumbY (margin-box top) = ${item.thumbY.toFixed(2)}`);
+                    Logger.debug(`  AH:${item.thumbActualHeight.toFixed(2)}, MT:${item.thumbMarginTop.toFixed(2)}, MB:${item.thumbMarginBottom.toFixed(2)}`);
+                }
+
+            } else { // Mobile or no thumb / zero height thumb
+                item.thumbBorderY = 0;
+                item.thumbY = 0;
+            }
+            if (AppConfig.LOG_LEVEL === 'debug') {
+                 Logger.debug(`  Item ${index}: mainY = ${item.mainY.toFixed(2)}, mainFullHeight = ${item.mainFullHeight.toFixed(2)}`);
             }
         });
 
-        const mainContentHeight = currentMainY; 
+        // Calculate total thumb content height for parallax based on border positions
+        let thumbContentHeight = 0;
+        if (this.isDesktop && this.state.items.length > 0) {
+            const lastThumbItem = this.state.items[this.state.items.length - 1];
+            if (lastThumbItem.thumbActualHeight > 0) { // Ensure last item has height
+                 // Height from scroller top to bottom of last item's border box + its margin bottom
+                thumbContentHeight = lastThumbItem.thumbBorderY + lastThumbItem.thumbActualHeight + lastThumbItem.thumbMarginBottom;
+            }
+        }
+        
+        const mainContentHeight = currentMainY;
         this.state.maxScroll = Math.max(0, mainContentHeight - this.state.containerHeight);
+        if (AppConfig.LOG_LEVEL === 'debug') {
+            Logger.debug(`Calculated: mainContentHeight = ${mainContentHeight.toFixed(2)}, containerHeight = ${this.state.containerHeight.toFixed(2)}, maxScroll = ${this.state.maxScroll.toFixed(2)}`);
+        }
+
 
         this.state.parallaxRatio = 0;
-        if (this.isDesktop && this.state.maxScroll > 0 && this.state.thumbContainerHeight > 0) {
-            const thumbContentHeight = currentThumbY; 
+        if (this.isDesktop && this.state.thumbContainerHeight > 0 && thumbContentHeight > 0) {
             const totalThumbScrollableHeight = Math.max(0, thumbContentHeight - this.state.thumbContainerHeight);
-            if (totalThumbScrollableHeight > 0) { 
+            if (totalThumbScrollableHeight > 0 && this.state.maxScroll > 0) {
                 this.state.parallaxRatio = totalThumbScrollableHeight / this.state.maxScroll;
+            }
+            if (AppConfig.LOG_LEVEL === 'debug') {
+                Logger.debug(`(Revised) thumbContentHeight = ${thumbContentHeight.toFixed(2)}, thumbContainerHeight = ${this.state.thumbContainerHeight.toFixed(2)}, totalThumbScrollableHeight = ${totalThumbScrollableHeight.toFixed(2)}, parallaxRatio = ${this.state.parallaxRatio.toFixed(4)}`);
             }
         }
 
         if (isNaN(this.state.parallaxRatio) || !isFinite(this.state.parallaxRatio)) {
             Logger.warn(`⚠️ Invalid parallax ratio calculated (${this.state.parallaxRatio}), defaulting to 0.`);
             this.state.parallaxRatio = 0;
+        }
+        if (AppConfig.LOG_LEVEL === 'debug') {
+            console.groupEnd();
         }
     }
 
@@ -1369,13 +1443,23 @@ class ScrollModeGallery {
         this.state.metricsReady = false;
         if (!this.dom) { this._resetMetrics(); return false; }
     
+        if (AppConfig.LOG_LEVEL === 'debug') {
+             console.groupCollapsed(`GALLERY METRICS CALCULATION (Filter: ${this.state.activeFilter})`);
+        }
+
         if (!this._fetchContainerDimensions()) {
-            this._resetMetrics(); return false;
+            this._resetMetrics(); 
+            if (AppConfig.LOG_LEVEL === 'debug') console.groupEnd();
+            return false;
         }
     
         if (this.state.items.length === 0) {
             this._resetMetrics(); 
             this.state.metricsReady = true;
+            if (AppConfig.LOG_LEVEL === 'debug') {
+                 Logger.debug("No items to calculate metrics for.");
+                 console.groupEnd();
+            }
             return true;
         }
     
@@ -1384,7 +1468,7 @@ class ScrollModeGallery {
             const mainImg = item.main?.querySelector('img');
             if (mainImg && !mainImg.complete) {
                 imageLoadPromises.push(new Promise(resolve => {
-                    mainImg.onload = () => { mainImg.dataset.loadedForMetrics = "true"; resolve({ itemIndex: item.index, type: 'main', success: true, src: mainImg.src }); };
+                    mainImg.onload = () => { resolve({ itemIndex: item.index, type: 'main', success: true, src: mainImg.src }); };
                     mainImg.onerror = () => { Logger.warn(`Main image failed to load for metrics: ${mainImg.src} in item ${item.index}`); resolve({ itemIndex: item.index, type: 'main', success: false, src: mainImg.src }); };
                 }));
             }
@@ -1393,7 +1477,7 @@ class ScrollModeGallery {
                 const thumbImg = item.thumb.querySelector('img');
                 if (thumbImg && !thumbImg.complete) {
                     imageLoadPromises.push(new Promise(resolve => {
-                        thumbImg.onload = () => { thumbImg.dataset.loadedForMetrics = "true"; resolve({ itemIndex: item.index, type: 'thumb', success: true, src: thumbImg.src }); };
+                        thumbImg.onload = () => { resolve({ itemIndex: item.index, type: 'thumb', success: true, src: thumbImg.src }); };
                         thumbImg.onerror = () => { Logger.warn(`Thumb image failed to load for metrics: ${thumbImg.src} in item ${item.index}`); resolve({ itemIndex: item.index, type: 'thumb', success: false, src: thumbImg.src }); };
                     }));
                 }
@@ -1409,74 +1493,46 @@ class ScrollModeGallery {
             Logger.debug("_calculateMetrics: All pending images processed (loaded or errored).");
         }
     
-        const SUSPICIOUS_THRESHOLD = this.config.SUSPICIOUSLY_SMALL_OFFSET_HEIGHT_THRESHOLD;
+        try {
+            for (const item of this.state.items) {
+                const mainItemElementFn = () => item.main;
+                const mainDims = await this._fetchValidatedItemDimensions(mainItemElementFn, `Main item ${item.index}`);
 
-        for (const item of this.state.items) {
-            // Process Main Item Dimensions
-            const mainItemElementFn = () => item.main;
-            const mainDims = await this._fetchValidatedItemDimensions(mainItemElementFn, `Main item ${item.index}`);
-            const mainImg = item.main?.querySelector('img');
-            let assignedMainActualHeight = 0;
+                item.mainActualHeight = Math.max(0, mainDims.offsetHeight);
+                if (isNaN(item.mainActualHeight)) { Logger.error(`Main item ${item.index} mainActualHeight became NaN. Defaulting to 0.`); item.mainActualHeight = 0; }
+                item.mainMarginTop = mainDims.marginTop;
+                item.mainMarginBottom = mainDims.marginBottom;
+                item.mainFullHeight = item.mainActualHeight + item.mainMarginTop + item.mainMarginBottom;
 
-            const canUseMainAspectRatio = mainImg && mainImg.complete && mainImg.naturalWidth > 0 && mainImg.naturalHeight > 0 && item.main && item.main.clientWidth > 0;
-            const preferMainAspectRatio = (!mainDims.success || mainDims.offsetHeight <= 0) || (mainDims.offsetHeight > 0 && mainDims.offsetHeight < SUSPICIOUS_THRESHOLD && canUseMainAspectRatio);
-
-            if (preferMainAspectRatio && canUseMainAspectRatio) {
-                assignedMainActualHeight = (mainImg.naturalHeight / mainImg.naturalWidth) * item.main.clientWidth;
-                if (mainDims.offsetHeight > 0 && mainDims.offsetHeight < SUSPICIOUS_THRESHOLD) {
-                    Logger.warn(`Main item ${item.index}: Overriding small offsetHeight (${mainDims.offsetHeight}px) with aspect ratio height (${assignedMainActualHeight.toFixed(2)}px).`);
+                if (this.isDesktop && item.thumb) {
+                    const thumbItemElementFn = () => item.thumb;
+                    const thumbDims = await this._fetchValidatedItemDimensions(thumbItemElementFn, `Thumb item ${item.index}`);
+                    
+                    item.thumbActualHeight = Math.max(0, thumbDims.offsetHeight);
+                    if (isNaN(item.thumbActualHeight)) { Logger.error(`Thumb item ${item.index} thumbActualHeight became NaN. Defaulting to 0.`); item.thumbActualHeight = 0; }
+                    item.thumbMarginTop = thumbDims.marginTop;
+                    item.thumbMarginBottom = thumbDims.marginBottom;
+                    item.thumbFullHeight = item.thumbActualHeight + item.thumbMarginTop + item.thumbMarginBottom; // This is used for initial sum, but not directly for positioning in new logic
                 } else {
-                    Logger.debug(`Main item ${item.index}: Using aspect ratio height (${assignedMainActualHeight.toFixed(2)}px) due to offsetHeight ${mainDims.offsetHeight}px or fetch failure (Success: ${mainDims.success}).`);
+                    item.thumbActualHeight = 0; item.thumbFullHeight = 0; item.thumbMarginTop = 0; item.thumbMarginBottom = 0;
                 }
-            } else {
-                assignedMainActualHeight = mainDims.offsetHeight > 0 ? mainDims.offsetHeight : 0;
-                if (preferMainAspectRatio && !canUseMainAspectRatio) { // Log if aspect ratio was preferred but couldn't be used
-                     Logger.warn(`Main item ${item.index}: Preferred aspect ratio but couldn't use it. Final assigned height: ${assignedMainActualHeight}px. Img complete: ${mainImg?.complete}, naturalW/H: ${mainImg?.naturalWidth}/${mainImg?.naturalHeight}, clientWidth: ${item.main?.clientWidth}`);
+                if (AppConfig.LOG_LEVEL === 'debug') {
+                    Logger.debug(`Item ${item.index} Metrics:
+  Main -> ActualH: ${item.mainActualHeight.toFixed(2)}, MarginT: ${item.mainMarginTop.toFixed(2)}, MarginB: ${item.mainMarginBottom.toFixed(2)}, FullH: ${item.mainFullHeight.toFixed(2)}
+  Thumb -> ActualH: ${item.thumbActualHeight.toFixed(2)}, MarginT: ${item.thumbMarginTop.toFixed(2)}, MarginB: ${item.thumbMarginBottom.toFixed(2)}, FullH: ${item.thumbFullHeight.toFixed(2)} (Note: FullH includes non-collapsed margins)`);
                 }
             }
-            item.mainActualHeight = Math.max(0, assignedMainActualHeight);
-            if (isNaN(item.mainActualHeight)) { Logger.error(`Main item ${item.index} mainActualHeight became NaN. Defaulting to 0.`); item.mainActualHeight = 0; }
-            item.mainMarginTop = mainDims.marginTop;
-            item.mainMarginBottom = mainDims.marginBottom;
-            item.mainFullHeight = item.mainActualHeight + item.mainMarginTop + item.mainMarginBottom;
-
-
-            // Process Thumbnail Item Dimensions (if desktop)
-            if (this.isDesktop && item.thumb) {
-                const thumbItemElementFn = () => item.thumb;
-                const thumbDims = await this._fetchValidatedItemDimensions(thumbItemElementFn, `Thumb item ${item.index}`);
-                const thumbImg = item.thumb.querySelector('img');
-                let assignedThumbActualHeight = 0;
-
-                const canUseThumbAspectRatio = thumbImg && thumbImg.complete && thumbImg.naturalWidth > 0 && thumbImg.naturalHeight > 0 && item.thumb && item.thumb.clientWidth > 0;
-                const preferThumbAspectRatio = (!thumbDims.success || thumbDims.offsetHeight <= 0) || (thumbDims.offsetHeight > 0 && thumbDims.offsetHeight < SUSPICIOUS_THRESHOLD && canUseThumbAspectRatio);
-
-                if (preferThumbAspectRatio && canUseThumbAspectRatio) {
-                    assignedThumbActualHeight = (thumbImg.naturalHeight / thumbImg.naturalWidth) * item.thumb.clientWidth;
-                     if (thumbDims.offsetHeight > 0 && thumbDims.offsetHeight < SUSPICIOUS_THRESHOLD) {
-                        Logger.warn(`Thumb item ${item.index}: Overriding small offsetHeight (${thumbDims.offsetHeight}px) with aspect ratio height (${assignedThumbActualHeight.toFixed(2)}px).`);
-                    } else {
-                        Logger.debug(`Thumb item ${item.index}: Using aspect ratio height (${assignedThumbActualHeight.toFixed(2)}px) due to offsetHeight ${thumbDims.offsetHeight}px or fetch failure (Success: ${thumbDims.success}).`);
-                    }
-                } else {
-                    assignedThumbActualHeight = thumbDims.offsetHeight > 0 ? thumbDims.offsetHeight : 0;
-                    if (preferThumbAspectRatio && !canUseThumbAspectRatio) {
-                         Logger.warn(`Thumb item ${item.index}: Preferred aspect ratio but couldn't use it. Final assigned height: ${assignedThumbActualHeight}px.`);
-                    }
-                }
-                item.thumbActualHeight = Math.max(0, assignedThumbActualHeight);
-                if (isNaN(item.thumbActualHeight)) { Logger.error(`Thumb item ${item.index} thumbActualHeight became NaN. Defaulting to 0.`); item.thumbActualHeight = 0; }
-                item.thumbMarginTop = thumbDims.marginTop;
-                item.thumbMarginBottom = thumbDims.marginBottom;
-                item.thumbFullHeight = item.thumbActualHeight + item.thumbMarginTop + item.thumbMarginBottom;
-            } else {
-                item.thumbActualHeight = 0; item.thumbFullHeight = 0; item.thumbMarginTop = 0; item.thumbMarginBottom = 0;
-            }
+            
+            this._updateItemPositionsAndCalculateScrollParameters();
+            this.state.metricsReady = true;
+            if (AppConfig.LOG_LEVEL === 'debug') console.groupEnd();
+            return true;
+        } catch (error) {
+            Logger.error("❌ Error during metric assignment in _calculateMetrics:", error);
+            this._resetMetrics();
+            if (AppConfig.LOG_LEVEL === 'debug') console.groupEnd();
+            return false;
         }
-        
-        this._updateItemPositionsAndCalculateScrollParameters();
-        this.state.metricsReady = true;
-        return true;
     }
 
 
@@ -1489,7 +1545,7 @@ class ScrollModeGallery {
             metricsReady: false, 
         });
         this.state.items.forEach(item => { 
-            item.mainY = 0; item.thumbY = 0;
+            item.mainY = 0; item.thumbY = 0; item.thumbBorderY = 0;
             item.mainActualHeight = 0; item.mainFullHeight = 0; item.mainMarginTop = 0; item.mainMarginBottom = 0;
             item.thumbActualHeight = 0; item.thumbFullHeight = 0; item.thumbMarginTop = 0; item.thumbMarginBottom = 0;
         });
@@ -1691,27 +1747,96 @@ class ScrollModeGallery {
         }
         
         const activeItem = this.state.items[this.state.activeIndex];
-        if (!activeItem || typeof activeItem.thumbY !== 'number' || !activeItem.thumb || typeof activeItem.thumbMarginTop !== 'number') { // FIXED: Added check for thumbMarginTop
+        // Check for thumbBorderY instead of thumbY for the new logic
+        if (!activeItem || typeof activeItem.thumbBorderY !== 'number' || !activeItem.thumb || typeof activeItem.thumbMarginTop !== 'number') {
             if (this.dom.cursor.style.opacity !== '0') { this.dom.cursor.style.opacity = '0'; this.dom.cursor.style.height = '0px'; }
-            Logger.warn(`Cursor update: Active item ${this.state.activeIndex} missing thumb, thumbY, or thumbMarginTop.`, activeItem);
+            Logger.warn(`Cursor update: Active item ${this.state.activeIndex} missing thumb, thumbBorderY, or thumbMarginTop.`, activeItem);
             return;
         }
-        
-        // FIXED: Trust activeItem.thumbActualHeight calculated by _calculateMetrics
-        const currentThumbHeight = activeItem.thumbActualHeight;
-        if (isNaN(currentThumbHeight)) {
-            Logger.warn(`Cursor update: activeItem.thumbActualHeight is NaN for index ${this.state.activeIndex}. Setting cursor height to 0.`);
-            this.dom.cursor.style.height = '0px';
-            this.dom.cursor.style.opacity = '0';
-            return;
+    
+        if (AppConfig.LOG_LEVEL === 'debug') {
+            console.groupCollapsed(`CURSOR UPDATE: Active Index ${this.state.activeIndex}, MainScrollY: ${this.state.y.curr.toFixed(2)}`);
+    
+            Logger.debug('Active Item Data (activeItem):', activeItem);
+            Logger.debug(`  Thumb Div Element:`, activeItem.thumb);
+            Logger.debug(`  item.thumbBorderY (abs top of border box in scroller): ${activeItem.thumbBorderY.toFixed(2)}`); // Using thumbBorderY
+            Logger.debug(`  item.thumbY (abs top of margin box in scroller): ${activeItem.thumbY.toFixed(2)}`);
+            Logger.debug(`  item.thumbMarginTop: ${activeItem.thumbMarginTop.toFixed(2)}`);
+            Logger.debug(`  item.thumbMarginBottom: ${activeItem.thumbMarginBottom.toFixed(2)}`);
+            Logger.debug(`  item.thumbActualHeight (offsetHeight): ${activeItem.thumbActualHeight.toFixed(2)}`);
+    
+            const imgElementForLog = activeItem.thumb.querySelector('img');
+            let imageRenderedHeightForLog = 'N/A';
+            let verticalCenteringOffsetForLog = 0;
+    
+            if (imgElementForLog && activeItem.thumbActualHeight > 0 && imgElementForLog.complete && imgElementForLog.naturalHeight > 0) {
+                const thumbItemContentWidth = activeItem.thumb.clientWidth;
+                if (thumbItemContentWidth > 0 && imgElementForLog.naturalWidth > 0) {
+                    const calculatedImgRenderedHeight = (imgElementForLog.naturalHeight / imgElementForLog.naturalWidth) * thumbItemContentWidth;
+                    imageRenderedHeightForLog = calculatedImgRenderedHeight.toFixed(2);
+                    if (calculatedImgRenderedHeight > 0 && calculatedImgRenderedHeight < activeItem.thumbActualHeight) {
+                        verticalCenteringOffsetForLog = ((activeItem.thumbActualHeight - calculatedImgRenderedHeight) / 2);
+                    }
+                }
+            }
+            Logger.debug(`  Calculated Image Rendered Height (for log): ${imageRenderedHeightForLog}px`);
+            Logger.debug(`  Calculated Vertical Centering Offset (for log): ${verticalCenteringOffsetForLog.toFixed(2)}px`);
         }
-        
-        const finalCursorHeight = Math.max(0, currentThumbHeight);
-        this.dom.cursor.style.height = `${finalCursorHeight}px`;
-
+    
+        let finalCursorHeight = activeItem.thumbActualHeight;
+        let verticalCenteringOffset = 0;
+        const imgElement = activeItem.thumb.querySelector('img');
+    
+        if (imgElement && activeItem.thumbActualHeight > 0 && imgElement.complete && imgElement.naturalHeight > 0) {
+            const thumbItemContentWidth = activeItem.thumb.clientWidth;
+            if (thumbItemContentWidth > 0 && imgElement.naturalWidth > 0) {
+                const imageRenderedHeight = (imgElement.naturalHeight / imgElement.naturalWidth) * thumbItemContentWidth;
+                if (imageRenderedHeight > 0 && imageRenderedHeight < activeItem.thumbActualHeight) {
+                    verticalCenteringOffset = (activeItem.thumbActualHeight - imageRenderedHeight) / 2;
+                    finalCursorHeight = imageRenderedHeight;
+                }
+            }
+        }
+        finalCursorHeight = Math.max(0, finalCursorHeight);
+    
         const effectiveParallaxRatio = this.state.parallaxRatio > 0 ? this.state.parallaxRatio : 0;
-        // FIXED: Add activeItem.thumbMarginTop to align cursor with content box, not margin box.
-        const cursorTargetY = activeItem.thumbY + activeItem.thumbMarginTop - (this.state.y.curr * effectiveParallaxRatio);
+        const mainScroll_Y_Curr = this.state.y.curr;
+        const parallaxScrollEffect = mainScroll_Y_Curr * effectiveParallaxRatio;
+    
+        // Use activeItem.thumbBorderY for cursor positioning
+        const cursorTargetY = activeItem.thumbBorderY + verticalCenteringOffset - parallaxScrollEffect;
+    
+        if (AppConfig.LOG_LEVEL === 'debug') {
+            console.log(`--- Values for cursorTargetY = A_new + C - D ---`);
+            console.log(`  A_new (activeItem.thumbBorderY): ${activeItem.thumbBorderY.toFixed(2)}`);
+            console.log(`  C (verticalCenteringOffset): ${verticalCenteringOffset.toFixed(2)}`);
+            console.log(`  D (parallaxScrollEffect = mainScroll_Y_Curr * effectiveParallaxRatio): ${parallaxScrollEffect.toFixed(2)}`);
+            console.log(`    (mainScroll_Y_Curr: ${mainScroll_Y_Curr.toFixed(2)}, effectiveParallaxRatio: ${effectiveParallaxRatio.toFixed(4)})`);
+            console.log(`  RESULT cursorTargetY: ${cursorTargetY.toFixed(2)}`);
+            console.log(`  RESULT finalCursorHeight: ${finalCursorHeight.toFixed(2)}`);
+    
+            console.log(`About to apply: cursor.style.height = ${finalCursorHeight.toFixed(2)}px`);
+            console.log(`About to apply: cursor.style.transform = translateY(${cursorTargetY.toFixed(2)}px)`);
+    
+            const thumbnailScrollerTransform = this.dom.thumbScroller ? getComputedStyle(this.dom.thumbScroller).transform : 'N/A';
+            console.log(`Thumbnail Scroller Computed Transform: ${thumbnailScrollerTransform} (should be approx -${parallaxScrollEffect.toFixed(2)}px in Y)`);
+            
+            const cursorRect = this.dom.cursor.getBoundingClientRect();
+            const thumbColRect = this.dom.thumbCol.getBoundingClientRect();
+            const activeThumbDivRect = activeItem.thumb.getBoundingClientRect();
+            console.log(`  Cursor BRect Top (rel to viewport): ${cursorRect.top.toFixed(2)}, Left: ${cursorRect.left.toFixed(2)}, Height: ${cursorRect.height.toFixed(2)}`);
+            console.log(`  ThumbCol BRect Top (rel to viewport): ${thumbColRect.top.toFixed(2)}`);
+            console.log(`  ActiveThumbDiv BRect Top (rel to viewport): ${activeThumbDivRect.top.toFixed(2)}, Height: ${activeThumbDivRect.height.toFixed(2)}`);
+            // Desired position of cursor's top relative to ThumbCol's PADDING edge (where cursor's transform starts)
+            console.log(`  Desired cursor top rel to ThumbCol PADDING edge: ${(cursorTargetY).toFixed(2)} (from calculation)`);
+            // Actual position of cursor's top relative to ThumbCol's PADDING edge
+            const P_col_top = parseFloat(getComputedStyle(this.dom.thumbCol).paddingTop) || 0;
+            console.log(`  Actual cursor top rel to ThumbCol PADDING edge: ${(cursorRect.top - (thumbColRect.top + P_col_top)).toFixed(2)} (from BRects)`);
+    
+            console.groupEnd();
+        }
+    
+        this.dom.cursor.style.height = `${finalCursorHeight.toFixed(2)}px`;
         this.dom.cursor.style.transform = `translateY(${cursorTargetY.toFixed(2)}px)`;
         
         if (finalCursorHeight > 0 && this.dom.cursor.style.opacity !== '1') {
@@ -1720,90 +1845,107 @@ class ScrollModeGallery {
             this.dom.cursor.style.opacity = '0';
         }
     }
-    _onWheel(event) { if (!this.isInitialized || !this.state.metricsReady || this.state.maxScroll <= 0) return; event.preventDefault(); this._clearSnapTimeout(); this.state.isInteracting = true; clearTimeout(this.state.interactionTimeout); this.state.interactionTimeout = setTimeout(() => { this.state.isInteracting = false; if (!this.state.isDragging) this._triggerSnap(); }, 150); this._updateTargetScroll(event.deltaY * this.config.WHEEL_MULTIPLIER); this._startAnimationLoop(); }
+
+    _onWheel(event) {
+        if (!this.isInitialized || !this.state.metricsReady || this.state.maxScroll <= 0) return;
+        event.preventDefault();
+        this._clearSnapTimeout();
+        this.state.isInteracting = true;
+        clearTimeout(this.state.interactionTimeout);
+        
+        this.state.interactionTimeout = setTimeout(() => {
+            this.state.isInteracting = false;
+            if (!this.state.isDragging && this.isInitialized && this.state.metricsReady) {
+                if (this.state.activeIndex >= 0 && this.state.activeIndex < this.state.items.length) {
+                    this._snapToIndex(this.state.activeIndex);
+                } else {
+                    Logger.warn(`⚠️ Snap aborted after wheel: Invalid activeIndex (${this.state.activeIndex})`);
+                }
+            }
+        }, 150);
+
+        this._updateTargetScroll(event.deltaY * this.config.WHEEL_MULTIPLIER);
+        this._startAnimationLoop();
+    }
     _onTouchStart(event) { if (!this.isInitialized || !this.dom || !this.state.metricsReady || this.state.maxScroll <= 0 || !(event.target instanceof Node) || !this.dom.container?.contains(event.target)) return; if (event.touches.length !== 1) { if (this.state.isTouchActive) this._onTouchEnd(event); return; } event.preventDefault(); this._clearSnapTimeout(); Object.assign(this.state, { isDragging: true, isInteracting: true, isTouchActive: true, y: { ...this.state.y, start: event.touches[0].clientY, lastTouchY: event.touches[0].clientY } }); this.dom.container.classList.add(CONFIG.SELECTORS.CLASS_NAMES.isDragging); this._addWindowTouchListeners(); this._startAnimationLoop(); }
     _onTouchMove(event) { if (!this.state.isTouchActive || event.touches.length !== 1) return; event.preventDefault(); const currentY = event.touches[0].clientY; const delta = (this.state.y.lastTouchY - currentY) * this.config.DRAG_MULTIPLIER; this._updateTargetScroll(delta); this.state.y.lastTouchY = currentY; }
     _onTouchEnd(event) { if (!this.state.isTouchActive) return; if (event.touches.length === 0) { Object.assign(this.state, { isDragging: false, isInteracting: false, isTouchActive: false }); clearTimeout(this.state.interactionTimeout); this.dom?.container?.classList.remove(CONFIG.SELECTORS.CLASS_NAMES.isDragging); this._removeWindowTouchListeners(); this._triggerSnap(); } }
     
+    _getIndexForYPosition(targetYViewCenter) {
+        if (this.state.items.length === 0 || this.state.containerHeight <= 0) return 0;
+
+        let closestIndex = 0;
+        let minDiff = Infinity;
+
+        for (let i = 0; i < this.state.items.length; i++) {
+            const item = this.state.items[i];
+            if (item && typeof item.mainY === 'number' && item.mainActualHeight > 0) {
+                const itemCenterInScroller = item.mainY + item.mainActualHeight / 2;
+                const diff = Math.abs(itemCenterInScroller - targetYViewCenter);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestIndex = i;
+                } else if (diff > minDiff && i > closestIndex) {
+                    break; 
+                }
+            }
+        }
+        return Math.max(0, Math.min(closestIndex, this.state.items.length - 1));
+    }
+
     _onKeyDown(event) {
         if (!this.isInitialized || !this.dom || !this.state.metricsReady || this.state.items.length === 0) return;
         
         let handled = false;
-        const currentY = this.state.y.curr; 
-        const viewportTop = currentY;
-        const epsilon = 1; 
-        let targetScrollY = -1;
-        let targetItemIndex = this.state.activeIndex; 
+        let targetScrollY = this.state.y.targ;
+        let newActiveIndex = this.state.activeIndex;
+        const epsilon = 1;
 
         switch (event.key) {
             case 'ArrowDown': case 'Down':
-                targetItemIndex = Math.min(this.state.activeIndex + 1, this.state.items.length - 1);
-                if (targetItemIndex !== this.state.activeIndex) {
+                newActiveIndex = Math.min(this.state.activeIndex + 1, this.state.items.length - 1);
+                if (newActiveIndex !== this.state.activeIndex) {
                     this._clearSnapTimeout();
-                    this._setActiveItem(targetItemIndex);
-                    this._snapToIndex(targetItemIndex); 
+                    this._setActiveItem(newActiveIndex);
+                    this._snapToIndex(newActiveIndex); 
                     this._startAnimationLoop();
                 }
                 handled = true;
                 break;
             case 'ArrowUp': case 'Up':
-                targetItemIndex = Math.max(this.state.activeIndex - 1, 0);
-                if (targetItemIndex !== this.state.activeIndex) {
+                newActiveIndex = Math.max(this.state.activeIndex - 1, 0);
+                if (newActiveIndex !== this.state.activeIndex) {
                     this._clearSnapTimeout();
-                    this._setActiveItem(targetItemIndex);
-                    this._snapToIndex(targetItemIndex); 
+                    this._setActiveItem(newActiveIndex);
+                    this._snapToIndex(newActiveIndex); 
                     this._startAnimationLoop();
                 }
                 handled = true;
                 break;
             
             case 'PageDown':
-                for (let i = 0; i < this.state.items.length; i++) {
-                    const item = this.state.items[i];
-                    if (item.mainY > viewportTop + epsilon) {
-                        targetScrollY = item.mainY;
-                        targetItemIndex = i;
-                        break;
-                    }
-                }
-                if (targetScrollY === -1 && currentY < this.state.maxScroll - epsilon) { 
-                    targetScrollY = this.state.maxScroll;
-                    targetItemIndex = this.state.items.length - 1;
-                } else if (targetScrollY === -1) { 
-                    targetScrollY = this.state.maxScroll; 
-                    targetItemIndex = this.state.items.length - 1;
-                }
-
-                if (targetScrollY !== -1 && Math.abs(this.state.y.targ - targetScrollY) > epsilon) {
+                targetScrollY = Math.min(this.state.y.curr + this.state.containerHeight, this.state.maxScroll);
+                newActiveIndex = this._getIndexForYPosition(targetScrollY + this.state.containerHeight / 2);
+                
+                if (Math.abs(this.state.y.targ - targetScrollY) > epsilon || newActiveIndex !== this.state.activeIndex) {
                     this._clearSnapTimeout();
-                    if (targetItemIndex !== this.state.activeIndex) this._setActiveItem(targetItemIndex);
-                    this.state.y.targ = Math.max(0, Math.min(targetScrollY, this.state.maxScroll));
+                    this._setActiveItem(newActiveIndex);
+                    this.state.y.targ = targetScrollY;
+                    this._snapToIndex(newActiveIndex);
                     this._startAnimationLoop();
                 }
                 handled = true;
                 break;
 
             case 'PageUp':
-                for (let i = this.state.items.length - 1; i >= 0; i--) {
-                    const item = this.state.items[i];
-                    if (item.mainY < viewportTop - epsilon) {
-                        targetScrollY = item.mainY;
-                        targetItemIndex = i;
-                        break;
-                    }
-                }
-                if (targetScrollY === -1 && currentY > epsilon) {
-                    targetScrollY = 0;
-                    targetItemIndex = 0;
-                } else if (targetScrollY === -1) { 
-                    targetScrollY = 0; 
-                    targetItemIndex = 0;
-                }
+                targetScrollY = Math.max(this.state.y.curr - this.state.containerHeight, 0);
+                newActiveIndex = this._getIndexForYPosition(targetScrollY + this.state.containerHeight / 2);
 
-                if (targetScrollY !== -1 && Math.abs(this.state.y.targ - targetScrollY) > epsilon) {
+                if (Math.abs(this.state.y.targ - targetScrollY) > epsilon || newActiveIndex !== this.state.activeIndex) {
                     this._clearSnapTimeout();
-                    if (targetItemIndex !== this.state.activeIndex) this._setActiveItem(targetItemIndex);
-                    this.state.y.targ = Math.max(0, Math.min(targetScrollY, this.state.maxScroll));
+                    this._setActiveItem(newActiveIndex);
+                    this.state.y.targ = targetScrollY;
+                    this._snapToIndex(newActiveIndex);
                     this._startAnimationLoop();
                 }
                 handled = true;
@@ -1812,14 +1954,17 @@ class ScrollModeGallery {
             case 'Home':
                 this._clearSnapTimeout();
                 this._setActiveItem(0);
-                this.state.y.targ = 0;
+                this.state.y.targ = 0; // Snap will refine this
+                this._snapToIndex(0);
                 this._startAnimationLoop();
                 handled = true;
                 break;
             case 'End':
                 this._clearSnapTimeout();
-                this._setActiveItem(this.state.items.length - 1);
-                this.state.y.targ = this.state.maxScroll;
+                newActiveIndex = this.state.items.length - 1;
+                this._setActiveItem(newActiveIndex);
+                this.state.y.targ = this.state.maxScroll; // Snap will refine this
+                this._snapToIndex(newActiveIndex);
                 this._startAnimationLoop();
                 handled = true;
                 break;
@@ -1850,7 +1995,6 @@ class ScrollModeGallery {
             if (!metricsSuccess) {
                 Logger.error("❌ Layout refresh failed: Metrics calculation unsuccessful. Gallery may be in an unstable state.");
                 this._resetMetrics();
-                this.state.metricsReady = true; 
                 this._setActiveItem(0, true);
                 this._applyTransformsDOM(0);
                 this._updateCursorPositionDOM();
@@ -1880,11 +2024,9 @@ class ScrollModeGallery {
                     this._startAnimationLoop();
                 }
             });
-
         } catch (e) {
             Logger.error("❌ Error during layout refresh:", e);
             this._resetMetrics();
-            this.state.metricsReady = true;
         }
     }
     async _onMediaQueryChange(event) { if (!this.isInitialized) return; const oldIsDesktop = this.isDesktop; this.isDesktop = event.matches; if (oldIsDesktop === this.isDesktop) return; Logger.debug(`%cScrollModeGallery: MediaQuery changed. Is Desktop: ${this.isDesktop}`, "color: blue; font-weight: bold;"); await this._refreshAndUpdateLayout(this.state.activeIndex, true); }
@@ -1962,7 +2104,7 @@ class ScrollModeGallery {
         
         if (itemData.mainActualHeight <= 0 || this.state.containerHeight <= 0) {
             Logger.warn(`⚠️ Snap failed for index ${index}: mainActualHeight (${itemData.mainActualHeight}) or containerHeight (${this.state.containerHeight}) is invalid. Setting target Y to item's mainY or clamping.`);
-            this.state.y.targ = (index === 0 && itemData.mainY === 0) ? 0 : Math.max(0, Math.min(itemData.mainY, this.state.maxScroll ?? 0));
+            this.state.y.targ = (index === 0) ? 0 : Math.max(0, Math.min(itemData.mainY, this.state.maxScroll ?? 0));
             return;
         }
 
@@ -1972,7 +2114,34 @@ class ScrollModeGallery {
     }
 
     _clearSnapTimeout() { if (this.state.snapTimeout) { clearTimeout(this.state.snapTimeout); this.state.snapTimeout = null; } }
-    destroy() { if (!this.isInitialized) return; this._stopAnimationLoop(); this._clearSnapTimeout(); clearTimeout(this.state.interactionTimeout); this._unbindAllEvents(); this.boundHandlers.debouncedOnResize?.cancel?.(); if (this.dom?.thumbScroller) this.dom.thumbScroller.replaceChildren(); if (this.dom?.mainScroller) this.dom.mainScroller.replaceChildren(); if (this.dom?.container) this.dom.container.tabIndex = -1; if (this.dom?.cursor) { Object.assign(this.dom.cursor.style, { opacity: '0', transform: 'translateY(0px)' }); } if (this.dom?.status) this.dom.status.textContent = ''; Object.assign(this.state, { items: [], filteredItems: [], fullscreenImageDataCache: [], y: { curr: 0, targ: 0, start: 0, lastTouchY: 0 }, activeIndex: 0, maxScroll: 0, parallaxRatio: 0, containerHeight: 0, thumbContainerHeight: 0, isDragging: false, snapTimeout: null, rafId: null, activeFilter: CONFIG.DEFAULTS.FILTER, isInteracting: false, interactionTimeout: null, isTouchActive: false, metricsReady: false }); this.desktopMediaQuery = null; this.isDesktop = false; this.dom = null; this.galleryInstance = null; this.isInitialized = false; }
+    destroy() {
+        if (!this.isInitialized) return;
+        this._stopAnimationLoop();
+        this._clearSnapTimeout();
+        clearTimeout(this.state.interactionTimeout);
+        this._unbindAllEvents();
+        this.boundHandlers.debouncedOnResize?.cancel?.();
+        if (this.dom?.thumbScroller) this.dom.thumbScroller.replaceChildren();
+        if (this.dom?.mainScroller) this.dom.mainScroller.replaceChildren();
+        if (this.dom?.container) this.dom.container.tabIndex = -1;
+        if (this.dom?.cursor) { Object.assign(this.dom.cursor.style, { opacity: '0', transform: 'translateY(0px)' }); }
+        if (this.dom?.status) this.dom.status.textContent = '';
+        Object.assign(this.state, {
+            items: [], filteredItems: [], fullscreenImageDataCache: [],
+            y: { curr: 0, targ: 0, start: 0, lastTouchY: 0 },
+            activeIndex: 0, maxScroll: 0, parallaxRatio: 0,
+            containerHeight: 0, thumbContainerHeight: 0,
+            isDragging: false, snapTimeout: null, rafId: null,
+            activeFilter: CONFIG.DEFAULTS.FILTER,
+            isInteracting: false, interactionTimeout: null, isTouchActive: false,
+            metricsReady: false
+        });
+        this.projectsData = [];
+        this.desktopMediaQuery = null;
+        this.dom = null;
+        this.galleryInstance = null;
+        this.isInitialized = false;
+    }
 }
 
 // ==========================================================================
@@ -2246,12 +2415,17 @@ class UI {
         });
 
         if (newlyActiveButton && this.state.currentFocusedFilterButton !== newlyActiveButton) {
+            // Only update currentFocusedFilterButton if focus isn't already within the filter list on a different button
+            // This prevents stealing focus if user keyboard-navigated to a non-active button then clicked elsewhere to activate it
             if (!document.activeElement || !this.dom.filterList.contains(document.activeElement)) {
-                 this.state.currentFocusedFilterButton = newlyActiveButton;
+                 this.state.currentFocusedFilterButton = newlyActiveButton; // Focus might have been lost from list, set to new active
             } else if (document.activeElement !== newlyActiveButton && document.activeElement.dataset.filter !== currentFilter) {
+                 // Focus is on a different, non-active button in the list; update logical focus to new active
                 this.state.currentFocusedFilterButton = newlyActiveButton;
             }
+            // If focus is already on the newlyActiveButton, currentFocusedFilterButton is already correct.
         } else if (!newlyActiveButton && this.dom.filterButtons.length > 0) {
+            // No button is active (e.g. bad filter value), default focus to the first.
             this.dom.filterButtons[0].setAttribute('tabindex', '0');
             this.state.currentFocusedFilterButton = this.dom.filterButtons[0];
         }
@@ -2319,7 +2493,7 @@ async function initializeApp() {
 }
 
 function handleGlobalScroll() { if (!domElements?.body) return; try { const currentlyScrolledTop = window.scrollY < 5; if (currentlyScrolledTop !== isScrolledTop) { isScrolledTop = currentlyScrolledTop; domElements.body.classList.toggle(CONFIG.SELECTORS.CLASS_NAMES.scrolledToTop, isScrolledTop); } } catch (error) { Logger.error("❌ Error in handleGlobalScroll:", error); } }
-function handleGlobalMouseMove(event) { }
+function handleGlobalMouseMove(event) { /* Placeholder for any global mouse move effects if needed */ }
 function handleGlobalResize() { if (!domElements?.html) { Logger.error("❌ Cannot handle resize: HTML element missing."); return; } try { const newScrollbarWidth = Utils.getScrollbarWidth(true); domElements.html.style.setProperty('--scrollbar-width', `${newScrollbarWidth}px`); backgroundAnimationInstance?.handleResize(); scrollGalleryInstance?.handleResize(); galleryInstance?.handleResize(); handleGlobalScroll(); } catch (error) { Logger.error("❌ Error during global resize handling:", error); } }
 
 // ==========================================================================
