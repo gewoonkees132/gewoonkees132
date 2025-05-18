@@ -3,7 +3,7 @@
  * @description Main JavaScript file for Kees Leemeijer's portfolio website.
  * Handles theme switching, background animation, project filtering,
  * scroll-driven gallery interaction, and fullscreen image viewing.
- * @version 1.8.2 - Addressed cursor overshoot due to margin collapse.
+ * @version 1.8.3 - Integrated mobile native scroll for gallery.
  */
 
 "use strict";
@@ -1145,6 +1145,26 @@ class ScrollModeGallery {
             this.isInitialized = false; this.dom = null;
         }
     }
+
+    _bindContainerScrollEvents() {
+        if (!this.dom || !this.isInitialized) return;
+        // Ensure no duplicates if called multiple times
+        this.dom.container.removeEventListener('wheel', this.boundHandlers.onWheel);
+        this.dom.container.removeEventListener('touchstart', this.boundHandlers.onTouchStart);
+
+        this.dom.container.addEventListener('wheel', this.boundHandlers.onWheel, { passive: false });
+        this.dom.container.addEventListener('touchstart', this.boundHandlers.onTouchStart, { passive: false });
+        Logger.debug("ScrollModeGallery: Desktop scroll events BOUND.");
+    }
+
+    _unbindContainerScrollEvents() {
+        if (!this.dom || !this.isInitialized) return;
+        this.dom.container.removeEventListener('wheel', this.boundHandlers.onWheel);
+        this.dom.container.removeEventListener('touchstart', this.boundHandlers.onTouchStart);
+        this._removeWindowTouchListeners(); // Important if a touchstart was in progress
+        Logger.debug("ScrollModeGallery: Desktop scroll events UNBOUND.");
+    }
+
     init() {
         if (!this.isInitialized || !this.dom) {
             Logger.warn("⚠️ ScrollModeGallery init skipped: Not initialized."); return;
@@ -1155,8 +1175,14 @@ class ScrollModeGallery {
         try {
             this.dom.container.tabIndex = 0;
             this.desktopMediaQuery?.addEventListener('change', this.boundHandlers.onMediaQueryChange);
-            this.applyFilter(this.state.activeFilter, true);
-            this._bindContainerEvents();
+            
+            // Configure for the current mode (desktop/mobile) right at the start
+            this._configureForCurrentMode(); 
+
+            this.applyFilter(this.state.activeFilter, true); // This will eventually call _refreshAndUpdateLayout
+            
+            // General keydown listener, behavior inside _onKeyDown is conditional
+            this.dom.container.addEventListener('keydown', this.boundHandlers.onKeyDown);
         } catch (e) {
             Logger.error("❌ Error during ScrollModeGallery initialization:", e);
             this.isInitialized = false;
@@ -1164,6 +1190,36 @@ class ScrollModeGallery {
             if (this.dom?.container) this.dom.container.tabIndex = -1;
         }
     }
+
+    // New method to set up desktop/mobile specific things
+    _configureForCurrentMode() {
+        if (!this.dom || !this.dom.mainCol) return; // mainCol is mainImageColumn
+
+        // Reset custom scroll positions when mode might change or on init
+        this.state.y.curr = 0;
+        this.state.y.targ = 0;
+
+        if (!this.isDesktop) {
+            Logger.debug("Configuring ScrollModeGallery for MOBILE.");
+            this.dom.mainCol.style.overflowY = 'auto';
+            this.dom.mainCol.style.overflowX = 'hidden';
+            if (this.dom.mainScroller) this.dom.mainScroller.style.transform = '';
+            if (this.dom.thumbScroller) this.dom.thumbScroller.style.transform = ''; // Also clear for safety
+            if (this.dom.cursor) this.dom.cursor.style.opacity = '0'; // Hide cursor on mobile
+
+            this._stopAnimationLoop();
+            this._unbindContainerScrollEvents(); // Don't use custom scroll events on mobile
+        } else {
+            Logger.debug("Configuring ScrollModeGallery for DESKTOP.");
+            this.dom.mainCol.style.overflowY = 'hidden'; // Custom scroll handles overflow
+            this.dom.mainCol.style.overflowX = 'hidden';
+            // Transforms for mainScroller & thumbScroller will be applied by _update or _applyTransformsDOM
+            
+            this._bindContainerScrollEvents(); // Use custom scroll events on desktop
+            // The animation loop will be started by _refreshAndUpdateLayout if conditions are met
+        }
+    }
+
 
     applyFilter(filterCategory, isInitialLoad = false) {
         if (!this.isInitialized || (!isInitialLoad && filterCategory === this.state.activeFilter)) return;
@@ -1366,7 +1422,7 @@ class ScrollModeGallery {
         // For revised thumb position calculation considering margin collapse
         let currentThumbBorderY = 0; // Y of the border-top of the current thumb item
 
-        if (AppConfig.LOG_LEVEL === 'debug') {
+        if (AppConfig.LOG_LEVEL === 'debug' && this.isDesktop) { // Only log detailed thumb positions for desktop
             console.groupCollapsed("ScrollModeGallery: _updateItemPositionsAndCalculateScrollParameters (Revised for Margin Collapse)");
         }
 
@@ -1396,7 +1452,7 @@ class ScrollModeGallery {
                 item.thumbBorderY = 0;
                 item.thumbY = 0;
             }
-            if (AppConfig.LOG_LEVEL === 'debug') {
+            if (AppConfig.LOG_LEVEL === 'debug' && this.isDesktop) { // Only log main for desktop if in group
                  Logger.debug(`  Item ${index}: mainY = ${item.mainY.toFixed(2)}, mainFullHeight = ${item.mainFullHeight.toFixed(2)}`);
             }
         });
@@ -1413,7 +1469,7 @@ class ScrollModeGallery {
         
         const mainContentHeight = currentMainY;
         this.state.maxScroll = Math.max(0, mainContentHeight - this.state.containerHeight);
-        if (AppConfig.LOG_LEVEL === 'debug') {
+        if (AppConfig.LOG_LEVEL === 'debug' && this.isDesktop) {
             Logger.debug(`Calculated: mainContentHeight = ${mainContentHeight.toFixed(2)}, containerHeight = ${this.state.containerHeight.toFixed(2)}, maxScroll = ${this.state.maxScroll.toFixed(2)}`);
         }
 
@@ -1433,23 +1489,23 @@ class ScrollModeGallery {
             Logger.warn(`⚠️ Invalid parallax ratio calculated (${this.state.parallaxRatio}), defaulting to 0.`);
             this.state.parallaxRatio = 0;
         }
-        if (AppConfig.LOG_LEVEL === 'debug') {
+        if (AppConfig.LOG_LEVEL === 'debug' && this.isDesktop) {
             console.groupEnd();
         }
     }
 
 
     async _calculateMetrics() {
-        this.state.metricsReady = false;
+        //this.state.metricsReady = false; // Set later after success
         if (!this.dom) { this._resetMetrics(); return false; }
     
-        if (AppConfig.LOG_LEVEL === 'debug') {
+        if (AppConfig.LOG_LEVEL === 'debug' && this.isDesktop) { // Only group log for desktop
              console.groupCollapsed(`GALLERY METRICS CALCULATION (Filter: ${this.state.activeFilter})`);
         }
 
         if (!this._fetchContainerDimensions()) {
             this._resetMetrics(); 
-            if (AppConfig.LOG_LEVEL === 'debug') console.groupEnd();
+            if (AppConfig.LOG_LEVEL === 'debug' && this.isDesktop) console.groupEnd();
             return false;
         }
     
@@ -1458,7 +1514,7 @@ class ScrollModeGallery {
             this.state.metricsReady = true;
             if (AppConfig.LOG_LEVEL === 'debug') {
                  Logger.debug("No items to calculate metrics for.");
-                 console.groupEnd();
+                 if (this.isDesktop) console.groupEnd();
             }
             return true;
         }
@@ -1516,7 +1572,7 @@ class ScrollModeGallery {
                 } else {
                     item.thumbActualHeight = 0; item.thumbFullHeight = 0; item.thumbMarginTop = 0; item.thumbMarginBottom = 0;
                 }
-                if (AppConfig.LOG_LEVEL === 'debug') {
+                if (AppConfig.LOG_LEVEL === 'debug' && this.isDesktop) { // Only log for desktop
                     Logger.debug(`Item ${item.index} Metrics:
   Main -> ActualH: ${item.mainActualHeight.toFixed(2)}, MarginT: ${item.mainMarginTop.toFixed(2)}, MarginB: ${item.mainMarginBottom.toFixed(2)}, FullH: ${item.mainFullHeight.toFixed(2)}
   Thumb -> ActualH: ${item.thumbActualHeight.toFixed(2)}, MarginT: ${item.thumbMarginTop.toFixed(2)}, MarginB: ${item.thumbMarginBottom.toFixed(2)}, FullH: ${item.thumbFullHeight.toFixed(2)} (Note: FullH includes non-collapsed margins)`);
@@ -1525,12 +1581,13 @@ class ScrollModeGallery {
             
             this._updateItemPositionsAndCalculateScrollParameters();
             this.state.metricsReady = true;
-            if (AppConfig.LOG_LEVEL === 'debug') console.groupEnd();
+            if (AppConfig.LOG_LEVEL === 'debug' && this.isDesktop) console.groupEnd();
+            else if(AppConfig.LOG_LEVEL === 'debug' && !this.isDesktop) Logger.debug("_calculateMetrics completed for mobile. No custom scroll logic.");
             return true;
         } catch (error) {
             Logger.error("❌ Error during metric assignment in _calculateMetrics:", error);
             this._resetMetrics();
-            if (AppConfig.LOG_LEVEL === 'debug') console.groupEnd();
+            if (AppConfig.LOG_LEVEL === 'debug' && this.isDesktop) console.groupEnd();
             return false;
         }
     }
@@ -1551,16 +1608,17 @@ class ScrollModeGallery {
         });
         if (this.dom?.cursor) { Object.assign(this.dom.cursor.style, { height: '0px', opacity: '0', transform: 'translateY(0px)' }); }
     }
-    _bindContainerEvents() { this._unbindContainerEvents(); if (!this.dom) return; this.dom.container.addEventListener('wheel', this.boundHandlers.onWheel, { passive: false }); this.dom.container.addEventListener('touchstart', this.boundHandlers.onTouchStart, { passive: false }); this.dom.container.addEventListener('keydown', this.boundHandlers.onKeyDown); }
-    _unbindContainerEvents() { if (!this.dom) return; this.dom.container.removeEventListener('wheel', this.boundHandlers.onWheel); this.dom.container.removeEventListener('touchstart', this.boundHandlers.onTouchStart); this.dom.container.removeEventListener('keydown', this.boundHandlers.onKeyDown); this._removeWindowTouchListeners(); }
+    
+    //_bindContainerEvents is replaced by _bindContainerScrollEvents and _configureForCurrentMode handles general keydown
+    _unbindContainerEvents() { if (!this.dom) return; this.dom.container.removeEventListener('wheel', this.boundHandlers.onWheel); this.dom.container.removeEventListener('touchstart', this.boundHandlers.onTouchStart); /* Keep keydown for now */ this._removeWindowTouchListeners(); }
     _addWindowTouchListeners() { window.addEventListener('touchmove', this.boundHandlers.onTouchMove, { passive: false }); window.addEventListener('touchend', this.boundHandlers.onTouchEnd, { passive: true }); window.addEventListener('touchcancel', this.boundHandlers.onTouchEnd, { passive: true }); }
     _removeWindowTouchListeners() { window.removeEventListener('touchmove', this.boundHandlers.onTouchMove); window.removeEventListener('touchend', this.boundHandlers.onTouchEnd); window.removeEventListener('touchcancel', this.boundHandlers.onTouchEnd); }
     _bindItemListeners() { this.state.items.forEach(item => { item.thumb?.addEventListener('click', this.boundHandlers.onThumbnailClick); item.main?.addEventListener('click', this.boundHandlers.onMainImageClick); }); }
     _unbindItemListeners() { this.state.items.forEach(item => { item.thumb?.removeEventListener('click', this.boundHandlers.onThumbnailClick); item.main?.removeEventListener('click', this.boundHandlers.onMainImageClick); }); }
-    _unbindAllEvents() { this._unbindContainerEvents(); this._unbindItemListeners(); this.desktopMediaQuery?.removeEventListener('change', this.boundHandlers.onMediaQueryChange); }
+    _unbindAllEvents() { this._unbindContainerEvents(); this.dom?.container?.removeEventListener('keydown', this.boundHandlers.onKeyDown); this._unbindItemListeners(); this.desktopMediaQuery?.removeEventListener('change', this.boundHandlers.onMediaQueryChange); }
 
     _update() {
-        if (!this.isInitialized || !this.dom || !this.state.metricsReady) {
+        if (!this.isDesktop || !this.isInitialized || !this.dom || !this.state.metricsReady) { // Only on desktop
             this._stopAnimationLoop();
             return;
         }
@@ -1574,7 +1632,7 @@ class ScrollModeGallery {
             const needsUpdate = Math.abs(delta) > this.animationConfig.UPDATE_EPSILON || this.state.isInteracting;
 
             if (needsUpdate) {
-                if (this.isDesktop && !this.prefersReducedMotion) {
+                if (!this.prefersReducedMotion) { // isDesktop is already true here
                     this.state.y.curr += delta * this.animationConfig.LERP_FACTOR;
                 } else {
                     this.state.y.curr = this.state.y.targ;
@@ -1603,10 +1661,9 @@ class ScrollModeGallery {
     }
 
     _startAnimationLoop() {
-        if (this.isInitialized && !this.state.rafId && this.state.metricsReady) {
-            if ((this.isDesktop && !this.prefersReducedMotion && this.state.maxScroll > 0) || this.state.isInteracting) {
-                this.state.rafId = requestAnimationFrame(this.boundHandlers.update);
-            }
+        if (!this.isDesktop || !this.isInitialized || this.state.rafId || !this.state.metricsReady) return; // Only on desktop
+        if ((!this.prefersReducedMotion && this.state.maxScroll > 0) || this.state.isInteracting) {
+            this.state.rafId = requestAnimationFrame(this.boundHandlers.update);
         }
     }
     _stopAnimationLoop() {
@@ -1620,11 +1677,18 @@ class ScrollModeGallery {
     _applyTransformsDOM(currentY) {
         if (!this.dom || !this.isInitialized) return;
     
+        if (!this.isDesktop) { // Mobile: reset transforms
+            if (this.dom.mainScroller) this.dom.mainScroller.style.transform = '';
+            if (this.dom.thumbScroller) this.dom.thumbScroller.style.transform = '';
+            return;
+        }
+        
+        // Desktop: apply transforms (existing logic)
         if (this.dom.mainScroller) {
             this.dom.mainScroller.style.transform = `translateY(-${currentY.toFixed(2)}px)`;
         }
     
-        if (this.isDesktop && this.dom.thumbScroller) {
+        if (this.dom.thumbScroller) { // (this.isDesktop is implied by now)
             const thumbY = (this.state.parallaxRatio > 0) ? currentY * this.state.parallaxRatio : 0;
             this.dom.thumbScroller.style.transform = `translateY(-${thumbY.toFixed(2)}px)`;
         }
@@ -1847,7 +1911,7 @@ class ScrollModeGallery {
     }
 
     _onWheel(event) {
-        if (!this.isInitialized || !this.state.metricsReady || this.state.maxScroll <= 0) return;
+        if (!this.isDesktop || !this.isInitialized || !this.state.metricsReady || this.state.maxScroll <= 0) return; // Only on desktop
         event.preventDefault();
         this._clearSnapTimeout();
         this.state.isInteracting = true;
@@ -1867,9 +1931,18 @@ class ScrollModeGallery {
         this._updateTargetScroll(event.deltaY * this.config.WHEEL_MULTIPLIER);
         this._startAnimationLoop();
     }
-    _onTouchStart(event) { if (!this.isInitialized || !this.dom || !this.state.metricsReady || this.state.maxScroll <= 0 || !(event.target instanceof Node) || !this.dom.container?.contains(event.target)) return; if (event.touches.length !== 1) { if (this.state.isTouchActive) this._onTouchEnd(event); return; } event.preventDefault(); this._clearSnapTimeout(); Object.assign(this.state, { isDragging: true, isInteracting: true, isTouchActive: true, y: { ...this.state.y, start: event.touches[0].clientY, lastTouchY: event.touches[0].clientY } }); this.dom.container.classList.add(CONFIG.SELECTORS.CLASS_NAMES.isDragging); this._addWindowTouchListeners(); this._startAnimationLoop(); }
-    _onTouchMove(event) { if (!this.state.isTouchActive || event.touches.length !== 1) return; event.preventDefault(); const currentY = event.touches[0].clientY; const delta = (this.state.y.lastTouchY - currentY) * this.config.DRAG_MULTIPLIER; this._updateTargetScroll(delta); this.state.y.lastTouchY = currentY; }
-    _onTouchEnd(event) { if (!this.state.isTouchActive) return; if (event.touches.length === 0) { Object.assign(this.state, { isDragging: false, isInteracting: false, isTouchActive: false }); clearTimeout(this.state.interactionTimeout); this.dom?.container?.classList.remove(CONFIG.SELECTORS.CLASS_NAMES.isDragging); this._removeWindowTouchListeners(); this._triggerSnap(); } }
+    _onTouchStart(event) { 
+        if (!this.isDesktop || !this.isInitialized || !this.dom || !this.state.metricsReady || this.state.maxScroll <= 0 || !(event.target instanceof Node) || !this.dom.container?.contains(event.target)) return; // Only on desktop
+        if (event.touches.length !== 1) { if (this.state.isTouchActive) this._onTouchEnd(event); return; } event.preventDefault(); this._clearSnapTimeout(); Object.assign(this.state, { isDragging: true, isInteracting: true, isTouchActive: true, y: { ...this.state.y, start: event.touches[0].clientY, lastTouchY: event.touches[0].clientY } }); this.dom.container.classList.add(CONFIG.SELECTORS.CLASS_NAMES.isDragging); this._addWindowTouchListeners(); this._startAnimationLoop(); 
+    }
+    _onTouchMove(event) { 
+        if (!this.isDesktop || !this.state.isTouchActive || event.touches.length !== 1) return; // Only on desktop
+        event.preventDefault(); const currentY = event.touches[0].clientY; const delta = (this.state.y.lastTouchY - currentY) * this.config.DRAG_MULTIPLIER; this._updateTargetScroll(delta); this.state.y.lastTouchY = currentY; 
+    }
+    _onTouchEnd(event) { 
+        if (!this.isDesktop || !this.state.isTouchActive) return; // Only on desktop
+        if (event.touches.length === 0) { Object.assign(this.state, { isDragging: false, isInteracting: false, isTouchActive: false }); clearTimeout(this.state.interactionTimeout); this.dom?.container?.classList.remove(CONFIG.SELECTORS.CLASS_NAMES.isDragging); this._removeWindowTouchListeners(); this._triggerSnap(); } 
+    }
     
     _getIndexForYPosition(targetYViewCenter) {
         if (this.state.items.length === 0 || this.state.containerHeight <= 0) return 0;
@@ -1894,9 +1967,35 @@ class ScrollModeGallery {
     }
 
     _onKeyDown(event) {
-        if (!this.isInitialized || !this.dom || !this.state.metricsReady || this.state.items.length === 0) return;
+        if (!this.isInitialized || !this.dom || this.state.items.length === 0) return;
         
         let handled = false;
+
+        if (!this.isDesktop) { // Mobile specific key handling
+            if (event.key === 'Enter' || event.key === ' ') {
+                const activeItemData = this.state.items[this.state.activeIndex];
+                const activeItemMain = activeItemData?.main;
+                if (activeItemMain) {
+                    this._onMainImageClick({ currentTarget: activeItemMain });
+                    handled = true;
+                } else if (activeItemData) {
+                     Logger.warn(`_onKeyDown (mobile): Active item ${this.state.activeIndex} has data but no main element.`);
+                } else {
+                     Logger.warn(`_onKeyDown (mobile): No item data at activeIndex ${this.state.activeIndex}.`);
+                }
+            }
+            // Allow native scroll behavior for ArrowUp/Down, PageUp/Down, Home, End on mobile.
+            // Do not preventDefault for these keys unless explicitly handled (like Enter/Space).
+            if (handled) event.preventDefault();
+            return; // End mobile-specific handling
+        }
+
+        // Desktop-only key handling (existing logic)
+        // Ensure metricsReady for desktop scroll-related key actions
+        if (!this.state.metricsReady && ['ArrowDown', 'Down', 'ArrowUp', 'Up', 'PageDown', 'PageUp', 'Home', 'End'].includes(event.key)) {
+            return;
+        }
+
         let targetScrollY = this.state.y.targ;
         let newActiveIndex = this.state.activeIndex;
         const epsilon = 1;
@@ -1981,25 +2080,25 @@ class ScrollModeGallery {
     }
     async _refreshAndUpdateLayout(activeIndexHint = -1, forceSnapAndAnimate = false) {
         if (!this.isInitialized) return;
-        this._stopAnimationLoop();
-        this.state.metricsReady = false;
-
+        this._stopAnimationLoop(); 
+        
         const oldActiveIndex = (activeIndexHint !== -1) ? activeIndexHint : this.state.activeIndex;
 
-        await new Promise(resolve => requestAnimationFrame(resolve));
+        await new Promise(resolve => requestAnimationFrame(resolve)); 
 
         try {
             const metricsSuccess = await this._calculateMetrics(); 
-            if (!this.isInitialized) return;
+            if (!this.isInitialized) return; 
 
             if (!metricsSuccess) {
                 Logger.error("❌ Layout refresh failed: Metrics calculation unsuccessful. Gallery may be in an unstable state.");
                 this._resetMetrics();
-                this._setActiveItem(0, true);
-                this._applyTransformsDOM(0);
-                this._updateCursorPositionDOM();
+                this._setActiveItem(0, true); 
+                this._applyTransformsDOM(0); 
+                this._updateCursorPositionDOM(); 
                 return;
             }
+            // metricsReady is true now if metricsSuccess
 
             if (this.state.items.length === 0) {
                 Object.assign(this.state.y, { curr: 0, targ: 0 });
@@ -2012,29 +2111,49 @@ class ScrollModeGallery {
 
             const newActiveIndex = Math.max(0, Math.min(oldActiveIndex, this.state.items.length - 1));
             this._setActiveItem(newActiveIndex, true); 
-            this._snapToIndex(this.state.activeIndex); 
 
-            this.state.y.curr = this.state.y.targ; 
+            if (this.isDesktop) { 
+                this._snapToIndex(this.state.activeIndex);
+                this.state.y.curr = this.state.y.targ; 
+            } else { 
+                this.state.y.curr = 0; 
+                this.state.y.targ = 0;
+            }
 
-            requestAnimationFrame(() => {
+
+            requestAnimationFrame(() => { 
                 if (!this.isInitialized) return;
-                this._applyTransformsDOM(this.state.y.curr);
-                this._updateCursorPositionDOM();
-                if (forceSnapAndAnimate || (this.isDesktop && !this.prefersReducedMotion && this.state.items.length > 0 && this.state.maxScroll > 0)) {
+                this._applyTransformsDOM(this.state.y.curr); 
+                this._updateCursorPositionDOM(); 
+
+                if (this.isDesktop && (forceSnapAndAnimate || (!this.prefersReducedMotion && this.state.items.length > 0 && this.state.maxScroll > 0))) {
                     this._startAnimationLoop();
+                } else if (!this.isDesktop) {
+                    this._stopAnimationLoop(); 
                 }
             });
         } catch (e) {
             Logger.error("❌ Error during layout refresh:", e);
-            this._resetMetrics();
+            this._resetMetrics(); 
         }
     }
-    async _onMediaQueryChange(event) { if (!this.isInitialized) return; const oldIsDesktop = this.isDesktop; this.isDesktop = event.matches; if (oldIsDesktop === this.isDesktop) return; Logger.debug(`%cScrollModeGallery: MediaQuery changed. Is Desktop: ${this.isDesktop}`, "color: blue; font-weight: bold;"); await this._refreshAndUpdateLayout(this.state.activeIndex, true); }
+
+    async _onMediaQueryChange(event) { 
+        if (!this.isInitialized) return; 
+        const oldIsDesktop = this.isDesktop; 
+        this.isDesktop = event.matches; 
+        if (oldIsDesktop === this.isDesktop) return;
+
+        Logger.debug(`%cScrollModeGallery: MediaQuery changed. Is Desktop: ${this.isDesktop}`, "color: blue; font-weight: bold;");
+        
+        this._configureForCurrentMode(); 
+        await this._refreshAndUpdateLayout(this.state.activeIndex, true); 
+    }
     handleResize() { if (this.isInitialized) { this.boundHandlers.debouncedOnResize(); } }
     async _onResizeInternal() { if (!this.isInitialized) return; Logger.debug("%cScrollModeGallery: Resize detected.", "color: blue;"); await this._refreshAndUpdateLayout(this.state.activeIndex, false); }
     _updateTargetScroll(delta) { this.state.y.targ += delta; this.state.y.targ = Math.max(0, Math.min(this.state.y.targ, this.state.maxScroll)); }
     _onThumbnailClick(event) {
-        if (!this.isInitialized || !(event.currentTarget instanceof HTMLElement) || !this.isDesktop || !this.state.metricsReady) return;
+        if (!this.isDesktop || !this.isInitialized || !(event.currentTarget instanceof HTMLElement) || !this.state.metricsReady) return; // Only on desktop
         try {
             const index = parseInt(event.currentTarget.dataset.index ?? '-1', 10);
             if (isNaN(index) || index < 0 || index >= this.state.items.length) { Logger.warn(`⚠️ Invalid index on thumbnail click: ${event.currentTarget.dataset.index}`); return; }
@@ -2065,13 +2184,13 @@ class ScrollModeGallery {
                 Logger.error(`❌ Image element within main item ${index} not found.`);
                 return;
             }
-            if (index === this.state.activeIndex) {
+            if (index === this.state.activeIndex || !this.isDesktop) { // Open fullscreen if active OR on mobile
                 if (this.galleryInstance?.isInitialized) {
                     this.galleryInstance.open(this.state.fullscreenImageDataCache, index, imageElement, item.main);
                 } else {
                     Logger.warn("⚠️ Fullscreen gallery instance not available or initialized. Cannot open image.");
                 }
-            } else {
+            } else { // Desktop, not active: scroll to it
                 this._clearSnapTimeout();
                 this._setActiveItem(index);
                 this._snapToIndex(index);
@@ -2081,10 +2200,19 @@ class ScrollModeGallery {
             Logger.error("❌ Error handling main image click:", e);
         }
     }
-    _triggerSnap() { if (this.state.isDragging || this.state.items.length === 0 || !this.state.metricsReady || this.state.maxScroll <= 0 || !this.isInitialized) return; this._clearSnapTimeout(); this.state.snapTimeout = setTimeout(() => { if (this.state.isDragging || !this.isInitialized || !this.state.metricsReady) return; if (this.state.activeIndex >= 0 && this.state.activeIndex < this.state.items.length) { this._snapToIndex(this.state.activeIndex); this._startAnimationLoop(); } else { Logger.warn(`⚠️ Snap aborted: Invalid activeIndex (${this.state.activeIndex})`); } }, this.animationConfig.SNAP_TIMEOUT_MS); }
+    _triggerSnap() { 
+        if (!this.isDesktop || this.state.isDragging || this.state.items.length === 0 || !this.state.metricsReady || this.state.maxScroll <= 0 || !this.isInitialized) return; // Only on desktop
+        this._clearSnapTimeout(); 
+        this.state.snapTimeout = setTimeout(() => { 
+            if (this.state.isDragging || !this.isInitialized || !this.state.metricsReady) return; 
+            if (this.state.activeIndex >= 0 && this.state.activeIndex < this.state.items.length) { 
+                this._snapToIndex(this.state.activeIndex); this._startAnimationLoop(); 
+            } else { Logger.warn(`⚠️ Snap aborted: Invalid activeIndex (${this.state.activeIndex})`); } 
+        }, this.animationConfig.SNAP_TIMEOUT_MS); 
+    }
 
     _snapToIndex(index) {
-        if (!this.isInitialized || !this.state.metricsReady) { 
+        if (!this.isDesktop || !this.isInitialized || !this.state.metricsReady) { // Only on desktop
             this.state.y.targ = Math.max(0, Math.min(this.state.y.targ ?? 0, this.state.maxScroll ?? 0));
             return;
         }
