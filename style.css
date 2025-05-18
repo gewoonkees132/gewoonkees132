@@ -974,7 +974,7 @@
        .project-gallery-section { padding-block-end: 3.125rem; }
 
        .scroll-mode-container {
-           height: 100vh; 
+           height: fit-content;
            border-radius: 1.25rem;
        }
        .thumbnail-column {
@@ -1006,7 +1006,10 @@
        .fullscreen-slide picture.is-loading-placeholder {
             max-height: calc(100% - 2.5rem);
        }
-
+       .menu header nav ul li a[data-label]::after,
+        .menu header nav ul li button[data-label]::after {
+        display: none !important; /* Hide the tooltip entirely on mobile */
+        }
        .fullscreen-button { width: 2.5rem; height: 2.5rem; }
        .fullscreen-button .material-symbols-outlined { font-size: 1.25rem; }
        .close-fullscreen { top: 0.625rem; inset-inline-end: 0.625rem; }
