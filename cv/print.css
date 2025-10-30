@@ -1,0 +1,637 @@
+/* ==========================================================================
+   KEES LEEMEIJER — PORTFOLIO PRINT STYLES v7.0 - FINAL
+   ==========================================================================
+   Final iteration matching the professional resume print aesthetic.
+   Features full-bleed background, logo watermark, and two-column grid.
+   ========================================================================== */
+
+@page {
+  size: A4 portrait;
+  margin: 0 0 0 0; /* Allow full-bleed background */
+  
+  @bottom-center {
+    content: counter(page) " / " counter(pages);
+    font-family: "Nunito", sans-serif;
+    font-size: 7pt;
+    color: #6a737d;
+    vertical-align: top;
+    margin: -10mm 0 0 0;
+  }
+}
+
+@media print {
+  /* ==========================================================================
+     Design Tokens (Print) - Matching Resume Style
+     ========================================================================== */
+  :root {
+    /* Colors - Exact match to resume */
+    --color-background: #ffffff;
+    --color-surface: #f2f2f2;
+    --color-text-primary: #2f363d;
+    --color-text-secondary: #6a737d;
+    --color-text-muted: #959da5;
+    --color-accent: #0E8192;
+    --color-border: #e1e4e8;
+    --color-border-light: #f0f3f6;
+
+    /* Typography - Exact match to resume */
+    --font-family-primary: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-size-h1: 18pt;
+    --font-size-h2: 14.5pt;
+    --font-size-h3: 12.5pt;
+    --font-size-h4: 10pt;
+    --font-size-base: 9.25pt;
+    --font-size-sm: 8.5pt;
+    --font-size-xs: 7.5pt;
+    --line-height-tight: 1.15;
+    --line-height-snug: 1.35;
+    --line-height-base: 1.45;
+    --line-height-heading: 1.15;
+    --letter-spacing-tight: -0.01em;
+
+    /* Spacing - Exact match to resume */
+    --space-2xs: 0.75mm;
+    --space-xs: 1.5mm;
+    --space-sm: 4mm;
+    --space-md: 4mm;
+    --space-lg: 7mm;
+    --space-xl: 14mm;
+
+    /* Print-specific Layout */
+    --print-safe-margin: 10mm;
+    --border-width: 0.5pt;
+    --border-width-thick: 0.6pt;
+    --column-gap: 7mm;
+    --indent-list: 4mm;
+    --paragraph-spacing: 1.75mm;
+    --list-item-spacing: 1mm;
+    --section-spacing: 5mm;
+    --cv-item-spacing: var(--space-md);
+    --size-avatar-print: 20mm;
+    --project-image-height: 35mm;
+  }
+
+  /* ==========================================================================
+     CRITICAL: FORCE ALL CONTENT VISIBLE
+     ========================================================================== */
+  * {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+    mask: none !important;
+    pointer-events: auto !important;
+    position: static !important;
+  }
+
+  /* Print optimization */
+  *, *::before, *::after {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+    animation: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* ==========================================================================
+     Reset & Base - Matching Resume
+     ========================================================================== */
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent !important;
+    color: var(--color-text-primary);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    font-weight: var(--font-weight-normal);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    hyphens: auto;
+    width: 100%;
+    height: auto;
+    overflow: visible !important;
+  }
+
+  /* ==========================================================================
+     Full-bleed Brand Background - Exact Match to Resume
+     ========================================================================== */
+  html::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(135deg,
+        rgba(14,129,146,0.02) 0%,
+        rgba(14,129,146,0.01) 55%,
+        transparent 100%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52.16 61.46' fill='%230E8192' opacity='.09'><g><path d='M18.5,23.97c9.94-.87,12.45-15.95,23.11-22.78,2.99-1.92,7.08-1.36,9.21,1.49,2.39,3.21,1.49,7.7-1.84,9.76-4.18,2.58-11.25,7.98-14.79,11.49-3.53,3.52-3.53,5.16-3.53,6.8s0,3.28,3.53,6.79c3.47,3.46,10.36,8.73,14.57,11.36,3.08,1.92,4.33,5.95,2.56,9.12-1.88,3.37-6.16,4.46-9.41,2.46-10.81-6.67-13.33-21.8-23.13-22.94-.68-.08-1.19-.64-1.19-1.33v-11.23c0-.52.39-.95.91-1Z'/><rect width='13.44' height='61.46' rx='3.66'/></g></svg>");
+    background-repeat: no-repeat, no-repeat;
+    background-size: cover, 20mm auto;
+    background-position: center, right var(--print-safe-margin) bottom 10mm;
+  }
+
+  /* Hide screen-only UI - Matching Resume */
+  .sidebar-nav, .mobile-header, .scroll-indicator-group, .main-nav,
+  .sidebar-header, .print-brand-header, .print-logo, button, input,
+  select, textarea, .no-print, .filter-container, .project-modal,
+  .modal-overlay, .modal-close, #project-modal-template, .skip-link,
+  .brand-logo, svg {
+    display: none !important;
+  }
+
+  /* Remove decorative screen backgrounds */
+  .layout-container { 
+    background: none !important; 
+  }
+  .layout-container::before { 
+    content: none !important; 
+    background: none !important; 
+  }
+
+  /* ==========================================================================
+     Main Content Safe Area - Matching Resume
+     ========================================================================== */
+  .layout-container {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+
+  .main-content {
+    padding: var(--print-safe-margin);
+    padding-bottom: 0; /* Bottom is handled by @page margin */
+    box-sizing: border-box;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    position: static !important;
+    overflow: visible !important;
+    min-height: auto !important;
+  }
+
+  main {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  /* ==========================================================================
+     Compact Header - Exact Match to Resume
+     ========================================================================== */
+  .page-header {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    page-break-after: avoid;
+    margin: 0 0 var(--space-sm) 0;
+  }
+
+  .header-content-wrapper {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "portrait text"
+      "portrait contact";
+    column-gap: var(--space-md);
+    row-gap: var(--space-xs);
+    align-items: start;
+    padding-bottom: var(--space-xs);
+    border-bottom: var(--border-width-thick) solid var(--color-accent);
+    margin: 0;
+  }
+
+  .header-portrait-container {
+    display: block !important;
+    grid-area: portrait;
+    width: var(--size-avatar-print);
+    height: var(--size-avatar-print);
+  }
+
+  .portrait-image {
+    display: block !important;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: var(--border-width) solid var(--color-border);
+    filter: grayscale(20%) contrast(1.1);
+  }
+
+  .header-text-container {
+    display: block !important;
+    grid-area: text;
+    align-self: center;
+  }
+
+  .page-header h1,
+  .header-text-container h1 {
+    display: block !important;
+    visibility: visible !important;
+    font-size: var(--font-size-h1);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    margin: 0 0 var(--space-2xs) 0;
+    letter-spacing: var(--letter-spacing-tight);
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+    color: var(--color-text-primary) !important;
+  }
+
+  .page-header .lead {
+    display: block !important;
+    visibility: visible !important;
+    font-size: calc(var(--font-size-base) * 1.15);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-accent);
+    margin: 0;
+    line-height: var(--line-height-tight);
+  }
+
+  .contact-info {
+    display: flex !important;
+    visibility: visible !important;
+    grid-area: contact;
+    list-style: none;
+    padding: 0;
+    margin: var(--space-2xs) 0 0 0;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-md);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-tight);
+  }
+
+  .contact-info li {
+    display: inline-block !important;
+    visibility: visible !important;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .contact-info a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+
+  /* ==========================================================================
+     Typography & Sections - Matching Resume
+     ========================================================================== */
+  h1, h2, h3, h4 {
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-heading);
+    page-break-after: avoid;
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-xs);
+    orphans: 3;
+    widows: 3;
+  }
+
+  h1 { 
+    font-size: var(--font-size-h1); 
+    margin-top: 0; 
+  }
+
+  h2 {
+    font-size: var(--font-size-h2);
+    color: var(--color-accent);
+    border-bottom: var(--border-width) solid var(--color-border);
+    padding-bottom: var(--space-2xs);
+    margin-top: var(--section-spacing);
+    margin-bottom: var(--space-sm);
+  }
+
+  section:first-of-type h2 { 
+    margin-top: 0; 
+  }
+
+  h3 { 
+    font-size: var(--font-size-h3); 
+    font-weight: var(--font-weight-semibold); 
+    margin-bottom: var(--space-2xs); 
+  }
+
+  h4 { 
+    font-size: var(--font-size-h4); 
+    font-weight: var(--font-weight-medium); 
+    margin-top: var(--space-xs); 
+    margin-bottom: var(--space-2xs); 
+  }
+
+  p {
+    margin: 0 0 var(--paragraph-spacing) 0;
+    orphans: 3;
+    widows: 3;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  p:last-child { 
+    margin-bottom: 0; 
+  }
+
+  a { 
+    color: var(--color-accent); 
+    text-decoration: none; 
+  }
+
+  strong { 
+    font-weight: var(--font-weight-bold); 
+  }
+
+  /* ==========================================================================
+     Projects Section - Two-Column Grid Matching Resume Layout
+     ========================================================================== */
+  #projects {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+
+  #projects > h2 {
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
+    font-size: var(--font-size-h2) !important;
+    font-weight: var(--font-weight-bold) !important;
+    color: var(--color-accent) !important;
+    border-bottom: var(--border-width) solid var(--color-border) !important;
+    padding-bottom: var(--space-2xs) !important;
+    margin: 0 0 var(--space-sm) 0 !important;
+    line-height: var(--line-height-heading) !important;
+    width: auto !important;
+    height: auto !important;
+    clip: auto !important;
+    clip-path: none !important;
+  }
+
+  /* Remove sr-only hiding */
+  .sr-only {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    clip-path: none !important;
+    white-space: normal !important;
+    border: 0 !important;
+  }
+
+  /* Two-column grid matching resume's 30/70 philosophy */
+  .projects-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    column-gap: var(--column-gap) !important;
+    row-gap: var(--space-lg) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Force all project cards visible */
+  .project-card {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    transform: none !important;
+    filter: none !important;
+    overflow: visible !important;
+  }
+
+  .project-card.hidden,
+  .project-card.filtering-out,
+  .project-card[data-category] {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Reset button styles */
+  .project-card-button,
+  button.project-card-button {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    color: inherit !important;
+    font: inherit !important;
+    text-align: left !important;
+    cursor: default !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    outline: none !important;
+    position: static !important;
+  }
+
+  /* ==========================================================================
+     Project Images - Professional Treatment
+     ========================================================================== */
+  .project-image-container {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    height: var(--project-image-height) !important;
+    margin-bottom: var(--space-xs) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    background: var(--color-surface) !important;
+    border: var(--border-width) solid var(--color-border-light) !important;
+    page-break-inside: avoid !important;
+  }
+
+  .project-image {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center top !important;
+    /* Subtle filter matching portrait treatment */
+    filter: grayscale(20%) contrast(1.1) !important;
+    image-rendering: optimizeQuality !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Project year badge */
+  .project-year {
+    display: inline-block !important;
+    visibility: visible !important;
+    position: absolute !important;
+    top: var(--space-xs) !important;
+    right: var(--space-xs) !important;
+    background: var(--color-accent) !important;
+    color: white !important;
+    padding: 0.5mm 2mm !important;
+    font-size: var(--font-size-xs) !important;
+    font-weight: var(--font-weight-semibold) !important;
+    z-index: 2 !important;
+  }
+
+  /* ==========================================================================
+     Project Content - Matching Resume Typography
+     ========================================================================== */
+  .project-content {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    position: static !important;
+  }
+
+  .project-title {
+    display: block !important;
+    visibility: visible !important;
+    font-size: var(--font-size-h3) !important;
+    font-weight: var(--font-weight-semibold) !important;
+    color: var(--color-text-primary) !important;
+    margin: 0 0 var(--space-2xs) 0 !important;
+    line-height: var(--line-height-tight) !important;
+    page-break-after: avoid !important;
+  }
+
+  .project-meta {
+    display: block !important;
+    visibility: visible !important;
+    font-size: var(--font-size-xs) !important;
+    font-weight: var(--font-weight-medium) !important;
+    color: var(--color-text-secondary) !important;
+    margin: 0 0 var(--space-xs) 0 !important;
+    font-style: normal !important;
+  }
+
+  .project-description {
+    display: block !important;
+    visibility: visible !important;
+    font-size: var(--font-size-sm) !important;
+    color: var(--color-text-secondary) !important;
+    line-height: var(--line-height-snug) !important;
+    margin: var(--space-xs) 0 var(--space-sm) 0 !important;
+    text-align: justify !important;
+    hyphens: auto !important;
+  }
+
+  /* Technologies - Professional comma-separated list */
+  .project-tech {
+    display: block !important;
+    visibility: visible !important;
+    font-size: var(--font-size-xs) !important;
+    color: var(--color-text-secondary) !important;
+    padding-top: var(--space-xs) !important;
+    border-top: var(--border-width) solid var(--color-border-light) !important;
+    margin-top: var(--space-xs) !important;
+    line-height: var(--line-height-snug) !important;
+  }
+
+  .project-tech::before {
+    content: "Technologies: " !important;
+    font-weight: var(--font-weight-bold) !important;
+    color: var(--color-text-primary) !important;
+  }
+
+  .tech-tag {
+    display: inline !important;
+    visibility: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+    border: none !important;
+    font: inherit !important;
+    color: inherit !important;
+    font-size: var(--font-size-xs) !important;
+  }
+
+  .tech-tag:not(:last-child)::after {
+    content: ", " !important;
+  }
+
+  /* ==========================================================================
+     Links - Professional Treatment
+     ========================================================================== */
+  a[href^="http"]:not([href*="keesleemeijer"])::after {
+    content: " (" attr(href) ")";
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    word-break: break-all;
+  }
+
+  .contact-info a::after,
+  a[href^="mailto:"]::after,
+  a[href^="tel:"]::after,
+  a[href^="#"]::after {
+    content: "" !important;
+  }
+
+  /* ==========================================================================
+     Print Quality Enhancement
+     ========================================================================== */
+  @supports (image-rendering: -webkit-optimize-contrast) {
+    .project-image,
+    .portrait-image {
+      image-rendering: -webkit-optimize-contrast !important;
+    }
+  }
+
+  @supports (image-rendering: crisp-edges) {
+    .project-image,
+    .portrait-image {
+      image-rendering: crisp-edges !important;
+    }
+  }
+
+  /* ==========================================================================
+     Absolute Failsafe
+     ========================================================================== */
+  body * {
+    display: revert !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Re-hide only specific elements */
+  body .sidebar-nav,
+  body .mobile-header,
+  body .scroll-indicator-group,
+  body .filter-container,
+  body .project-modal,
+  body .modal-overlay,
+  body .modal-close,
+  body #project-modal-template,
+  body .skip-link,
+  body .brand-logo,
+  body svg {
+    display: none !important;
+  }
+}
