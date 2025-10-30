@@ -1,14 +1,22 @@
 /* ==========================================================================
-   KEES LEEMEIJER — PORTFOLIO PRINT STYLES v7.0 - FINAL
-   ==========================================================================
-   Final iteration matching the professional resume print aesthetic.
-   Features full-bleed background, logo watermark, and two-column grid.
-   ========================================================================== */
+Kees Leemeijer — Print Styles v10.2
 
+- Full-bleed background (all pages)
+- Consistent safe margins on every page via padding
+- Reliable page numbers using the @page rule
+- Two-column grid with paired sections
+========================================================================== */
+
+/*
+*   This setup enables a full-bleed background and reliable page numbers.
+*   1. Margins are set to 0 on top/left/right to allow the background to fill the page.
+*   2. A bottom margin is reserved exclusively for the page number area.
+*   3. Padding is applied to .main-content to create the content "safe area".
+*/
 @page {
   size: A4 portrait;
-  margin: 0 0 0 0; /* Allow full-bleed background */
-  
+  margin: 0 0 0 0; /* top, right, bottom, left */
+
   @bottom-center {
     content: counter(page) " / " counter(pages);
     font-family: "Nunito", sans-serif;
@@ -21,20 +29,20 @@
 
 @media print {
   /* ==========================================================================
-     Design Tokens (Print) - Matching Resume Style
-     ========================================================================== */
+   Design Tokens (Print)
+  ========================================================================== */
   :root {
-    /* Colors - Exact match to resume */
+    /* Colors */
     --color-background: #ffffff;
     --color-surface: #f2f2f2;
     --color-text-primary: #2f363d;
     --color-text-secondary: #6a737d;
     --color-text-muted: #959da5;
-    --color-accent: #0E8192;
+    --color-accent: #2f363d;
     --color-border: #e1e4e8;
     --color-border-light: #f0f3f6;
 
-    /* Typography - Exact match to resume */
+    /* Typography */
     --font-family-primary: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --font-weight-normal: 400;
     --font-weight-medium: 500;
@@ -53,7 +61,7 @@
     --line-height-heading: 1.15;
     --letter-spacing-tight: -0.01em;
 
-    /* Spacing - Exact match to resume */
+    /* Spacing */
     --space-2xs: 0.75mm;
     --space-xs: 1.5mm;
     --space-sm: 4mm;
@@ -72,36 +80,16 @@
     --section-spacing: 5mm;
     --cv-item-spacing: var(--space-md);
     --size-avatar-print: 20mm;
-    --project-image-height: 35mm;
   }
 
   /* ==========================================================================
-     CRITICAL: FORCE ALL CONTENT VISIBLE
-     ========================================================================== */
-  * {
-    visibility: visible !important;
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-    clip-path: none !important;
-    mask: none !important;
-    pointer-events: auto !important;
-    position: static !important;
-  }
-
-  /* Print optimization */
+   Reset & Base
+  ========================================================================== */
   *, *::before, *::after {
     print-color-adjust: exact !important;
     -webkit-print-color-adjust: exact !important;
-    animation: none !important;
-    transition: none !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
   }
 
-  /* ==========================================================================
-     Reset & Base - Matching Resume
-     ========================================================================== */
   html, body {
     margin: 0;
     padding: 0;
@@ -114,20 +102,30 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     hyphens: auto;
-    width: 100%;
-    height: auto;
-    overflow: visible !important;
   }
 
+  /* Hide screen-only UI */
+  .sidebar-nav, .mobile-header, .scroll-indicator-group, .main-nav,
+  .sidebar-header, .print-brand-header, .print-logo, button, input,
+  select, textarea, .no-print {
+    display: none !important;
+  }
+
+  /* Remove decorative screen backgrounds */
+  .layout-container { background: none !important; }
+  .layout-container::before { content: none !important; background: none !important; }
+
   /* ==========================================================================
-     Full-bleed Brand Background - Exact Match to Resume
-     ========================================================================== */
+   Full-bleed brand background (fixed across all pages)
+  ========================================================================== */
   html::before {
     content: '';
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
+
+    /* Layer 1: subtle accent gradient; Layer 2: logo watermark */
     background-image:
       linear-gradient(135deg,
         rgba(14,129,146,0.02) 0%,
@@ -136,69 +134,118 @@
       url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52.16 61.46' fill='%230E8192' opacity='.09'><g><path d='M18.5,23.97c9.94-.87,12.45-15.95,23.11-22.78,2.99-1.92,7.08-1.36,9.21,1.49,2.39,3.21,1.49,7.7-1.84,9.76-4.18,2.58-11.25,7.98-14.79,11.49-3.53,3.52-3.53,5.16-3.53,6.8s0,3.28,3.53,6.79c3.47,3.46,10.36,8.73,14.57,11.36,3.08,1.92,4.33,5.95,2.56,9.12-1.88,3.37-6.16,4.46-9.41,2.46-10.81-6.67-13.33-21.8-23.13-22.94-.68-.08-1.19-.64-1.19-1.33v-11.23c0-.52.39-.95.91-1Z'/><rect width='13.44' height='61.46' rx='3.66'/></g></svg>");
     background-repeat: no-repeat, no-repeat;
     background-size: cover, 20mm auto;
+    /* Position watermark within the safe area defined by padding/margin */
     background-position: center, right var(--print-safe-margin) bottom 10mm;
   }
 
-  /* Hide screen-only UI - Matching Resume */
-  .sidebar-nav, .mobile-header, .scroll-indicator-group, .main-nav,
-  .sidebar-header, .print-brand-header, .print-logo, button, input,
-  select, textarea, .no-print, .filter-container, .project-modal,
-  .modal-overlay, .modal-close, #project-modal-template, .skip-link,
-  .brand-logo, svg {
-    display: none !important;
+  /* Ensure gradient-filled text prints as solid color */
+  .page-header h1 {
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+    color: var(--color-text-primary) !important;
   }
 
-  /* Remove decorative screen backgrounds */
-  .layout-container { 
-    background: none !important; 
-  }
-  .layout-container::before { 
-    content: none !important; 
-    background: none !important; 
-  }
-
-  /* ==========================================================================
-     Main Content Safe Area - Matching Resume
-     ========================================================================== */
-  .layout-container {
-    display: block !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    position: static !important;
-    overflow: visible !important;
-  }
-
+  /*
+  *   The content's "safe area" is now created with padding, as the @page
+  *   margin is 0 on the top and sides to allow for the full-bleed background.
+  */
   .main-content {
     padding: var(--print-safe-margin);
     padding-bottom: 0; /* Bottom is handled by @page margin */
     box-sizing: border-box;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-    display: block !important;
-    width: 100% !important;
-    margin: 0 !important;
-    position: static !important;
-    overflow: visible !important;
-    min-height: auto !important;
-  }
-
-  main {
-    display: block !important;
-    width: 100% !important;
   }
 
   /* ==========================================================================
-     Compact Header - Exact Match to Resume
-     ========================================================================== */
-  .page-header {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+   Main Layout
+  ========================================================================== */
+  .page-resume .main-content {
+    display: grid;
+    grid-template-columns: 30fr 70fr;
+    column-gap: var(--column-gap);
+    row-gap: var(--space-xs);
+    align-items: start;
+  }
+
+  /* Header spans both columns */
+  .page-resume .page-header {
+    grid-row: 1;
+    grid-column: 1 / -1;
     page-break-after: avoid;
     margin: 0 0 var(--space-sm) 0;
   }
 
+  /* Left column: Summary, Skills */
+  .page-resume #summary {
+    grid-row: 2;
+    grid-column: 1;
+    margin: 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .page-resume #skills {
+    grid-row: 3;
+    grid-column: 1;
+    margin: 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Right column: Experience spanning Summary + Skills */
+  .page-resume #experience {
+    grid-row: 2 / 4;
+    grid-column: 2;
+    margin: 0;
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  /* Left column: Awards, Languages */
+  .page-resume #awards {
+    grid-row: 4;
+    grid-column: 1;
+    margin: 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .page-resume #languages {
+    grid-row: 5;
+    grid-column: 1;
+    margin: 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Right column: Education spanning Awards + Languages */
+  .page-resume #education {
+    grid-row: 4 / 6;
+    grid-column: 2;
+    margin: 0;
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  /* Fallback helpers */
+  .page-resume .print-col-left,
+  .page-resume .print-column-left { grid-column: 1; }
+  .page-resume .print-col-right,
+  .page-resume .print-column-right { grid-column: 2; }
+
+  /* Headings within sections should not add extra top spacing */
+  .page-resume .main-content > section h2 { margin-top: 0; }
+
+  /* Keep each job entry together */
+  .page-resume .cv-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: var(--cv-item-spacing);
+  }
+  .page-resume .cv-item:last-child { margin-bottom: 0; }
+
+  /* ==========================================================================
+   Compact Header (Logo-free)
+  ========================================================================== */
   .header-content-wrapper {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -214,14 +261,11 @@
   }
 
   .header-portrait-container {
-    display: block !important;
     grid-area: portrait;
     width: var(--size-avatar-print);
     height: var(--size-avatar-print);
   }
-
   .portrait-image {
-    display: block !important;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -230,29 +274,15 @@
     filter: grayscale(20%) contrast(1.1);
   }
 
-  .header-text-container {
-    display: block !important;
-    grid-area: text;
-    align-self: center;
-  }
-
-  .page-header h1,
+  .header-text-container { grid-area: text; align-self: center; }
   .header-text-container h1 {
-    display: block !important;
-    visibility: visible !important;
     font-size: var(--font-size-h1);
     font-weight: var(--font-weight-bold);
     line-height: var(--line-height-tight);
     margin: 0 0 var(--space-2xs) 0;
     letter-spacing: var(--letter-spacing-tight);
-    background: none !important;
-    -webkit-text-fill-color: initial !important;
-    color: var(--color-text-primary) !important;
   }
-
   .page-header .lead {
-    display: block !important;
-    visibility: visible !important;
     font-size: calc(var(--font-size-base) * 1.15);
     font-weight: var(--font-weight-medium);
     color: var(--color-accent);
@@ -261,48 +291,31 @@
   }
 
   .contact-info {
-    display: flex !important;
-    visibility: visible !important;
     grid-area: contact;
     list-style: none;
     padding: 0;
     margin: var(--space-2xs) 0 0 0;
+    display: flex;
     flex-wrap: wrap;
     gap: var(--space-2xs) var(--space-md);
     font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
     line-height: var(--line-height-tight);
   }
-
-  .contact-info li {
-    display: inline-block !important;
-    visibility: visible !important;
-    margin: 0;
-    white-space: nowrap;
-  }
-
-  .contact-info a {
-    color: var(--color-text-secondary);
-    text-decoration: none;
-  }
+  .contact-info li { margin: 0; white-space: nowrap; }
+  .contact-info a { color: var(--color-text-secondary); text-decoration: none; }
 
   /* ==========================================================================
-     Typography & Sections - Matching Resume
-     ========================================================================== */
+   Typography & Sections
+  ========================================================================== */
   h1, h2, h3, h4 {
     font-weight: var(--font-weight-bold);
     line-height: var(--line-height-heading);
     page-break-after: avoid;
     margin-top: var(--space-sm);
     margin-bottom: var(--space-xs);
-    orphans: 3;
-    widows: 3;
   }
-
-  h1 { 
-    font-size: var(--font-size-h1); 
-    margin-top: 0; 
-  }
+  h1 { font-size: var(--font-size-h1); margin-top: 0; }
 
   h2 {
     font-size: var(--font-size-h2);
@@ -312,23 +325,10 @@
     margin-top: var(--section-spacing);
     margin-bottom: var(--space-sm);
   }
+  section:first-of-type h2 { margin-top: 0; }
 
-  section:first-of-type h2 { 
-    margin-top: 0; 
-  }
-
-  h3 { 
-    font-size: var(--font-size-h3); 
-    font-weight: var(--font-weight-semibold); 
-    margin-bottom: var(--space-2xs); 
-  }
-
-  h4 { 
-    font-size: var(--font-size-h4); 
-    font-weight: var(--font-weight-medium); 
-    margin-top: var(--space-xs); 
-    margin-bottom: var(--space-2xs); 
-  }
+  h3 { font-size: var(--font-size-h3); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-2xs); }
+  h4 { font-size: var(--font-size-h4); font-weight: var(--font-weight-medium); margin-top: var(--space-xs); margin-bottom: var(--space-2xs); }
 
   p {
     margin: 0 0 var(--paragraph-spacing) 0;
@@ -337,301 +337,145 @@
     text-align: justify;
     hyphens: auto;
   }
+  p:last-child { margin-bottom: 0; }
 
-  p:last-child { 
-    margin-bottom: 0; 
-  }
+  a { color: var(--color-accent); text-decoration: none; }
 
-  a { 
-    color: var(--color-accent); 
-    text-decoration: none; 
-  }
+  ul { padding-left: var(--indent-list); margin: 0 0 var(--paragraph-spacing) 0; }
+  li { margin-bottom: var(--list-item-spacing); page-break-inside: avoid; line-height: var(--line-height-snug); }
+  li:last-child { margin-bottom: 0; }
+  li::marker { color: var(--color-accent); font-size: 0.9em; }
+  strong { font-weight: var(--font-weight-bold); }
 
-  strong { 
-    font-weight: var(--font-weight-bold); 
-  }
-
-  /* ==========================================================================
-     Projects Section - Two-Column Grid Matching Resume Layout
-     ========================================================================== */
-  #projects {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 100% !important;
-    position: static !important;
-    overflow: visible !important;
-  }
-
-  #projects > h2 {
-    display: block !important;
-    visibility: visible !important;
-    position: static !important;
-    font-size: var(--font-size-h2) !important;
-    font-weight: var(--font-weight-bold) !important;
-    color: var(--color-accent) !important;
-    border-bottom: var(--border-width) solid var(--color-border) !important;
-    padding-bottom: var(--space-2xs) !important;
-    margin: 0 0 var(--space-sm) 0 !important;
-    line-height: var(--line-height-heading) !important;
-    width: auto !important;
-    height: auto !important;
-    clip: auto !important;
-    clip-path: none !important;
-  }
-
-  /* Remove sr-only hiding */
-  .sr-only {
-    position: static !important;
-    width: auto !important;
-    height: auto !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: visible !important;
-    clip: auto !important;
-    clip-path: none !important;
-    white-space: normal !important;
-    border: 0 !important;
-  }
-
-  /* Two-column grid matching resume's 30/70 philosophy */
-  .projects-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    column-gap: var(--column-gap) !important;
-    row-gap: var(--space-lg) !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  /* Force all project cards visible */
-  .project-card {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: relative !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    background: transparent !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-    transform: none !important;
-    filter: none !important;
-    overflow: visible !important;
-  }
-
-  .project-card.hidden,
-  .project-card.filtering-out,
-  .project-card[data-category] {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-
-  /* Reset button styles */
-  .project-card-button,
-  button.project-card-button {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: none !important;
-    background: transparent !important;
-    color: inherit !important;
-    font: inherit !important;
-    text-align: left !important;
-    cursor: default !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    outline: none !important;
-    position: static !important;
-  }
+  section { margin-bottom: var(--section-spacing); page-break-inside: avoid; }
+  section:last-of-type { margin-bottom: 0; }
 
   /* ==========================================================================
-     Project Images - Professional Treatment
-     ========================================================================== */
-  .project-image-container {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 100% !important;
-    height: var(--project-image-height) !important;
-    margin-bottom: var(--space-xs) !important;
-    position: relative !important;
-    overflow: hidden !important;
-    background: var(--color-surface) !important;
-    border: var(--border-width) solid var(--color-border-light) !important;
-    page-break-inside: avoid !important;
+   Résumé-Specific
+  ========================================================================== */
+  .page-resume #summary p { line-height: var(--line-height-snug); font-size: var(--font-size-sm); }
+
+  .page-resume .skills-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    columns: 1;
+  }
+  .page-resume .skills-list li {
+    margin-bottom: var(--space-sm);
+    break-inside: avoid;
+    line-height: var(--line-height-snug);
+  }
+  .page-resume .skills-list strong {
+    display: block;
+    margin-bottom: calc(var(--space-2xs) * 0.5);
+    font-size: var(--font-size-base);
+  }
+  .page-resume .skills-list li > text,
+  .page-resume .skills-list li > span:not(strong) {
+    font-size: calc(var(--font-size-base) * 0.95);
+    color: var(--color-text-secondary);
   }
 
-  .project-image {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    object-position: center top !important;
-    /* Subtle filter matching portrait treatment */
-    filter: grayscale(20%) contrast(1.1) !important;
-    image-rendering: optimizeQuality !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
+  .page-resume .cv-item > h3 { margin: 0 0 var(--space-2xs) 0; font-size: var(--font-size-h3); }
 
-  /* Project year badge */
-  .project-year {
-    display: inline-block !important;
-    visibility: visible !important;
-    position: absolute !important;
-    top: var(--space-xs) !important;
-    right: var(--space-xs) !important;
-    background: var(--color-accent) !important;
-    color: white !important;
-    padding: 0.5mm 2mm !important;
-    font-size: var(--font-size-xs) !important;
-    font-weight: var(--font-weight-semibold) !important;
-    z-index: 2 !important;
+  .page-resume .experience-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-sm);
+    margin: var(--space-xs) 0;
   }
-
-  /* ==========================================================================
-     Project Content - Matching Resume Typography
-     ========================================================================== */
-  .project-content {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    padding: 0 !important;
-    position: static !important;
-  }
-
-  .project-title {
-    display: block !important;
-    visibility: visible !important;
-    font-size: var(--font-size-h3) !important;
-    font-weight: var(--font-weight-semibold) !important;
-    color: var(--color-text-primary) !important;
-    margin: 0 0 var(--space-2xs) 0 !important;
-    line-height: var(--line-height-tight) !important;
-    page-break-after: avoid !important;
-  }
-
-  .project-meta {
-    display: block !important;
-    visibility: visible !important;
-    font-size: var(--font-size-xs) !important;
-    font-weight: var(--font-weight-medium) !important;
-    color: var(--color-text-secondary) !important;
-    margin: 0 0 var(--space-xs) 0 !important;
-    font-style: normal !important;
-  }
-
-  .project-description {
-    display: block !important;
-    visibility: visible !important;
-    font-size: var(--font-size-sm) !important;
-    color: var(--color-text-secondary) !important;
-    line-height: var(--line-height-snug) !important;
-    margin: var(--space-xs) 0 var(--space-sm) 0 !important;
-    text-align: justify !important;
-    hyphens: auto !important;
-  }
-
-  /* Technologies - Professional comma-separated list */
-  .project-tech {
-    display: block !important;
-    visibility: visible !important;
-    font-size: var(--font-size-xs) !important;
-    color: var(--color-text-secondary) !important;
-    padding-top: var(--space-xs) !important;
-    border-top: var(--border-width) solid var(--color-border-light) !important;
-    margin-top: var(--space-xs) !important;
-    line-height: var(--line-height-snug) !important;
-  }
-
-  .project-tech::before {
-    content: "Technologies: " !important;
-    font-weight: var(--font-weight-bold) !important;
-    color: var(--color-text-primary) !important;
-  }
-
-  .tech-tag {
-    display: inline !important;
-    visibility: visible !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: none !important;
-    border: none !important;
-    font: inherit !important;
-    color: inherit !important;
-    font-size: var(--font-size-xs) !important;
-  }
-
-  .tech-tag:not(:last-child)::after {
-    content: ", " !important;
-  }
-
-  /* ==========================================================================
-     Links - Professional Treatment
-     ========================================================================== */
-  a[href^="http"]:not([href*="keesleemeijer"])::after {
-    content: " (" attr(href) ")";
+  .page-resume .experience-header h4 {
+    margin: 0;
+    line-height: var(--line-height-tight);
     font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
-    word-break: break-all;
+    color: var(--color-text-secondary);
+  }
+  .page-resume .experience-header span {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    flex-shrink: 0;
   }
 
-  .contact-info a::after,
-  a[href^="mailto:"]::after,
-  a[href^="tel:"]::after,
-  a[href^="#"]::after {
-    content: "" !important;
-  }
+  .page-resume .language-list { list-style: none; padding: 0; margin: 0; }
+  .page-resume .language-list li { font-size: var(--font-size-sm); margin: var(--space-2xs) 0; }
 
-  /* ==========================================================================
-     Print Quality Enhancement
-     ========================================================================== */
-  @supports (image-rendering: -webkit-optimize-contrast) {
-    .project-image,
-    .portrait-image {
-      image-rendering: -webkit-optimize-contrast !important;
-    }
+  .page-resume #awards .cv-item { margin-bottom: var(--space-sm); }
+  .page-resume #awards .cv-item h3 {
+    display: inline;
+    margin-right: var(--space-xs);
+    font-size: var(--font-size-h4);
   }
-
-  @supports (image-rendering: crisp-edges) {
-    .project-image,
-    .portrait-image {
-      image-rendering: crisp-edges !important;
-    }
+  .page-resume #awards .cv-item h3 span {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    margin-left: var(--space-xs);
   }
+  .page-resume #awards .cv-item p { margin-top: var(--space-2xs); font-size: var(--font-size-sm); }
 
   /* ==========================================================================
-     Absolute Failsafe
-     ========================================================================== */
-  body * {
-    display: revert !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+   Portfolio (Print)
+  ========================================================================== */
+  .page-portfolio .filter-container,
+  .page-portfolio .project-image-container { display: none !important; }
+
+  .page-portfolio .projects-grid { display: block; }
+  .page-portfolio .project-card-button {
+    display: block !important;
+    padding: 0;
+    border: none;
+    background: transparent;
+    text-align: left;
+    font: inherit;
+    color: inherit;
   }
-  
-  /* Re-hide only specific elements */
-  body .sidebar-nav,
-  body .mobile-header,
-  body .scroll-indicator-group,
-  body .filter-container,
-  body .project-modal,
-  body .modal-overlay,
-  body .modal-close,
-  body #project-modal-template,
-  body .skip-link,
-  body .brand-logo,
-  body svg {
-    display: none !important;
+  .page-portfolio .project-card {
+    page-break-inside: avoid;
+    margin-bottom: var(--cv-item-spacing);
+    padding-bottom: var(--cv-item-spacing);
+    border-bottom: var(--border-width) solid var(--color-border);
   }
+  .page-portfolio .project-card:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .page-portfolio .project-content { padding: 0; }
+  .page-portfolio .project-title {
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-semibold);
+    margin-block: 0 var(--space-2xs);
+  }
+  .page-portfolio .project-meta {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    margin-block: 0 var(--space-xs);
+  }
+  .page-portfolio .project-description {
+    margin-block: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-sm);
+  }
+  .page-portfolio .project-metrics {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    display: flex;
+    gap: var(--space-md);
+    margin-block: var(--space-xs) var(--space-sm);
+    padding-top: var(--space-xs);
+    border-top: var(--border-width) solid var(--color-border-light);
+  }
+  .page-portfolio .metric strong { color: var(--color-text-primary); }
+  .page-portfolio .project-tech { font-size: var(--font-size-xs); color: var(--color-text-secondary); }
+  .page-portfolio .tech-tag {
+    display: inline;
+    padding: 0; margin: 0; background: none; border: none; font: inherit; color: inherit;
+  }
+  .page-portfolio .project-tech::before {
+    content: "Technologies: ";
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+  }
+  .page-portfolio .tech-tag:not(:last-child)::after { content: ", "; }
 }
