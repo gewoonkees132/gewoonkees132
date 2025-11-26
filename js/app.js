@@ -1,8 +1,8 @@
-import { CONFIG } from './config.js';
-import { appStore } from './core/Store.js';
-import { FullscreenGallery } from './components/fullscreen.js';
-import { ScrollGallery } from './components/gallery.js';
-import { AppControls } from './components/Controls.js';
+import { CONFIG } from '/js/config.js';
+import { appStore } from '/js/core/Store.js';
+import { FullscreenGallery } from '/js/components/fullscreen.js';
+import { ScrollGallery } from '/js/components/gallery.js';
+import { AppControls } from '/js/components/Controls.js';
 
 export const initApp = async () => {
     // 1. Instantiate Components
