@@ -2,7 +2,7 @@
  * Simple State Management (Observer Pattern).
  * Holds the single source of truth for the application.
  */
-import { EventBus } from '/js/utils/utils.js'; 
+import { EventBus } from './utils.js'; 
 
 class Store {
     constructor() {

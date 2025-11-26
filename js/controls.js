@@ -1,7 +1,7 @@
-import { Component } from '/js/core/component.js';
-import { appStore } from '/js/core/store.js';
-import { CONFIG } from '/js/config.js';
-import { Utils, EventBus } from '/js/utils/utils.js';
+import { Component } from './component.js';
+import { appStore } from './store.js';
+import { CONFIG } from './config.js';
+import { Utils, EventBus } from './utils.js';
 
 export class AppControls extends Component {
     constructor() {
