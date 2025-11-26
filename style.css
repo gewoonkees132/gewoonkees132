@@ -1,31 +1,63 @@
+/* style.css */
+
+/* ==========================================================================
+   0. Typography (Self-Hosted)
+   ========================================================================== */
+
+/* 1. Inter Variable Font */
+@font-face {
+    font-family: 'Inter';
+    font-weight: 100 900; /* Supports the full range */
+    font-style: normal;
+    font-display: swap;   /* Text is visible immediately in system font, then swaps */
+    src: url('fonts/inter-var.woff2') format('woff2');
+}
+
+/* 2. Material Symbols Variable Font */
+@font-face {
+    font-family: 'Material Symbols Outlined';
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: block; /* 'block' hides the ugly text fallback until icon loads */
+    src: url('fonts/material-symbols.woff2') format('woff2');
+}
+
+/* 3. Material Symbols Helper Class 
+   (Previously provided by the Google CSS link, now we must define it) */
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'liga';
+}
+
 /* ==========================================================================
 1. Base Reset & Global Styles
 ========================================================================== */
 
 *, *::before, *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-   }
+    margin: 0; padding: 0; box-sizing: border-box;
+}
 
-   html {
+html {
     scroll-behavior: smooth;
-    /* CSS variable updated by JS to compensate for scrollbar width */
-    --scrollbar-width: 0px; /* JS sets this with 'px' unit */
-
-    /* --- Base Transition Timings & Easing --- */
+    --scrollbar-width: 0px;
     --transition-duration-base: 0.8s;
     --transition-easing-base: ease;
     --transition-duration-filter-item: 0.8s;
-
-    /* --- Focus Outline --- */
     --focus-outline-width: 2px;
     --focus-outline-offset: 2px;
-    /* --focus-outline-color defined per theme */
-
-    /* --- Component-Specific Timings & Variables --- */
-
-    /* Fullscreen Slider & Zoom (FLIP Animation) */
     --transition-duration-zoom: 0.6s;
     --transition-easing-zoom: cubic-bezier(0.45, 0, 0.35, 1);
     --transition-duration-fade-bg: 0.6s;
@@ -39,92 +71,67 @@
     --slide-loading-color: hsla(0, 0%, 100%, 0.1);
     --slide-error-bg-color: hsla(0, 0%, 15%, 0.8);
     --slide-error-text-color: hsla(0, 0%, 80%, 0.8);
-
-    /* Fullscreen Peeking Slider Effect */
     --transition-duration-slide-peek: 0.4s;
     --transition-easing-slide-peek: ease-out;
     --slide-peek-blur: 5px;
     --slide-peek-opacity: 0.4;
-    --slide-width-percent: 80%; /* Width of the main (active) slide */
-    /* Padding on the slider wrapper to achieve peeking effect for first/last items */
+    --slide-width-percent: 80%;
     --slide-wrapper-padding: calc((100% - var(--slide-width-percent)) / 2);
-
-    /* --- Scroll Gallery Cursor --- */
     --transition-duration-cursor-transform: 0.2s;
     --transition-easing-cursor-transform: cubic-bezier(0.4, 0, 0.2, 1);
+    --z-index-background: -1;
+    --z-index-default: 1;
+    --z-index-content: 2;
+    --z-index-menu: 10;
+    --z-index-tooltip: 20;
+    --z-index-fullscreen-backdrop: 999;
+    --z-index-fullscreen-slider: 1000;
+    --z-index-fullscreen-controls: 1001;
+}
 
-    /* --- Z-Indexes --- */
-    /* Ensures logical stacking order for components like modals, tooltips, menus. */
-    --z-index-background: -1;      /* Background canvas */
-    --z-index-default: 1;         /* Default stacking context */
-    --z-index-content: 2;         /* Main page content */
-    --z-index-menu: 10;           /* Sidebar/navigation menu */
-    --z-index-tooltip: 20;        /* Tooltips for navigation items */
-    --z-index-fullscreen-backdrop: 999; /* Fullscreen gallery backdrop */
-    --z-index-fullscreen-slider: 1000;  /* Fullscreen gallery slider content */
-    --z-index-fullscreen-controls: 1001;/* Fullscreen gallery controls (close button) */
-   }
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+        animation-delay: -1ms !important;
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        background-attachment: scroll !important;
+        scroll-behavior: auto !important;
+        transition-delay: 0s !important;
+        transition-duration: 0s !important;
+    }
+    html.reduced-motion #about #role, #about #role {
+        animation: none !important; border-inline-end-color: transparent !important;
+    }
+}
 
-   /* Respect reduced motion preference */
-   @media (prefers-reduced-motion: reduce) {
-     html {
-       scroll-behavior: auto;
-     }
-     *, *::before, *::after {
-       animation-delay: -1ms !important;
-       animation-duration: 1ms !important;
-       animation-iteration-count: 1 !important;
-       background-attachment: scroll !important;
-       scroll-behavior: auto !important;
-       transition-delay: 0s !important;
-       transition-duration: 0s !important;
-     }
-     /* Specifically target blink-caret if JS doesn't remove class/animation */
-     html.reduced-motion #about #role,
-     #about #role { /* Apply even if JS hasn't added class yet */
-        animation: none !important;
-        border-inline-end-color: transparent !important; /* Keep caret visually off */
-     }
-   }
+html.fullscreen-active { overflow: hidden; padding-right: var(--scrollbar-width); }
 
-   /* Class added by JS when fullscreen is active */
-   html.fullscreen-active {
-    overflow: hidden; /* Prevents scrolling of the body content underneath the modal */
-    padding-right: var(--scrollbar-width);
-   }
-
-   body {
+body {
     font-family: 'Inter', sans-serif;
     color: var(--text-color);
     background-image: var(--body-background-gradient);
-    background-attachment: scroll; /* Default scroll, fixed applied conditionally for performance */
-    transition: color var(--transition-duration-base) var(--transition-easing-base),
-                background-image var(--transition-duration-base) var(--transition-easing-base);
-    line-height: 1.5;
-    min-height: 100vh;
-    font-size: 1rem; /* Base for rem units, assuming 16px default browser font size */
-   }
+    background-attachment: scroll;
+    transition: color var(--transition-duration-base) var(--transition-easing-base), background-image var(--transition-duration-base) var(--transition-easing-base);
+    line-height: 1.5; min-height: 100vh; font-size: 1rem;
+}
 
-   a { text-decoration: none; color: inherit; }
-   ul { list-style: none; }
-   img, svg, picture { display: block; max-width: 100%; height: auto; }
-   button { font: inherit; cursor: pointer; border: none; background: none; padding: 0; color: inherit; text-align: inherit; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+img, svg, picture { display: block; max-width: 100%; height: auto; }
+button { font: inherit; cursor: pointer; border: none; background: none; padding: 0; color: inherit; text-align: inherit; }
 
-   a, button {
-    outline: var(--focus-outline-width) solid transparent; /* Transparent by default */
+a, button {
+    outline: var(--focus-outline-width) solid transparent;
     outline-offset: var(--focus-outline-offset);
     transition: outline-color var(--transition-duration-base) var(--transition-easing-base);
-   }
-   a:focus-visible, button:focus-visible {
-    outline-color: var(--focus-outline-color); /* Uses theme-dependent color */
-   }
+}
+a:focus-visible, button:focus-visible { outline-color: var(--focus-outline-color); }
 
-   /* ==========================================================================
-   2. Color & Theme Variables (:root & dark-mode)
-   ========================================================================== */
-
-   :root {
-    /* --- Base HSL Values (Light Mode) --- */
+/* ==========================================================================
+2. Color & Theme Variables (:root & dark-mode)
+========================================================================== */
+:root {
     --base-hue-primary: 45; --base-saturation-primary: 76%; --base-lightness-primary: 65%;
     --base-hue-secondary: 0; --base-saturation-secondary: 0%; --base-lightness-secondary: 93%;
     --base-hue-text: 210; --base-saturation-text: 4%; --base-lightness-text: 12%;
@@ -135,16 +142,14 @@
     --base-hue-gradient-end: 0; --base-saturation-gradient-end: 0%; --base-lightness-gradient-end: 90%; --base-opacity-gradient-end: 0.44;
     --base-hue-bg-gradient-start: 0; --base-saturation-bg-gradient-start: 0%; --base-lightness-bg-gradient-start: 97%; --base-opacity-bg-gradient-start: 0.92;
     --base-hue-bg-gradient-end: 0; --base-saturation-bg-gradient-end: 0%; --base-lightness-bg-gradient-end: 65%; --base-opacity-bg-gradient-end: 0.8;
-    /* Ball colors for light mode - vibrant for liquid effect */
+    
+    /* Ball colors - critical for CSS background */
     --base-hue-ball-color-light: 45; --base-saturation-ball-color-light: 80%; --base-lightness-ball-color-light: 75%; --base-opacity-ball-color-light: 0.8;
     --base-hue-ball-color-medium: 30; --base-saturation-ball-color-medium: 75%; --base-lightness-ball-color-medium: 70%; --base-opacity-ball-color-medium: 0.8;
     --base-hue-ball-color-dark: 0; --base-saturation-ball-color-dark: 75%; --base-lightness-ball-color-dark: 68%; --base-opacity-ball-color-dark: 0.8;
 
-
-    /* --- Global Hue Shift --- */
     --hue-shift: 0;
 
-    /* --- Calculated Colors --- */
     --color-primary: hsl(calc(var(--base-hue-primary) + var(--hue-shift)), var(--base-saturation-primary), var(--base-lightness-primary));
     --color-secondary: hsl(calc(var(--base-hue-secondary) + var(--hue-shift)), var(--base-saturation-secondary), var(--base-lightness-secondary));
     --text-color: hsl(calc(var(--base-hue-text) + var(--hue-shift)), var(--base-saturation-text), var(--base-lightness-text));
@@ -155,20 +160,17 @@
     --gradient-end: hsla(calc(var(--base-hue-gradient-end) + var(--hue-shift)), var(--base-saturation-gradient-end), var(--base-lightness-gradient-end), var(--base-opacity-gradient-end));
     --bg-gradient-start: hsla(calc(var(--base-hue-bg-gradient-start) + var(--hue-shift)), var(--base-saturation-bg-gradient-start), var(--base-lightness-bg-gradient-start), var(--base-opacity-bg-gradient-start));
     --bg-gradient-end: hsla(calc(var(--base-hue-bg-gradient-end) + var(--hue-shift)), var(--base-saturation-bg-gradient-end), var(--base-lightness-bg-gradient-end), var(--base-opacity-bg-gradient-end));
+    
     --ball-color-light: hsla(calc(var(--base-hue-ball-color-light) + var(--hue-shift)), var(--base-saturation-ball-color-light), var(--base-lightness-ball-color-light), var(--base-opacity-ball-color-light));
     --ball-color-medium: hsla(calc(var(--base-hue-ball-color-medium) + var(--hue-shift)), var(--base-saturation-ball-color-medium), var(--base-lightness-ball-color-medium), var(--base-opacity-ball-color-medium));
     --ball-color-dark: hsla(calc(var(--base-hue-ball-color-dark) + var(--hue-shift)), var(--base-saturation-ball-color-dark), var(--base-lightness-ball-color-dark), var(--base-opacity-ball-color-dark));
 
-    /* --- Final Gradients --- */
     --gradient-main: linear-gradient(120deg, var(--gradient-start), var(--gradient-end));
     --body-background-gradient: linear-gradient(120deg, var(--bg-gradient-start), var(--bg-gradient-end));
-
-    /* --- Focus Outline Color --- */
     --focus-outline-color: var(--color-primary);
-   }
+}
 
-   /* --- Dark Mode Variable Overrides --- */
-   :root.dark-mode {
+:root.dark-mode {
     --base-hue-primary: 225; --base-saturation-primary: 50%; --base-lightness-primary: 42%;
     --base-hue-secondary: 240; --base-saturation-secondary: 7%; --base-lightness-secondary: 18%;
     --base-hue-text: 45; --base-saturation-text: 14%; --base-lightness-text: 81%;
@@ -180,490 +182,231 @@
     --base-hue-bg-gradient-start: 240; --base-saturation-bg-gradient-start: 7%; --base-lightness-bg-gradient-start: 0%; --base-opacity-bg-gradient-start: 0.7;
     --base-hue-bg-gradient-end: 0; --base-saturation-bg-gradient-end: 0%; --base-lightness-bg-gradient-end: 0%; --base-opacity-bg-gradient-end: 0.98;
 
-    /* Ball colors for dark mode - vibrant for liquid effect */
     --base-hue-ball-color-light: 210; --base-saturation-ball-color-light: 100%; --base-lightness-ball-color-light: 70%; --base-opacity-ball-color-light: 0.7;
     --base-hue-ball-color-medium: 280; --base-saturation-ball-color-medium: 90%; --base-lightness-ball-color-medium: 65%; --base-opacity-ball-color-medium: 0.7;
     --base-hue-ball-color-dark: 330; --base-saturation-ball-color-dark: 95%; --base-lightness-ball-color-dark: 60%; --base-opacity-ball-color-dark: 0.7;
-
 
     --fullscreen-bg-color: hsla(0, 0%, 5%, 0.92);
     --slide-loading-color: hsla(0, 0%, 15%, 0.5);
     --slide-error-bg-color: hsla(0, 0%, 10%, 0.8);
     --slide-error-text-color: hsla(0, 0%, 70%, 0.8);
-   }
+}
 
-   /* ==========================================================================
-   3. Utility Classes
-   ========================================================================== */
+/* ==========================================================================
+4. CSS-Only Background (GPU Offload Replacement)
+========================================================================== */
+.css-background {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    z-index: var(--z-index-background);
+    pointer-events: none;
+    overflow: hidden;
+    /* Blur moves to the container to optimize performance */
+    backdrop-filter: blur(100px); 
+    -webkit-backdrop-filter: blur(800px);
+    background: transparent;
+}
 
-   .visually-hidden {
+.blob {
+    position: absolute;
+    border-radius: 90%;
+    opacity: 0.2;
+    will-change: transform; /* Promotes to Compositor Layer */
+}
+
+.blob--1 {
+    width: 70vw; height: 70vw;
+    top: -10%; left: 0%;
+    background: radial-gradient(circle, var(--ball-color-light), transparent 70%);
+    animation: float1 25s infinite alternate ease-in-out;
+}
+
+.blob--2 {
+    width: 120vw; height: 120vw;
+    bottom: -10%; right: -50%;
+    background: radial-gradient(circle, var(--ball-color-medium), transparent 50%);
+    animation: float2 30s infinite alternate-reverse ease-in-out;
+}
+
+.blob--3 {
+    width: 80vw; height: 80vw;
+    top: 40%; left: 40%;
+    background: radial-gradient(circle, var(--ball-color-dark), transparent 60%);
+    animation: float3 28s infinite alternate ease-in-out;
+}
+
+@keyframes float1 { from { transform: translate(0, 0); } to { transform: translate(-20vw, 15vh); } }
+@keyframes float2 { from { transform: translate(0, 0); } to { transform: translate(-30vw, -10vh); } }
+@keyframes float3 { from { transform: translate(0, 0); } to { transform: translate(30vw, -20vh); } }
+
+/* ==========================================================================
+Utilities & Skeletons
+========================================================================== */
+.visually-hidden {
     position: absolute !important; width: 1px !important; height: 1px !important;
     padding: 0 !important; margin: -1px !important; overflow: hidden !important;
     clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important;
-   }
-   .bg-gradient {
+}
+.bg-gradient {
     background: var(--gradient-main);
     transition: background var(--transition-duration-base) var(--transition-easing-base);
-   }
-   .item-error-content {
-    display: flex; flex-direction: column; align-items: center;
-    font-size: 0.8em; text-align: center; line-height: 1.2;
-    justify-content: center;
-    width: 100%; height: 100%;
-   }
-   .item-error-content::before {
-    content: "⚠"; display: block;
-    font-size: 1.8em; margin-bottom: 0.3em; line-height: 1;
-   }
-   .slide-error-title { font-size: 0.8em; margin-top: 0.3em; opacity: 0.8; }
+}
 
-   img.image-load-error,
-   picture.image-load-error {
-     display: none;
-   }
+/* Layout Stabilization & Skeletons */
+.skeleton {
+    background: var(--slide-loading-color);
+    animation: shimmer 2s infinite linear;
+    background-image: linear-gradient(to right, 
+        var(--slide-loading-color) 0%, 
+        hsla(0, 0%, 50%, 0.1) 20%, 
+        var(--slide-loading-color) 40%, 
+        var(--slide-loading-color) 100%
+    );
+    background-size: 1000px 100%;
+    min-height: 200px;
+}
+@keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
 
-   .scroll-gallery__thumb-item picture,
-   .scroll-gallery__main-item picture,
-   .fullscreen-slide picture {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-   }
-   .scroll-gallery__thumb-item img,
-   .scroll-gallery__main-item img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-   }
-   .fullscreen-slide img {
-    object-fit: contain;
-   }
+.item-error-content { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; text-align: center; font-size: 0.8em; }
+.item-error-content::before { content: "⚠"; font-size: 1.8em; margin-bottom: 0.3em; display: block; }
+.slide-error-title { font-size: 0.8em; margin-top: 0.3em; opacity: 0.8; }
+img.image-load-error, picture.image-load-error { display: none; }
 
-    .will-change-opacity-filter { will-change: opacity, filter; }
-    .will-change-transform { will-change: transform; }
-    .will-change-opacity { will-change: opacity; }
-    .will-change-transform-opacity { will-change: transform, opacity; }
+/* Aspect Ratio Enforcement */
+.scroll-gallery__main-item { aspect-ratio: 16 / 9; /* Default reservation, adjustable */ }
+.scroll-gallery__thumb-item { aspect-ratio: 4 / 3; }
 
-
-   /* ==========================================================================
-   4. Background Canvas
-   ========================================================================== */
-
-   #gradient-background {
-    position: fixed; inset: 0;
-    width: 100%; height: 100%;
-    z-index: var(--z-index-background);
-    background: transparent;
-    pointer-events: none;
-   }
-
-   /* ==========================================================================
-   5. Layout: Main Container & Content Structure
-   ========================================================================== */
-
-   .main-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    align-items: start;
-    max-width: 100rem;
-    padding-block-start: 3.125rem;
-    padding-inline: 1.25rem;
-    margin-inline: auto;
-    margin-block-end: 1.25rem;
-    transform-origin: center center;
-    opacity: 1; filter: none;
-    transition: none;
-   }
-
-   .content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    width: 100%;
+/* ==========================================================================
+Layout & Components
+========================================================================== */
+.main-container {
+    display: grid; grid-template-columns: 1fr; align-items: start;
+    max-width: 100rem; padding-block-start: 3.125rem; padding-inline: 1.25rem;
+    margin-inline: auto; margin-block-end: 1.25rem;
+}
+.content {
+    display: flex; flex-direction: column; gap: 1.25rem; width: 100%;
     z-index: var(--z-index-content);
-    transition: opacity var(--transition-duration-fade-bg) var(--transition-easing-fade-bg),
-                filter var(--transition-duration-fade-bg) var(--transition-easing-fade-bg);
-    opacity: 1;
-    filter: blur(0px);
-   }
+    transition: opacity var(--transition-duration-fade-bg) var(--transition-easing-fade-bg), filter var(--transition-duration-fade-bg) var(--transition-easing-fade-bg);
+}
 
-   /* ==========================================================================
-   6. Component: Sidebar / Menu (.menu)
-   ========================================================================== */
-
-   .menu {
-    display: flex;
-    flex-direction: column;
-    gap: 0.9375rem;
-    position: static;
-    z-index: var(--z-index-menu);
-    align-self: stretch;
-    margin-block-end: 1.25rem;
-   }
-   .menu .profile { order: 1; height: auto; }
-   .menu header { order: 2; width: auto; display: flex; justify-content: center; }
-
-   /* -----------------------------------------
-   6.1 Component: Navigation (.menu header nav)
-   ----------------------------------------- */
-   .menu header nav { display: block; width: auto; }
-   .menu header nav ul {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 0.9375rem;
-    background: var(--gradient-main);
-    padding-block: 0.625rem;
-    padding-inline: 1.25rem;
-    border-radius: 2.1875rem;
-    margin-block-end: 0;
+/* Sidebar / Menu */
+.menu { display: flex; flex-direction: column; gap: 0.9375rem; position: static; z-index: var(--z-index-menu); align-self: stretch; margin-block-end: 1.25rem; }
+.menu .profile { order: 1; height: auto; }
+.menu header { order: 2; width: auto; display: flex; justify-content: center; }
+.menu header nav { display: block; width: auto; }
+.menu header nav ul {
+    display: flex; flex-direction: row; justify-content: center; gap: 0.9375rem;
+    background: var(--gradient-main); padding: 0.625rem 1.25rem; border-radius: 2.1875rem;
     transition: background var(--transition-duration-base) var(--transition-easing-base);
-   }
-   .menu header nav ul li a,
-   .menu header nav ul li button {
-    display: flex; justify-content: center; align-items: center;
-    width: 3.125rem;
-    height: 3.125rem;
-    border-radius: 50%;
-    font-size: 1.03rem;
-    color: var(--text-color);
-    background-color: var(--bg-color);
-    transition: color var(--transition-duration-base) var(--transition-easing-base),
-                background-color var(--transition-duration-base) var(--transition-easing-base),
-                outline-color var(--transition-duration-base) var(--transition-easing-base);
-    position: relative;
-    z-index: var(--z-index-default);
-    border: none;
-   }
-
-   .menu header nav ul li a[data-label]::after,
-   .menu header nav ul li button[data-label]::after {
-    content: attr(data-label);
-    position: absolute;
-    top: 50%;
-    inset-inline-start: 130%;
-    transform: translateY(-50%);
-    white-space: nowrap;
-    background-color: var(--color-primary);
-    color: var(--bg-color);
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.3125rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    opacity: 0; visibility: hidden;
-    transition: opacity var(--transition-duration-base) var(--transition-easing-base),
-                visibility var(--transition-duration-base) var(--transition-easing-base);
-    z-index: var(--z-index-tooltip);
-    pointer-events: none;
-   }
-
-   .menu header nav ul li a:is(:hover, :focus-visible),
-   .menu header nav ul li button:is(:hover, :focus-visible) {
-    color: var(--color-primary);
-    outline-color: var(--focus-outline-color);
-   }
-   .menu header nav ul li a:is(:hover, :focus-visible)::after,
-   .menu header nav ul li button:is(:hover, :focus-visible)::after {
+}
+.menu header nav ul li a, .menu header nav ul li button {
+    display: flex; justify-content: center; align-items: center; width: 3.125rem; height: 3.125rem;
+    border-radius: 50%; font-size: 1.03rem; color: var(--text-color); background-color: var(--bg-color);
+    transition: color var(--transition-duration-base) var(--transition-easing-base), background-color var(--transition-duration-base) var(--transition-easing-base), outline-color var(--transition-duration-base) var(--transition-easing-base);
+    position: relative; z-index: var(--z-index-default); border: none;
+}
+.menu header nav ul li a[data-label]::after, .menu header nav ul li button[data-label]::after {
+    content: attr(data-label); position: absolute; top: 50%; inset-inline-start: 130%; transform: translateY(-50%);
+    white-space: nowrap; background-color: var(--color-primary); color: var(--bg-color); padding: 0.5rem 0.75rem;
+    border-radius: 0.3125rem; font-size: 0.875rem; font-weight: 500; opacity: 0; visibility: hidden;
+    transition: opacity var(--transition-duration-base) var(--transition-easing-base), visibility var(--transition-duration-base) var(--transition-easing-base);
+    z-index: var(--z-index-tooltip); pointer-events: none;
+}
+.menu header nav ul li a:is(:hover, :focus-visible), .menu header nav ul li button:is(:hover, :focus-visible) {
+    color: var(--color-primary); outline-color: var(--focus-outline-color);
+}
+.menu header nav ul li a:is(:hover, :focus-visible)::after, .menu header nav ul li button:is(:hover, :focus-visible)::after {
     opacity: 1; visibility: visible;
-   }
+}
 
-   /* -----------------------------------------
-   6.2 Component: Profile Card (.profile)
-   ----------------------------------------- */
-   .profile {
-    display: flex;
-    flex-direction: column;
-    border-radius: 1.875rem;
-    overflow: hidden;
-    background: var(--gradient-main);
-    transition: background var(--transition-duration-base) var(--transition-easing-base);
-   }
-   .profile__container {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 2.5rem;
-    width: 100%;
-    flex-grow: 1;
-   }
-   .profile__image {
-    width: 100%; aspect-ratio: 1 / 1;
-    max-height: 18.75rem;
-    flex-shrink: 0;
-    border-radius: 1.25rem;
-    background-color: var(--color-secondary);
-    overflow: hidden;
-    margin-block-end: 2.5rem;
-   }
-   .profile__image picture,
-   .profile__image img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    object-position: center;
-    border-radius: inherit;
-   }
-   .profile__info {
-    display: flex; flex-direction: column; align-items: center; text-align: center;
-    margin-block-end: 1.25rem;
-    flex-shrink: 0;
-   }
-   .profile__name {
-    font-size: 2.2rem; font-weight: 600; margin: 0;
-   }
+/* Profile Card */
+.profile { display: flex; flex-direction: column; border-radius: 1.875rem; overflow: hidden; background: var(--gradient-main); transition: background var(--transition-duration-base) var(--transition-easing-base); }
+.profile__container { display: flex; flex-direction: column; align-items: center; padding: 2.5rem; width: 100%; flex-grow: 1; }
+.profile__image { width: 100%; aspect-ratio: 1 / 1; max-height: 18.75rem; flex-shrink: 0; border-radius: 1.25rem; background-color: var(--color-secondary); overflow: hidden; margin-block-end: 2.5rem; }
+.profile__image picture, .profile__image img { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: inherit; }
+.profile__info { display: flex; flex-direction: column; align-items: center; text-align: center; margin-block-end: 1.25rem; flex-shrink: 0; }
+.profile__name { font-size: 2.2rem; font-weight: 600; margin: 0; }
+.profile__social { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.625rem; margin-block-start: 0.625rem; margin-block-end: 2.5rem; flex-shrink: 0; }
+.profile__social-link {
+    display: flex; justify-content: center; align-items: center; width: 3rem; height: 3rem; border-radius: 50%;
+    border: 1px solid var(--border-color); color: var(--text-color); font-size: 1.2rem;
+    transition: color var(--transition-duration-base) var(--transition-easing-base), border-color var(--transition-duration-base) var(--transition-easing-base), transform 0.2s var(--transition-easing-base), outline-color var(--transition-duration-base) var(--transition-easing-base);
+}
+.profile__social-link svg { width: 1.5rem; height: 1.5rem; display: block; fill: currentColor; pointer-events: none; }
+.profile__social-link:is(:hover, :focus-visible) { color: var(--color-primary); border-color: var(--color-primary); transform: translateY(-0.125rem); outline-color: var(--focus-outline-color); }
+.profile__contact-wrapper { border-block-start: 1px solid var(--border-color); width: 100%; margin-block-start: auto; flex-shrink: 0; transition: border-color var(--transition-duration-base) var(--transition-easing-base); }
+.profile__contact-link {
+    display: flex; justify-content: center; align-items: center; height: 4.375rem; width: 100%;
+    color: var(--text-color); background: transparent; letter-spacing: 0.0313rem; font-weight: 500;
+    border-end-start-radius: 1.875rem; border-end-end-radius: 1.875rem;
+    transition: color var(--transition-duration-base) var(--transition-easing-base), background var(--transition-duration-base) var(--transition-easing-base), outline-color var(--transition-duration-base) var(--transition-easing-base);
+}
+.profile__contact-link:is(:hover, :focus-visible) { color: var(--bg-color); background: var(--color-primary); outline-color: var(--focus-outline-color); }
 
-   /* -----------------------------------------
-   6.3 Component: Social Links (.profile__social)
-   ----------------------------------------- */
-   .profile__social {
-    display: flex; justify-content: center; align-items: center;
-    flex-wrap: wrap;
-    gap: 0.625rem;
-    margin-block-start: 0.625rem;
-    margin-block-end: 2.5rem;
-    flex-shrink: 0;
-   }
-   .profile__social-link {
-    display: flex; justify-content: center; align-items: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    transition: color var(--transition-duration-base) var(--transition-easing-base),
-                border-color var(--transition-duration-base) var(--transition-easing-base),
-                transform 0.2s var(--transition-easing-base),
-                outline-color var(--transition-duration-base) var(--transition-easing-base);
-    font-size: 1.2rem;
-   }
-   .profile__social-link svg {
-    width: 1.5rem;
-    height: 1.5rem;
-    display: block;
-    fill: currentColor;
-    pointer-events: none;
-   }
-   .profile__social-link:is(:hover, :focus-visible) {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-    transform: translateY(-0.125rem);
-    outline-color: var(--focus-outline-color);
-   }
-
-   /* -----------------------------------------
-   6.4 Component: Contact Button (.profile__contact-wrapper)
-   ----------------------------------------- */
-   .profile__contact-wrapper {
-    border-block-start: 1px solid var(--border-color);
-    width: 100%;
-    margin-block-start: auto;
-    flex-shrink: 0;
-    transition: border-color var(--transition-duration-base) var(--transition-easing-base);
-   }
-   .profile__contact-link {
-    display: flex; justify-content: center; align-items: center;
-    height: 4.375rem;
-    width: 100%;
-    color: var(--text-color); background: transparent;
-    letter-spacing: 0.0313rem;
-    font-weight: 500;
-    border-end-start-radius: 1.875rem;
-    border-end-end-radius: 1.875rem;
-    transition: color var(--transition-duration-base) var(--transition-easing-base),
-                background var(--transition-duration-base) var(--transition-easing-base),
-                outline-color var(--transition-duration-base) var(--transition-easing-base);
-   }
-   .profile__contact-link:is(:hover, :focus-visible) {
-    color: var(--bg-color);
-    background: var(--color-primary);
-    outline-color: var(--focus-outline-color);
-   }
-
-   /* ==========================================================================
-   7. Content Sections (About, Filters)
-   ========================================================================== */
-
-   .section-container {
-    background: var(--gradient-main);
-    padding: 2.5rem 3.125rem;
-    display: flex; flex-direction: column;
-    border-radius: 1.875rem;
-    transition: background var(--transition-duration-base) var(--transition-easing-base);
-   }
-
-   /* -----------------------------------------
-   7.1 Component: About Section (#about)
-   ----------------------------------------- */
-   #about h2 { color: var(--text-color); font-weight: 500; font-size: 1.3rem; margin-block-end: 0.5rem; }
-   #about #role {
-    color: var(--color-primary);
-    white-space: nowrap;
+/* Content Sections */
+.section-container { background: var(--gradient-main); padding: 2.5rem 3.125rem; display: flex; flex-direction: column; border-radius: 1.875rem; transition: background var(--transition-duration-base) var(--transition-easing-base); }
+#about h2 { color: var(--text-color); font-weight: 500; font-size: 1.3rem; margin-block-end: 0.5rem; }
+#about #role {
+    color: var(--color-primary); white-space: nowrap; border-inline-end: 2px solid var(--color-primary);
+    display: inline-block; padding-inline-end: 0.3125rem; min-height: 1.3rem; vertical-align: bottom;
     transition: opacity 0.5s var(--transition-easing-base), color var(--transition-duration-base) var(--transition-easing-base);
-    border-inline-end: 2px solid var(--color-primary);
-    display: inline-block;
-    padding-inline-end: 0.3125rem;
-    min-height: 1.3rem;
-    vertical-align: bottom;
     animation: blink-caret 0.75s step-end infinite;
-   }
-   @keyframes blink-caret {
-    from, to { border-inline-end-color: transparent; }
-    50% { border-inline-end-color: var(--color-primary); }
-   }
-   #about h3.about-location { color: var(--text-color); font-size: 1.7rem; margin-block: 0.5rem; font-weight: 500; }
-   #about p { color: var(--text-color); font-size: 0.9rem; margin-block-start: 1rem; font-weight: 400; max-width: 62.5rem; line-height: 1.6; }
+}
+@keyframes blink-caret { from, to { border-inline-end-color: transparent; } 50% { border-inline-end-color: var(--color-primary); } }
+#about h3.about-location { color: var(--text-color); font-size: 1.7rem; margin-block: 0.5rem; font-weight: 500; }
+#about p { color: var(--text-color); font-size: 0.9rem; margin-block-start: 1rem; font-weight: 400; max-width: 62.5rem; line-height: 1.6; }
 
-   /* -----------------------------------------
-   7.2 Component: Section Heading (Used for Filters #projects)
-   ----------------------------------------- */
-   .section-heading { display: flex; flex-direction: column; align-items: flex-start; margin-block-end: 1.25rem; }
-   .section-heading h2 { color: var(--text-color); font-weight: 500; font-size: 2.2rem; margin-block-start: 0.375rem; margin-block-end: 0; }
+.section-heading { display: flex; flex-direction: column; align-items: flex-start; margin-block-end: 1.25rem; }
+.section-heading h2 { color: var(--text-color); font-weight: 500; font-size: 2.2rem; margin-block-start: 0.375rem; margin-block-end: 0; }
 
-   /* -----------------------------------------
-   7.3 Component: Project Filter List (.project-filter-list)
-   ----------------------------------------- */
-   .project-filter-list {
-    display: flex; justify-content: center; align-items: center;
-    flex-wrap: wrap;
-    gap: 0.625rem 1.25rem;
-    margin-block: 2.625rem;
-    padding-inline-start: 0;
-   }
-   .filter-button {
-    color: var(--text-color); padding: 0.5rem 0.9375rem;
-    border-radius: 1.25rem;
-    font-weight: 500; font-size: 0.8rem;
-    letter-spacing: 0.0625rem;
-    cursor: pointer; user-select: none;
-    transition: color var(--transition-duration-base) var(--transition-easing-base),
-                background-color var(--transition-duration-base) var(--transition-easing-base),
-                border-color var(--transition-duration-base) var(--transition-easing-base),
-                outline-color var(--transition-duration-base) var(--transition-easing-base);
-    border: 1px solid transparent;
-    background-color: transparent;
-    min-height: 2.75rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-   }
-   .filter-button:is(:hover, :focus-visible) {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-    outline-color: var(--focus-outline-color);
-   }
-   .filter-button.active {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-   }
-   .filter-button.active:is(:hover, :focus-visible) {
-    background-color: hsla(var(--base-hue-primary), var(--base-saturation-primary), var(--base-lightness-primary), 0.1);
-   }
+.project-filter-list { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.625rem 1.25rem; margin-block: 2.625rem; padding-inline-start: 0; }
+.filter-button {
+    color: var(--text-color); padding: 0.5rem 0.9375rem; border-radius: 1.25rem; font-weight: 500; font-size: 0.8rem;
+    letter-spacing: 0.0625rem; cursor: pointer; user-select: none; border: 1px solid transparent; background-color: transparent;
+    min-height: 2.75rem; display: inline-flex; align-items: center; justify-content: center;
+    transition: color var(--transition-duration-base) var(--transition-easing-base), background-color var(--transition-duration-base) var(--transition-easing-base), border-color var(--transition-duration-base) var(--transition-easing-base), outline-color var(--transition-duration-base) var(--transition-easing-base);
+}
+.filter-button:is(:hover, :focus-visible) { color: var(--color-primary); border-color: var(--color-primary); outline-color: var(--focus-outline-color); }
+.filter-button.active { border-color: var(--color-primary); color: var(--color-primary); }
+.filter-button.active:is(:hover, :focus-visible) { background-color: hsla(var(--base-hue-primary), var(--base-saturation-primary), var(--base-lightness-primary), 0.1); }
 
-   /* ==========================================================================
-   8. Component: Project Gallery Section & Scroll Mode Gallery
-   ========================================================================== */
-
-   #project-gallery {
-    scroll-margin-block-start: 1.25rem;
-   }
-   .project-gallery-section {
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    padding-block-start: 0;
-    width: 100%; box-sizing: border-box;
-    padding-block-end: 0;
-   }
-
-   /* -----------------------------------------
-   8.1 Component: Scroll Mode Gallery (.scroll-mode-container)
-   ----------------------------------------- */
-   .scroll-mode-container {
+/* Gallery */
+#project-gallery { scroll-margin-block-start: 1.25rem; }
+.project-gallery-section { display: flex; flex-direction: column; justify-content: center; align-items: center; padding-block: 0; width: 100%; box-sizing: border-box; }
+.scroll-mode-container {
     display: flex;
     width: 100%;
     max-width: 112.5rem;
-    height: 90vh;
-    margin: 1.875rem auto 3.125rem;
-    overflow: hidden; /* This overflow hidden is for the DESKTOP JS-driven scroll */
-    position: relative;
+    margin-top: 3.125rem;
+    height: calc(100vh - 6.25rem); /* 100vh - (sticky top + original margin-bottom) */
+    overflow: hidden;
     background: var(--gradient-main);
     border-radius: 1.875rem;
     box-shadow: 0 0.5rem 1.5625rem hsla(0, 0%, 0%, 0.1);
     outline: none;
-   }
-   .thumbnail-column {
-    flex: 0 0 10rem;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-    padding: 0.625rem 0.3125rem;
-    box-sizing: border-box;
-    border-right: 1px solid var(--border-color);
-    transition: border-color var(--transition-duration-base) var(--transition-easing-base);
-   }
-   .main-image-column {
-    flex: 1;
-    height: 100%;
-    overflow: hidden; /* DESKTOP: hidden (JS scroll). MOBILE: overridden to 'auto' */
-    position: relative;
-    padding: 1.25rem;
-    box-sizing: border-box;
-   }
-   .thumbnail-scroller,
-   .main-image-scroller {
+}
+.thumbnail-column { flex: 0 0 10rem; height: 100%; overflow: hidden; position: relative; padding: 0.625rem 0.3125rem; box-sizing: border-box; border-right: 1px solid var(--border-color); transition: border-color var(--transition-duration-base) var(--transition-easing-base); }
+.main-image-column { flex: 1; height: 100%; overflow: hidden; position: relative; padding: 1.25rem; box-sizing: border-box; }
+.thumbnail-scroller, .main-image-scroller { width: 100%; position: relative; padding: 0.625rem 0.3125rem; }
+
+.scroll-gallery__thumb-item {
+    display: block; width: calc(100% - 1.25rem); margin: 0.625rem auto; cursor: pointer;
+    border-radius: 0.5rem; overflow: hidden; position: relative; box-shadow: 0 0.125rem 0.3125rem hsla(0, 0%, 0%, 0.1);
+    opacity: 0.5; transform: scale(0.95); transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
+    background-color: var(--color-secondary); outline: none;
+}
+.scroll-gallery__thumb-item img { display: block; width: 100%; height: auto; object-fit: contain; transition: transform 0.4s ease; opacity: 1; }
+.scroll-gallery__thumb-item:hover { opacity: 0.75; transform: scale(1); box-shadow: 0 0.25rem 0.625rem hsla(0, 0%, 0%, 0.15); }
+.scroll-gallery__thumb-item:hover img { transform: scale(1.05); }
+.scroll-gallery__thumb-item.active { opacity: 1; transform: scale(1); box-shadow: 0 0.375rem 0.9375rem hsla(0, 0%, 0%, 0.2); }
+.scroll-gallery__thumb-item--error { background-color: var(--slide-error-bg-color); display: flex; align-items: center; justify-content: center; color: var(--slide-error-text-color); box-shadow: none; opacity: 0.8; cursor: default; transform: scale(1); min-height: 50px; }
+
+.scroll-gallery__main-item {
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
     width: 100%;
-    position: relative;
-   }
-
-   .scroll-gallery__thumb-item {
-    display: block;
-    width: calc(100% - 1.25rem);
-    margin: 0.625rem auto;
-    cursor: pointer;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 0.125rem 0.3125rem hsla(0, 0%, 0%, 0.1);
-    opacity: 0.5;
-    transform: scale(0.95);
-    transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
-    background-color: var(--color-secondary);
-    outline: none;
-   }
-   .scroll-gallery__thumb-item img {
-    display: block;
-    transition: transform 0.4s ease;
-    opacity: 1;
-   }
-   .scroll-gallery__thumb-item:hover {
-    opacity: 0.75; transform: scale(1);
-    box-shadow: 0 0.25rem 0.625rem hsla(0, 0%, 0%, 0.15);
-   }
-   .scroll-gallery__thumb-item:hover img { transform: scale(1.05); }
-
-   .scroll-gallery__thumb-item.active {
-    opacity: 1; transform: scale(1);
-    box-shadow: 0 0.375rem 0.9375rem hsla(0, 0%, 0%, 0.2);
-   }
-   .scroll-gallery__thumb-item--error {
-    background-color: var(--slide-error-bg-color);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--slide-error-text-color);
-    box-shadow: none; opacity: 0.8; cursor: default;
-    transform: scale(1);
-    min-height: 50px;
-   }
-   .scroll-gallery__thumb-item--error picture,
-   .scroll-gallery__thumb-item--error img {
-       display: none !important;
-   }
-   .scroll-gallery__thumb-item--error .item-error-content {
-    width: 100%; height: 100%;
-   }
-
-
-   .scroll-gallery__main-item {
-    display: block;
-    width: 100%;
-    margin-bottom: 10vh; /* Spacing between main images in the scroller (DESKTOP) */
-                        /* On MOBILE, this is normal content flow */
+    margin-bottom: 10vh;
     border-radius: 0.9375rem;
     overflow: hidden;
     position: relative;
@@ -671,351 +414,104 @@
     box-shadow: 0 0.5rem 1.25rem hsla(0, 0%, 0%, 0.15);
     background-color: var(--color-secondary);
     outline-offset: -3px;
-   }
-   .scroll-gallery__main-item:last-child { margin-bottom: 0; }
+}
+.scroll-gallery__main-item:last-child { margin-bottom: 0; }
+.scroll-gallery__main-item img {
+    display: block; opacity: 1; width: 100%; height: auto; object-fit: contain;
+    transition: transform var(--transition-duration-zoom) var(--transition-easing-zoom); /* Added for smooth zoom */
+}
+.scroll-gallery__main-item--zoomed {
+    cursor: zoom-out;
+}
+.scroll-gallery__main-item--zoomed img {
+    transform: scale(1.5);
+    transform-origin: center center; /* Ensure zoom is from the center */
+}
+.scroll-gallery__main-item--error { background-color: var(--slide-error-bg-color); display: flex; align-items: center; justify-content: center; color: var(--slide-error-text-color); box-shadow: none; cursor: default; min-height: 200px; }
 
-   .scroll-gallery__main-item img {
-    display: block;
-    opacity: 1;
-   }
-   .scroll-gallery__main-item--error {
-    background-color: var(--slide-error-bg-color);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--slide-error-text-color);
-    box-shadow: none; cursor: default;
-    min-height: 200px;
-   }
-   .scroll-gallery__main-item--error picture,
-   .scroll-gallery__main-item--error img {
-       display: none !important;
-   }
-   .scroll-gallery__main-item--error .item-error-content {
-    width: 100%; height: 100%;
-   }
-   .scroll-gallery__main-item--error .item-error-content::before { font-size: 2.5em; }
+.active-cursor {
+    position: absolute; left: 0.9375rem; width: calc(100% - 1.875rem); border: 2px solid var(--color-primary);
+    border-radius: 0.5rem; pointer-events: none; opacity: 0; z-index: 10;
+    transition: transform var(--transition-duration-cursor-transform) var(--transition-easing-cursor-transform), opacity 0.6s ease, border-color var(--transition-duration-base) var(--transition-easing-base), height 0.4s ease;
+}
+.scroll-mode-container.is-dragging { cursor: grabbing; }
+.gallery-empty-message { text-align: center; padding: 3.125rem 1.25rem; color: var(--text-color); opacity: 0.7; font-size: 1.1rem; font-style: italic; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 20vh; }
 
-   .active-cursor {
-    position: absolute;
-    left: 0.9375rem; /* Corresponds to half of (100% - calc(100% - 1.25rem)) for centering */
-    width: calc(100% - 1.875rem); /* Matches .scroll-gallery__thumb-item width */
-    border: 2px solid var(--color-primary);
-    border-radius: 0.5rem; /* Matches .scroll-gallery__thumb-item border-radius */
-    pointer-events: none;
-    opacity: 0;
-    transition: transform var(--transition-duration-cursor-transform) var(--transition-easing-cursor-transform),
-                opacity 0.6s ease,
-                border-color var(--transition-duration-base) var(--transition-easing-base),
-                height 0.4s ease; /* Keep height transition for smoothness */
-    box-sizing: border-box;
-    z-index: 10;
-   }
+/* Fullscreen Slider */
+.fullscreen-container {
+    display: flex; position: fixed; inset: 0; background-color: var(--fullscreen-bg-color);
+    justify-content: center; align-items: center; z-index: var(--z-index-fullscreen-backdrop);
+    opacity: 0; pointer-events: none; transition: opacity var(--transition-duration-fade-bg) var(--transition-easing-fade-bg);
+}
+.fullscreen-container.active { opacity: 1; pointer-events: auto; }
+.fullscreen-slider-wrapper {
+    width: 100%; height: 100%; display: flex; overflow-x: scroll; position: relative;
+    z-index: var(--z-index-fullscreen-slider); scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain; padding-inline: var(--slide-wrapper-padding); scroll-padding-inline: var(--slide-wrapper-padding);
+    box-sizing: border-box; scrollbar-width: none; -ms-overflow-style: none;
+}
+.fullscreen-slider-wrapper::-webkit-scrollbar { display: none; }
+.fullscreen-slide {
+    width: var(--slide-width-percent); height: 100%; flex: 0 0 var(--slide-width-percent); scroll-snap-align: center;
+    position: relative; display: flex; justify-content: center; align-items: center; box-sizing: border-box;
+    overflow: hidden; cursor: pointer; opacity: var(--slide-peek-opacity); filter: blur(var(--slide-peek-blur));
+    transition: opacity var(--transition-duration-slide-peek) var(--transition-easing-slide-peek), filter var(--transition-duration-slide-peek) var(--transition-easing-slide-peek);
+}
+.fullscreen-slide.is-active-slide { opacity: 1; filter: none; cursor: default; }
+.fullscreen-slide img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 0.625rem 1.5625rem hsla(0, 0%, 0%, 0.3); border-radius: 0.25rem; pointer-events: none; }
+.fullscreen-slide picture.is-loading-placeholder { background-color: var(--slide-loading-color); min-height: 12.5rem; min-width: 12.5rem; max-width: 80%; max-height: 80%; border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; }
+.fullscreen-slide.slide-load-error { background-color: var(--slide-error-bg-color); border-radius: 0.25rem; color: var(--slide-error-text-color); padding: 1.25rem; display: flex; justify-content: center; align-items: center; opacity: 1; filter: none; cursor: default; min-height: 12.5rem; min-width: 12.5rem; }
 
-   .scroll-mode-container.is-dragging { cursor: grabbing; }
+.fullscreen-button {
+    position: absolute; background: var(--fullscreen-button-bg); border: none; color: var(--fullscreen-button-color);
+    font-size: 1.5rem; cursor: pointer; width: 2.75rem; height: 2.75rem; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center; user-select: none; line-height: 1; z-index: var(--z-index-fullscreen-controls);
+    opacity: 0; pointer-events: none; transition: all 0.3s ease;
+}
+.fullscreen-container.active .fullscreen-button { opacity: 1; pointer-events: auto; transition-delay: calc(var(--transition-duration-fade-bg) * 0.5); }
+.fullscreen-button:is(:hover, :focus-visible) { color: var(--fullscreen-button-color-hover); background-color: var(--fullscreen-button-bg-hover); transform: scale(1.08); outline-color: hsla(0, 0%, 100%, 0.7); }
+.close-fullscreen { top: 1.25rem; inset-inline-end: 1.25rem; }
 
-   .gallery-empty-message {
-    text-align: center;
-    padding: 3.125rem 1.25rem;
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 1.1rem;
-    font-style: italic;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 20vh;
-   }
-   /* ==========================================================================
-      9. Component: Fullscreen Peeking Slider (#fullscreen-container)
-      ========================================================================== */
+.main-container.fullscreen-effect-active > .content { filter: blur(4px); opacity: 0.3; pointer-events: none; }
 
-   .fullscreen-container {
-       display: flex;
-       position: fixed; inset: 0;
-       background-color: var(--fullscreen-bg-color);
-       justify-content: center; align-items: center;
-       z-index: var(--z-index-fullscreen-backdrop);
-       opacity: 0; pointer-events: none;
-       transition: opacity var(--transition-duration-fade-bg) var(--transition-easing-fade-bg);
-   }
-   .fullscreen-container.active {
-       opacity: 1; pointer-events: auto;
-   }
+/* Media Queries */
+@media (min-width: 62rem) {
+    body { background-attachment: fixed; }
+    .main-container { grid-template-columns: 26.5625rem 1fr; gap: 0.625rem; padding-inline: 0.625rem; margin-block-end: 3.125rem; }
+    @media (max-width: 75rem) { .main-container { grid-template-columns: 21.875rem 1fr; gap: 0.3125rem; margin-block-end: 2.5rem; } }
+    .menu { display: grid; grid-template-columns: 4.0625rem 1fr; position: sticky; top: 3.125rem; align-self: start; flex-direction: row; gap: 0.625rem; margin-block-end: 0; height: calc(100vh - 6.25rem); overflow-y: auto; }
+    @media (max-width: 75rem) { .menu { grid-template-columns: 3.75rem 1fr; gap: 0.625rem; } }
+    .menu .profile { order: initial; height: fit-content; max-height: calc(100vh - 6.25rem - 0.625rem); overflow-y: auto; }
+    .menu header { order: initial; width: 100%; display: block; justify-content: initial; }
+    .menu header nav ul { display: grid; justify-content: center; align-items: center; gap: 0.625rem; padding: 0.5rem; margin-block-end: 0.625rem; background: var(--gradient-main); border-radius: 2.1875rem; width: fit-content; margin-inline: auto; flex-direction: column; }
+    .profile__image { max-height: 17.5rem; }
+    .content { gap: 0.75rem; }
+}
 
-   .fullscreen-slider-wrapper {
-       width: 100%; height: 100%;
-       display: flex;
-       overflow-x: scroll;
-       position: relative;
-       z-index: var(--z-index-fullscreen-slider);
-       scroll-snap-type: x mandatory;
-       -webkit-overflow-scrolling: touch;
-       overscroll-behavior-x: contain;
-       padding-inline: var(--slide-wrapper-padding);
-       scroll-padding-inline: var(--slide-wrapper-padding);
-       box-sizing: border-box;
-       scrollbar-width: none;
-       -ms-overflow-style: none;
-   }
-   .fullscreen-slider-wrapper::-webkit-scrollbar { display: none; }
-
-   .fullscreen-slide {
-       width: var(--slide-width-percent);
-       height: 100%;
-       flex: 0 0 var(--slide-width-percent);
-       scroll-snap-align: center;
-       position: relative;
-       display: flex; justify-content: center; align-items: center;
-       box-sizing: border-box;
-       overflow: hidden;
-       cursor: pointer;
-       opacity: var(--slide-peek-opacity);
-       filter: blur(var(--slide-peek-blur));
-       transition: opacity var(--transition-duration-slide-peek) var(--transition-easing-slide-peek),
-                   filter var(--transition-duration-slide-peek) var(--transition-easing-slide-peek);
-   }
-   .fullscreen-slide.is-active-slide {
-       opacity: 1;
-       filter: none;
-       cursor: default;
-   }
-
-   .fullscreen-slide img {
-       display: block;
-       max-width: 100%; max-height: 100%;
-       object-fit: contain;
-       box-shadow: 0 0.625rem 1.5625rem hsla(0, 0%, 0%, 0.3);
-       border-radius: 0.25rem;
-       position: relative;
-       transform-origin: 0 0;
-       pointer-events: none;
-   }
-
-   .fullscreen-slide picture.is-loading-placeholder {
-       background-color: var(--slide-loading-color);
-       min-height: 12.5rem;
-       min-width: 12.5rem;
-       width: auto;
-       height: auto;
-       max-width: 80%;
-       max-height: 80%;
-       box-shadow: none;
-       border-radius: 0.25rem;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-   }
-   .fullscreen-slide picture.is-loading-placeholder img {
-       display: none;
-   }
-   .fullscreen-slide img:-moz-loading {
-       background-color: var(--slide-loading-color);
-       min-height: 12.5rem; min-width: 12.5rem;
-       box-shadow: none; border-radius: 0.25rem;
-   }
-
-
-   .fullscreen-slide.slide-load-error {
-       background-color: var(--slide-error-bg-color);
-       border-radius: 0.25rem;
-       color: var(--slide-error-text-color);
-       padding: 1.25rem;
-       display: flex;
-       justify-content: center; align-items: center;
-       opacity: 1; filter: none;
-       cursor: default;
-       min-height: 12.5rem; min-width: 12.5rem;
-   }
-   .fullscreen-slide.slide-load-error .item-error-content { display: flex; }
-   .fullscreen-slide.slide-load-error picture,
-   .fullscreen-slide.slide-load-error img { display: none; }
-
-   .fullscreen-image-transition {
-       transition: transform var(--transition-duration-zoom) var(--transition-easing-zoom),
-                   opacity calc(var(--transition-duration-zoom) * 0.8) ease;
-   }
-
-   /* -----------------------------------------
-      9.1 Component: Fullscreen Controls
-      ----------------------------------------- */
-   .fullscreen-button {
-       position: absolute;
-       background: var(--fullscreen-button-bg); border: none;
-       color: var(--fullscreen-button-color);
-       font-size: 1.5rem;
-       cursor: pointer;
-       transition: color var(--transition-duration-base) var(--transition-easing-base),
-                   background-color var(--transition-duration-base) var(--transition-easing-base),
-                   transform 0.15s var(--transition-easing-base),
-                   outline-color var(--transition-duration-base) var(--transition-easing-base),
-                   opacity 0.3s ease;
-       padding: 0;
-       width: 2.75rem;
-       height: 2.75rem;
-       border-radius: 50%;
-       display: flex; justify-content: center; align-items: center;
-       user-select: none; line-height: 1;
-       outline-offset: calc(-1 * var(--focus-outline-width));
-       z-index: var(--z-index-fullscreen-controls);
-       opacity: 0; pointer-events: none;
-   }
-   .fullscreen-container.active .fullscreen-button {
-       opacity: 1;
-       pointer-events: auto;
-       transition-delay: calc(var(--transition-duration-fade-bg) * 0.5);
-   }
-   .fullscreen-container.is-zooming .fullscreen-button {
-       opacity: 0 !important;
-       pointer-events: none !important;
-       transition: none !important;
-   }
-   .fullscreen-button .material-symbols-outlined { font-size: 1.5rem; display: block; }
-
-   .fullscreen-button:is(:hover, :focus-visible) {
-       color: var(--fullscreen-button-color-hover);
-       background-color: var(--fullscreen-button-bg-hover);
-       transform: scale(1.08);
-       outline-color: hsla(0, 0%, 100%, 0.7);
-   }
-   .fullscreen-button:active {
-       transform: scale(0.95);
-       background-color: hsla(0, 0%, 100%, 0.2);
-       transition-duration: 0.05s;
-   }
-   .close-fullscreen {
-       top: 1.25rem;
-       inset-inline-end: 1.25rem;
-   }
-
-   /* ==========================================================================
-      10. Focus Pull Effect (Background Blur/Fade)
-      ========================================================================== */
-
-   .main-container.fullscreen-effect-active > .content {
-       filter: blur(4px);
-       opacity: 0.3;
-       pointer-events: none;
-   }
-
-   /* ==========================================================================
-      12. Media Queries (Responsive Design)
-      ========================================================================== */
-
-   @media (min-width: 62rem) { /* Corresponds to SCROLL_MODE.DESKTOP_MEDIA_QUERY */
-       body {
-           background-attachment: fixed;
-       }
-
-       .main-container {
-           grid-template-columns: 26.5625rem 1fr;
-           gap: 0.625rem;
-           padding-inline: 0.625rem;
-           margin-block-end: 3.125rem;
-       }
-       @media (max-width: 75rem) {
-           .main-container { grid-template-columns: 21.875rem 1fr; gap: 0.3125rem; margin-block-end: 2.5rem; }
-       }
-
-       .menu {
-           display: grid;
-           grid-template-columns: 4.0625rem 1fr;
-           position: sticky;
-           top: 3.125rem;
-           align-self: start;
-           flex-direction: row;
-           gap: 0.625rem;
-           margin-block-end: 0;
-           height: calc(100vh - 6.25rem);
-           overflow-y: auto;
-       }
-       @media (max-width: 75rem) {
-           .menu { grid-template-columns: 3.75rem 1fr; gap: 0.625rem; }
-       }
-       .menu .profile {
-           order: initial;
-           height: fit-content;
-           max-height: calc(100vh - 6.25rem - 0.625rem);
-           overflow-y: auto;
-        }
-       .menu header { order: initial; width: 100%; display: block; justify-content: initial; }
-
-       .menu header nav ul {
-           display: grid;
-           justify-content: center; align-items: center;
-           gap: 0.625rem;
-           padding: 0.5rem;
-           margin-block-end: 0.625rem;
-           background: var(--gradient-main);
-           border-radius: 2.1875rem;
-           width: fit-content;
-           margin-inline: auto;
-           flex-direction: column;
-       }
-
-       .profile__image { max-height: 17.5rem; }
-       .content { gap: 0.75rem; }
+@media (max-width: 61.9375rem) {
+    html.fullscreen-active { padding-right: 0; }
+    .main-container { padding-block-start: 1.875rem; padding-inline: 0.9375rem; margin-block-end: 1.875rem; }
+    .section-container { padding: 1.875rem 1.5625rem; border-radius: 1.875rem; }
+    #about { border-radius: 1.875rem; }
+    .profile__image img, .profile__image picture { object-position: center 30%; }
+    .section-heading h2 { font-size: 1.8rem; }
+    #about h3.about-location { font-size: 1.4rem; }
+    #about p { font-size: 0.85rem; }
+    .project-filter-list { margin-block: 1.875rem; }
+    .project-gallery-section { padding-block-end: 3.125rem; }
+    .scroll-mode-container { height: fit-content; border-radius: 1.25rem; }
+    .thumbnail-column { display: none; }
+    .main-image-column { flex: 1 0 100%; width: 100%; padding: 0.625rem; border-right: none; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+    .scroll-gallery__main-item { margin-bottom: 2rem; border-radius: 0.625rem; box-shadow: 0 0.125rem 0.375rem hsla(0, 0%, 0%, 0.08); }
+    .scroll-gallery__main-item img {
+        object-fit: cover; /* Make image fill height, potentially cropping horizontally */
+        height: 100%; /* Ensure image takes full height of its container */
     }
-
-   @media (max-width: 61.9375rem) { /* Mobile and smaller tablets */
-       html.fullscreen-active { padding-right: 0; }
-
-       .main-container { padding-block-start: 1.875rem; padding-inline: 0.9375rem; margin-block-end: 1.875rem; }
-       .section-container { padding: 1.875rem 1.5625rem; border-radius: 1.875rem; }
-       #about { border-radius: 1.875rem; }
-
-       .profile__image img,
-       .profile__image picture { object-position: center 30%; }
-
-       .section-heading h2 { font-size: 1.8rem; }
-       #about h3.about-location { font-size: 1.4rem; }
-       #about p { font-size: 0.85rem; }
-
-       .project-filter-list { margin-block: 1.875rem; }
-       #project-gallery { scroll-margin-block-start: 1.25rem; }
-       .project-gallery-section { padding-block-end: 3.125rem; }
-
-       .scroll-mode-container {
-           height: fit-content; /* Allow it to grow with content on mobile */
-           border-radius: 1.25rem;
-           /* overflow: hidden; <- THIS IS IMPORTANT, it was hiding native scroll on mobile before mainCol was fixed */
-       }
-       .thumbnail-column {
-           display: none;
-       }
-       .main-image-column {
-           flex: 1 0 100%;
-           width: 100%;
-           padding: 0.625rem;
-           border-right: none;
-           overflow-x: hidden;
-           -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
-       }
-
-       .scroll-gallery__main-item {
-           margin-bottom: 2rem;
-           border-radius: 0.625rem;
-           box-shadow: 0 0.125rem 0.375rem hsla(0, 0%, 0%, 0.08);
-       }
-       .active-cursor {
-           display: none;
-       }
-       html {
-           --slide-width-percent: 85%;
-           --slide-peek-blur: 3px;
-       }
-        .fullscreen-slide img {
-            max-height: calc(100% - 2.5rem);
-            border-radius: 0.25rem;
-            box-shadow: 0 0.5rem 0.9375rem hsla(0, 0%, 0%, 0.25);
-       }
-       .fullscreen-slide picture.is-loading-placeholder {
-            max-height: calc(100% - 2.5rem);
-       }
-       .menu header nav ul li a[data-label]::after,
-        .menu header nav ul li button[data-label]::after {
-        display: none !important; /* Hide the tooltip entirely on mobile */
-        }
-       .fullscreen-button { width: 2.5rem; height: 2.5rem; }
-       .fullscreen-button .material-symbols-outlined { font-size: 1.25rem; }
-       .close-fullscreen { top: 0.625rem; inset-inline-end: 0.625rem; }
-   }
+    .active-cursor { display: none; }
+    html { --slide-width-percent: 85%; --slide-peek-blur: 3px; }
+    .fullscreen-slide img { max-height: calc(100% - 2.5rem); border-radius: 0.25rem; box-shadow: 0 0.5rem 0.9375rem hsla(0, 0%, 0%, 0.25); }
+    .fullscreen-slide picture.is-loading-placeholder { max-height: calc(100% - 2.5rem); }
+    .menu header nav ul li a[data-label]::after, .menu header nav ul li button[data-label]::after { display: none !important; }
+    .fullscreen-button { width: 2.5rem; height: 2.5rem; }
+    .close-fullscreen { top: 0.625rem; inset-inline-end: 0.625rem; }
+}
