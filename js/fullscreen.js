@@ -34,7 +34,6 @@ export class FullscreenGallery extends Component {
         this.state = { isOpen: true, currentIndex: index, currentData: projects };
         appStore.setState({ isFullscreen: true });
 
-        // PERF: Render slides. 
         this._renderSlides();
         
         this.el.hidden = false;
@@ -45,7 +44,6 @@ export class FullscreenGallery extends Component {
 
         requestAnimationFrame(() => {
             this.el.classList.add(CONFIG.CLASSES.active);
-            // Instant scroll to position, then smooth transition
             this._scrollToSlide(index, "auto");
             this._updateClasses(); 
             this.dom.closeBtn?.focus();
@@ -64,7 +62,6 @@ export class FullscreenGallery extends Component {
             this.state.isOpen = false;
             this.el.hidden = true;
             this.el.setAttribute("aria-hidden", "true");
-            // PERF: Free memory
             this.dom.wrapper.replaceChildren(); 
             appStore.setState({ isFullscreen: false });
         });
@@ -73,24 +70,16 @@ export class FullscreenGallery extends Component {
     _renderSlides() {
         const frag = document.createDocumentFragment();
         
-        // PERF Optimization:
-        // Even with lazy-loading, creating 100+ slides is heavy.
-        // However, assuming < 200 items, strict DOM creation is acceptable 
-        // IF the content inside is lightweight.
-        // We use decoding="async" and loading="lazy" strictly.
-        
         this.state.currentData.forEach((p, i) => {
             const slide = document.createElement("div");
             slide.className = "fullscreen-slide";
             
-            // PERF: Only load the target image eagerly. 
-            // Neighbors get lazy loaded, others are far lazy loaded.
             const isNear = Math.abs(i - this.state.currentIndex) <= 1;
             
             const img = document.createElement("img");
             img.src = p.src;
             img.loading = isNear ? "eager" : "lazy";
-            img.decoding = "async"; // Critical for smooth sliding
+            img.decoding = "async"; 
             
             slide.onclick = () => i !== this.state.currentIndex && this.navigate(i);
             
@@ -116,12 +105,9 @@ export class FullscreenGallery extends Component {
     }
 
     _updateClasses() {
-        // PERF: Batch DOM reads/writes
-        // We only toggle classes. The CSS handles opacity transitions (Compositor).
         const children = this.dom.wrapper.children;
         const current = this.state.currentIndex;
         
-        // Only update if changed to avoid recalc style
         for (let i = 0; i < children.length; i++) {
             const slide = children[i];
             const isActive = i === current;

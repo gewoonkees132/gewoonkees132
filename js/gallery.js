@@ -16,183 +16,152 @@ export class ScrollGallery extends Component {
         };
 
         this.items = []; 
-        this.observer = null;
-        this.renderTask = null; // Track the current render task
+        this.renderTask = null;
+
+        // PERF: IntersectionObserver for "Just-In-Time" image injection.
+        // We observe the container <div>, not the image.
+        this.imageInjector = new IntersectionObserver(this._onImageContainerIntersect.bind(this), {
+            rootMargin: '50% 0px 50% 0px', // Load when within 50% of viewport height
+            threshold: 0.01
+        });
+
+        // PERF: IntersectionObserver for Active State (separate from loading)
+        this.activeObserver = new IntersectionObserver(this._onActiveIntersect.bind(this), {
+            root: this.dom.scrollContainer,
+            rootMargin: '-45% 0px -45% 0px', // Center of viewport
+            threshold: 0
+        });
 
         this._init();
     }
 
     _init() {
         if (!this.el) return;
-
-        // PERF: Debounce rapid filter changes to prevent layout thrashing
         this.subscribe('state:projects', this.render);
         this.subscribe('state:activeFilter', this.render);
-        
-        // Event delegation is efficient, keep it.
         this.addEvent(this.el, 'click', (e) => this._handleClick(e));
-        
-        this.observer = new IntersectionObserver(this._onIntersect.bind(this), {
-            root: this.dom.scrollContainer,
-            rootMargin: '-10% 0px -10% 0px',
-            threshold: 0.1 // PERF: Lower threshold triggers faster
-        });
     }
 
     destroy() {
-        if (this.observer) this.observer.disconnect();
-        if (this.renderTask) cancelAnimationFrame(this.renderTask);
+        if (this.imageInjector) this.imageInjector.disconnect();
+        if (this.activeObserver) this.activeObserver.disconnect();
+        if (this.renderTask) cancelIdleCallback(this.renderTask);
         super.destroy(); 
     }
 
     render = () => {
-        // Cancel any pending render loops from previous filters
-        if (this.renderTask) cancelAnimationFrame(this.renderTask);
+        if (this.renderTask) cancelIdleCallback(this.renderTask);
 
         const projects = appStore.getFilteredProjects();
         this.items = [];
-        this.observer.disconnect();
+        this.imageInjector.disconnect();
+        this.activeObserver.disconnect();
         
-        // PERF: Use replaceChildren for efficient DOM clearing
-        this._clearGallery();
+        // PERF: Fast DOM clear
+        this.dom.mainCol.replaceChildren();
+        this.dom.thumbCol.replaceChildren();
 
         if (projects.length === 0) {
             this._displayEmptyMessage();
             return;
         }
 
-        // PERF: Time-Sliced Rendering Strategy
-        // 1. Render the first batch immediately (viewport visible)
-        // 2. Schedule the rest in micro-tasks to keep main thread responsive
-        const INITIAL_BATCH_SIZE = 6; 
-        const CHUNK_SIZE = 10;
-        
+        // PERF: Time-Sliced Rendering Strategy using requestIdleCallback
+        // This prevents the "Block Main Thread" warning when rendering 100+ items.
+        const CHUNK_SIZE = 20;
         let currentIndex = 0;
 
-        const processChunk = () => {
+        const processChunk = (deadline) => {
             const fragmentThumb = document.createDocumentFragment();
             const fragmentMain = document.createDocumentFragment();
             
-            const limit = Math.min(currentIndex + CHUNK_SIZE, projects.length);
-            
-            for (let i = currentIndex; i < limit; i++) {
-                const p = projects[i];
-                const { thumb, main } = this._createGalleryItem(p, i);
+            // Render as many as possible while time remains, or until chunk limit
+            while (currentIndex < projects.length && (deadline.timeRemaining() > 1 || deadline.didTimeout)) {
+                const limit = Math.min(currentIndex + CHUNK_SIZE, projects.length);
                 
-                this.items.push({ thumb, main });
-                fragmentThumb.appendChild(thumb);
-                fragmentMain.appendChild(main);
-                this.observer.observe(main);
+                for (let i = currentIndex; i < limit; i++) {
+                    const p = projects[i];
+                    const { thumb, main } = this._createGalleryItem(p, i);
+                    
+                    this.items.push({ thumb, main });
+                    fragmentThumb.appendChild(thumb);
+                    fragmentMain.appendChild(main);
+                    
+                    // Observe the empty container for lazy injection
+                    this.imageInjector.observe(main);
+                    this.activeObserver.observe(main);
+                }
+                currentIndex = limit;
+                
+                // Flush to DOM immediately to keep visual progress
+                this.dom.thumbCol.appendChild(fragmentThumb);
+                this.dom.mainCol.appendChild(fragmentMain);
             }
 
-            // Append chunk to DOM
-            this.dom.thumbCol.appendChild(fragmentThumb);
-            this.dom.mainCol.appendChild(fragmentMain);
-
-            currentIndex = limit;
-
             if (currentIndex < projects.length) {
-                // Schedule next chunk. 
-                // Using requestAnimationFrame ensures we paint between chunks.
-                this.renderTask = requestAnimationFrame(processChunk);
+                this.renderTask = requestIdleCallback(processChunk);
             }
         };
 
-        // Render initial batch synchronously for LCP/FCP
-        currentIndex = 0;
-        const initialLimit = Math.min(INITIAL_BATCH_SIZE, projects.length);
-        
-        const initialFragThumb = document.createDocumentFragment();
-        const initialFragMain = document.createDocumentFragment();
-
-        for (let i = 0; i < initialLimit; i++) {
-            const p = projects[i];
-            const { thumb, main } = this._createGalleryItem(p, i);
-            this.items.push({ thumb, main });
-            initialFragThumb.appendChild(thumb);
-            initialFragMain.appendChild(main);
-            this.observer.observe(main);
-        }
-        
-        this.dom.thumbCol.appendChild(initialFragThumb);
-        this.dom.mainCol.appendChild(initialFragMain);
-        
-        currentIndex = initialLimit;
-
-        // Reset view position
+        // Start the rendering pipeline
+        this.renderTask = requestIdleCallback(processChunk);
         this._resetView();
-
-        // Kick off the rest if needed
-        if (currentIndex < projects.length) {
-            // PERF: Use idle callback if available, else RAF. 
-            // This prioritizes user input over rendering off-screen items.
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(() => {
-                    this.renderTask = requestAnimationFrame(processChunk);
-                });
-            } else {
-                this.renderTask = requestAnimationFrame(processChunk);
-            }
-        }
     }
 
     _createGalleryItem(project, index) {
-        // Thumb - simplified structure
+        // Thumb
         const thumb = document.createElement('button');
         thumb.className = CONFIG.CLASSES.thumbItem;
         thumb.dataset.index = index;
         thumb.setAttribute('aria-label', `View ${project.title}`);
-        
-        // PERF: Explicit width/height to prevent reflows
-        thumb.innerHTML = `<img 
-            src="${project.src}" 
-            alt="" 
-            loading="lazy" 
-            decoding="async"
-            width="150"
-            height="100">`;
+        // Thumbs are small, standard lazy load is fine
+        thumb.innerHTML = `<img src="${project.src}" alt="" loading="lazy" decoding="async" width="150" height="100">`;
 
-        // Main Image
+        // Main Image Container (Empty initially)
         const main = document.createElement('div');
         main.className = CONFIG.CLASSES.mainItem;
         main.dataset.index = index;
+        main.dataset.src = project.src; // Store data for injection
+        main.dataset.title = project.title;
         main.tabIndex = 0;
         
-        // PERF: Do NOT create the <img> tag yet if it's far down the list.
-        // However, since we are using content-visibility: auto in CSS, 
-        // we can safely create the node, and the browser will defer the painting.
-        const img = this._createMainImage(project, index);
-        main.appendChild(img);
+        // PERF: We do NOT create the <img> here. 
+        // We rely on _onImageContainerIntersect to inject it.
+        // CSS 'content-visibility: auto' + 'contain-intrinsic-size' handles the layout placeholder.
 
         return { thumb, main };
     }
 
-    _createMainImage(project, index) {
-        const img = document.createElement('img');
-        
-        // PERF: Use low-res placeholder or just src. 
-        // Assuming src is efficient enough with srcset.
-        img.src = project.src;
-        img.alt = project.title || 'Project';
-        img.width = 1200; 
-        img.height = 800; 
-        img.srcset = generateSrcset(project.src);
-        img.sizes = galleryImageSizes;
-        img.decoding = "async"; // Critical for main thread unblocking
-
-        // PERF: Strict loading strategy
-        if (index === 0) {
-            img.fetchPriority = "high";
-            img.loading = "eager";
-        } else {
-            img.loading = "lazy";
-            img.fetchPriority = "low";
-        }
-        return img;
+    // PERF: This is the "Just-In-Time" injector
+    _onImageContainerIntersect(entries, observer) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const container = entry.target;
+                
+                // Only inject if not already present
+                if (!container.querySelector('img')) {
+                    const img = document.createElement('img');
+                    img.src = container.dataset.src;
+                    img.alt = container.dataset.title || 'Project';
+                    img.width = 1200; 
+                    img.height = 800; 
+                    img.srcset = generateSrcset(container.dataset.src);
+                    img.sizes = galleryImageSizes;
+                    img.decoding = "async"; 
+                    
+                    // Since it's intersecting, we want it now
+                    img.loading = "eager"; 
+                    
+                    container.appendChild(img);
+                }
+                
+                // Stop observing once injected (memory optimization)
+                observer.unobserve(container);
+            }
+        });
     }
 
     _clearGallery() {
-        // PERF: replaceChildren is faster than innerHTML = ''
         this.dom.mainCol.replaceChildren();
         this.dom.thumbCol.replaceChildren();
     }
@@ -204,11 +173,9 @@ export class ScrollGallery extends Component {
 
     _resetView() {
         this.dom.scrollContainer.scrollTop = 0;
-        this._updateActive(0);
     }
 
     _handleClick(e) {
-        // Event delegation logic remains same
         const thumb = e.target.closest(`.${CONFIG.CLASSES.thumbItem}`);
         const main = e.target.closest(`.${CONFIG.CLASSES.mainItem}`);
 
@@ -222,29 +189,18 @@ export class ScrollGallery extends Component {
         }
     }
 
-    _onIntersect(entries) {
-        // PERF: Find the one with max intersection ratio for accuracy
-        let maxRatio = 0;
-        let activeIndex = -1;
-
+    _onActiveIntersect(entries) {
         entries.forEach(entry => {
-            if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
-                maxRatio = entry.intersectionRatio;
-                activeIndex = parseInt(entry.target.dataset.index, 10);
+            if (entry.isIntersecting) {
+                const index = parseInt(entry.target.dataset.index, 10);
+                this._updateActive(index);
             }
         });
-
-        if (activeIndex !== -1) {
-            this._updateActive(activeIndex);
-        }
     }
 
     _updateActive(index) {
         if (!this.items[index]) return;
 
-        // PERF: Batch DOM updates via simple class toggles
-        // Note: In a virtualized list, we would only update visible, 
-        // but here we update all for simplicity as 'active' class is lightweight.
         const prevActive = this.dom.thumbCol.querySelector(`.${CONFIG.CLASSES.active}`);
         if (prevActive) {
             prevActive.classList.remove(CONFIG.CLASSES.active);
@@ -262,7 +218,6 @@ export class ScrollGallery extends Component {
         const target = this.items[index]?.thumb;
         if (!target || !this.dom.cursor) return;
 
-        // PERF: Use transform for cursor movement (Compositor only)
         requestAnimationFrame(() => {
             this.dom.cursor.style.transform = `translateY(${target.offsetTop}px)`;
             this.dom.cursor.style.height = `${target.offsetHeight}px`;

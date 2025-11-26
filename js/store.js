@@ -1,7 +1,3 @@
-/**
- * Simple State Management (Observer Pattern).
- * Holds the single source of truth for the application.
- */
 import { EventBus } from './utils.js'; 
 
 class Store {
@@ -15,10 +11,6 @@ class Store {
         };
     }
 
-    /**
-     * Update state and notify listeners.
-     * @param {Object} newState - Partial state object to update.
-     */
     setState(newState) {
         const prevState = { ...this.state };
         this.state = { ...this.state, ...newState };
