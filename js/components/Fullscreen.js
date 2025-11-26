@@ -1,7 +1,7 @@
-import { Component } from '../core/Component.js';
+import { Component } from '../core/component.js';
 import { EventBus, Utils } from '../utils/utils.js';
 import { CONFIG } from '../config.js';
-import { appStore } from '../core/Store.js';
+import { appStore } from '../core/store.js';
 
 export class FullscreenGallery extends Component {
     constructor() {

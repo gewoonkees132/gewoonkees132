@@ -1,5 +1,5 @@
-import { Component } from '../core/Component.js';
-import { appStore } from '../core/Store.js';
+import { Component } from '../core/component.js';
+import { appStore } from '../core/store.js';
 import { CONFIG } from '../config.js';
 import { Utils, EventBus } from '../utils/utils.js';
 
