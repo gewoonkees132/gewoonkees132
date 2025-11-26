@@ -1,8 +1,8 @@
-import { Component } from '../core/component.js';
-import { appStore } from '../core/store.js';
-import { EventBus } from '../utils/utils.js';
-import { CONFIG } from '../config.js';
-import { generateSrcset, galleryImageSizes } from '../utils/image.js';
+import { Component } from '/js/core/component.js';
+import { appStore } from '/js/core/store.js';
+import { EventBus } from '/js/utils/utils.js';
+import { CONFIG } from '/js/config.js';
+import { generateSrcset, galleryImageSizes } from '/js/utils/image.js';
 
 export class ScrollGallery extends Component {
     constructor(el) {

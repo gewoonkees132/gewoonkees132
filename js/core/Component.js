@@ -1,4 +1,4 @@
-import { EventBus } from '../utils/utils.js';
+import { EventBus } from '/js/utils/utils.js';
 
 /**
  * Base Component Class.

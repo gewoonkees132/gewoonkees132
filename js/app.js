@@ -13,7 +13,7 @@ export const initApp = async () => {
     // 2. Fetch Data
     try {
         // This fetch matches the <link rel="preload"> in HTML, so it should resolve instantly from cache
-        const res = await fetch("projects.json");
+        const res = await fetch("/projects.json");
         if (!res.ok) throw new Error("API Error");
         
         const rawData = await res.json();
