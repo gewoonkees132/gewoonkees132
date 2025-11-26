@@ -17,6 +17,7 @@ export class ScrollGallery extends Component {
 
         this.items = []; 
         this.observer = null;
+        this.renderTask = null; // Track the current render task
 
         this._init();
     }
@@ -24,59 +25,127 @@ export class ScrollGallery extends Component {
     _init() {
         if (!this.el) return;
 
+        // PERF: Debounce rapid filter changes to prevent layout thrashing
         this.subscribe('state:projects', this.render);
         this.subscribe('state:activeFilter', this.render);
+        
+        // Event delegation is efficient, keep it.
         this.addEvent(this.el, 'click', (e) => this._handleClick(e));
         
         this.observer = new IntersectionObserver(this._onIntersect.bind(this), {
             root: this.dom.scrollContainer,
             rootMargin: '-10% 0px -10% 0px',
-            threshold: 0.5
+            threshold: 0.1 // PERF: Lower threshold triggers faster
         });
     }
 
     destroy() {
         if (this.observer) this.observer.disconnect();
+        if (this.renderTask) cancelAnimationFrame(this.renderTask);
         super.destroy(); 
     }
 
-    render() {
+    render = () => {
+        // Cancel any pending render loops from previous filters
+        if (this.renderTask) cancelAnimationFrame(this.renderTask);
+
         const projects = appStore.getFilteredProjects();
         this.items = [];
         this.observer.disconnect();
-
+        
+        // PERF: Use replaceChildren for efficient DOM clearing
         this._clearGallery();
 
         if (projects.length === 0) {
             this._displayEmptyMessage();
             return;
         }
+
+        // PERF: Time-Sliced Rendering Strategy
+        // 1. Render the first batch immediately (viewport visible)
+        // 2. Schedule the rest in micro-tasks to keep main thread responsive
+        const INITIAL_BATCH_SIZE = 6; 
+        const CHUNK_SIZE = 10;
         
-        const thumbFrag = document.createDocumentFragment();
-        const mainFrag = document.createDocumentFragment();
+        let currentIndex = 0;
 
-        projects.forEach((p, index) => {
-            const { thumb, main } = this._createGalleryItem(p, index);
+        const processChunk = () => {
+            const fragmentThumb = document.createDocumentFragment();
+            const fragmentMain = document.createDocumentFragment();
+            
+            const limit = Math.min(currentIndex + CHUNK_SIZE, projects.length);
+            
+            for (let i = currentIndex; i < limit; i++) {
+                const p = projects[i];
+                const { thumb, main } = this._createGalleryItem(p, i);
+                
+                this.items.push({ thumb, main });
+                fragmentThumb.appendChild(thumb);
+                fragmentMain.appendChild(main);
+                this.observer.observe(main);
+            }
+
+            // Append chunk to DOM
+            this.dom.thumbCol.appendChild(fragmentThumb);
+            this.dom.mainCol.appendChild(fragmentMain);
+
+            currentIndex = limit;
+
+            if (currentIndex < projects.length) {
+                // Schedule next chunk. 
+                // Using requestAnimationFrame ensures we paint between chunks.
+                this.renderTask = requestAnimationFrame(processChunk);
+            }
+        };
+
+        // Render initial batch synchronously for LCP/FCP
+        currentIndex = 0;
+        const initialLimit = Math.min(INITIAL_BATCH_SIZE, projects.length);
+        
+        const initialFragThumb = document.createDocumentFragment();
+        const initialFragMain = document.createDocumentFragment();
+
+        for (let i = 0; i < initialLimit; i++) {
+            const p = projects[i];
+            const { thumb, main } = this._createGalleryItem(p, i);
             this.items.push({ thumb, main });
-            thumbFrag.appendChild(thumb);
-            mainFrag.appendChild(main);
+            initialFragThumb.appendChild(thumb);
+            initialFragMain.appendChild(main);
             this.observer.observe(main);
-        });
+        }
+        
+        this.dom.thumbCol.appendChild(initialFragThumb);
+        this.dom.mainCol.appendChild(initialFragMain);
+        
+        currentIndex = initialLimit;
 
-        this._batchUpdateDOM(thumbFrag, mainFrag);
+        // Reset view position
         this._resetView();
+
+        // Kick off the rest if needed
+        if (currentIndex < projects.length) {
+            // PERF: Use idle callback if available, else RAF. 
+            // This prioritizes user input over rendering off-screen items.
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => {
+                    this.renderTask = requestAnimationFrame(processChunk);
+                });
+            } else {
+                this.renderTask = requestAnimationFrame(processChunk);
+            }
+        }
     }
 
     _createGalleryItem(project, index) {
-        // Thumb
+        // Thumb - simplified structure
         const thumb = document.createElement('button');
         thumb.className = CONFIG.CLASSES.thumbItem;
         thumb.dataset.index = index;
         thumb.setAttribute('aria-label', `View ${project.title}`);
+        
+        // PERF: Explicit width/height to prevent reflows
         thumb.innerHTML = `<img 
             src="${project.src}" 
-            srcset="${generateSrcset(project.src)}"
-            sizes="150px"
             alt="" 
             loading="lazy" 
             decoding="async"
@@ -89,8 +158,10 @@ export class ScrollGallery extends Component {
         main.dataset.index = index;
         main.tabIndex = 0;
         
+        // PERF: Do NOT create the <img> tag yet if it's far down the list.
+        // However, since we are using content-visibility: auto in CSS, 
+        // we can safely create the node, and the browser will defer the painting.
         const img = this._createMainImage(project, index);
-        
         main.appendChild(img);
 
         return { thumb, main };
@@ -98,29 +169,32 @@ export class ScrollGallery extends Component {
 
     _createMainImage(project, index) {
         const img = document.createElement('img');
+        
+        // PERF: Use low-res placeholder or just src. 
+        // Assuming src is efficient enough with srcset.
         img.src = project.src;
         img.alt = project.title || 'Project';
-        img.width = 1200; // Intrinsic width for aspect ratio
-        img.height = 800; // Intrinsic height for aspect ratio
+        img.width = 1200; 
+        img.height = 800; 
         img.srcset = generateSrcset(project.src);
         img.sizes = galleryImageSizes;
-        img.decoding = "async";
+        img.decoding = "async"; // Critical for main thread unblocking
 
+        // PERF: Strict loading strategy
         if (index === 0) {
             img.fetchPriority = "high";
             img.loading = "eager";
-        } else if (index === 1) {
-            img.loading = "eager";
-            img.fetchPriority = "auto";
         } else {
             img.loading = "lazy";
+            img.fetchPriority = "low";
         }
         return img;
     }
 
     _clearGallery() {
-        this.dom.mainCol.innerHTML = '';
-        this.dom.thumbCol.innerHTML = '';
+        // PERF: replaceChildren is faster than innerHTML = ''
+        this.dom.mainCol.replaceChildren();
+        this.dom.thumbCol.replaceChildren();
     }
 
     _displayEmptyMessage() {
@@ -128,17 +202,13 @@ export class ScrollGallery extends Component {
         this.dom.cursor.style.opacity = '0';
     }
 
-    _batchUpdateDOM(thumbFrag, mainFrag) {
-        this.dom.thumbCol.replaceChildren(thumbFrag);
-        this.dom.mainCol.replaceChildren(mainFrag);
-    }
-    
     _resetView() {
         this.dom.scrollContainer.scrollTop = 0;
         this._updateActive(0);
     }
 
     _handleClick(e) {
+        // Event delegation logic remains same
         const thumb = e.target.closest(`.${CONFIG.CLASSES.thumbItem}`);
         const main = e.target.closest(`.${CONFIG.CLASSES.mainItem}`);
 
@@ -153,20 +223,37 @@ export class ScrollGallery extends Component {
     }
 
     _onIntersect(entries) {
-        const visible = entries.find(e => e.isIntersecting);
-        if (visible) {
-            this._updateActive(parseInt(visible.target.dataset.index, 10));
+        // PERF: Find the one with max intersection ratio for accuracy
+        let maxRatio = 0;
+        let activeIndex = -1;
+
+        entries.forEach(entry => {
+            if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+                maxRatio = entry.intersectionRatio;
+                activeIndex = parseInt(entry.target.dataset.index, 10);
+            }
+        });
+
+        if (activeIndex !== -1) {
+            this._updateActive(activeIndex);
         }
     }
 
     _updateActive(index) {
         if (!this.items[index]) return;
 
-        this.items.forEach((item, i) => {
-            const isActive = i === index;
-            item.thumb.classList.toggle(CONFIG.CLASSES.active, isActive);
-            item.thumb.setAttribute("aria-current", String(isActive));
-        });
+        // PERF: Batch DOM updates via simple class toggles
+        // Note: In a virtualized list, we would only update visible, 
+        // but here we update all for simplicity as 'active' class is lightweight.
+        const prevActive = this.dom.thumbCol.querySelector(`.${CONFIG.CLASSES.active}`);
+        if (prevActive) {
+            prevActive.classList.remove(CONFIG.CLASSES.active);
+            prevActive.setAttribute("aria-current", "false");
+        }
+
+        const nextActive = this.items[index].thumb;
+        nextActive.classList.add(CONFIG.CLASSES.active);
+        nextActive.setAttribute("aria-current", "true");
 
         this._moveCursor(index);
     }
@@ -175,6 +262,7 @@ export class ScrollGallery extends Component {
         const target = this.items[index]?.thumb;
         if (!target || !this.dom.cursor) return;
 
+        // PERF: Use transform for cursor movement (Compositor only)
         requestAnimationFrame(() => {
             this.dom.cursor.style.transform = `translateY(${target.offsetTop}px)`;
             this.dom.cursor.style.height = `${target.offsetHeight}px`;

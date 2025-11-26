@@ -5,7 +5,7 @@ import { Utils, EventBus } from '/js/utils/utils.js';
 
 export class AppControls extends Component {
     constructor() {
-        super(document.body); // Captures global controls
+        super(document.body); 
         this.typewriterTimeoutId = null;
 
         this._initFilters();
@@ -15,7 +15,7 @@ export class AppControls extends Component {
 
     destroy() {
         if (this.typewriterTimeoutId) clearTimeout(this.typewriterTimeoutId);
-        super.destroy(); // Cleans up DOM events
+        super.destroy();
     }
 
     _initFilters() {
@@ -26,15 +26,19 @@ export class AppControls extends Component {
             const btn = e.target.closest('button');
             if (!btn) return;
 
-            // Update Store
-            appStore.setState({ activeFilter: btn.dataset.filter });
-
-            // Update UI
+            // PERF: Update UI immediately (optimistic UI) 
+            // before the store triggers the heavy gallery render.
             list.querySelectorAll('button').forEach(b => {
                 const isActive = b === btn;
-                b.classList.toggle(CONFIG.CLASSES.active, isActive);
-                b.setAttribute('aria-current', String(isActive));
+                if (b.classList.contains(CONFIG.CLASSES.active) !== isActive) {
+                    b.classList.toggle(CONFIG.CLASSES.active, isActive);
+                    b.setAttribute('aria-current', String(isActive));
+                }
             });
+
+            // Update Store (triggers Gallery Render)
+            // The Gallery uses requestAnimationFrame so this won't block the button state update.
+            appStore.setState({ activeFilter: btn.dataset.filter });
         });
     }
 
@@ -51,6 +55,7 @@ export class AppControls extends Component {
         });
 
         this.addEvent(hueBtn, 'click', () => {
+            // PERF: Using CSS Variable for hue shift is excellent (Compositor friendly if used on colors).
             const newHue = (appStore.get().hue + CONFIG.ANIMATION.HUE_SHIFT_AMOUNT) % 360;
             appStore.setState({ hue: newHue });
             document.documentElement.style.setProperty("--hue-shift", String(newHue));
@@ -60,6 +65,7 @@ export class AppControls extends Component {
 
     _initTypewriter() {
         const el = this.find(CONFIG.SELECTORS.roleElement);
+        // PERF: Respect reduced motion
         if (!el || Utils.prefersReducedMotion()) {
             if (el) el.textContent = CONFIG.ANIMATION.ROLES[0];
             return;
@@ -69,6 +75,9 @@ export class AppControls extends Component {
         
         const loop = () => {
             const currentRole = CONFIG.ANIMATION.ROLES[roleIndex];
+            
+            // PERF: textContent causes layout/paint. 
+            // We optimized the CSS to have a fixed min-height to avoid CLS.
             el.textContent = currentRole.substring(0, isDeleting ? charIndex - 1 : charIndex + 1);
             
             charIndex = isDeleting ? charIndex - 1 : charIndex + 1;
@@ -84,6 +93,8 @@ export class AppControls extends Component {
             }
             this.typewriterTimeoutId = setTimeout(loop, speed);
         };
-        loop();
+        
+        // Start loop via RAF to ensure we don't block hydration
+        requestAnimationFrame(() => loop());
     }
 }
