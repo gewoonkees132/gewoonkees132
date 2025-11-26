@@ -9,9 +9,7 @@
     font-family: 'Inter';
     font-weight: 100 900; /* Supports the full range */
     font-style: normal;
-    /* PERF: 'swap' ensures text is visible immediately. 
-       Combined with specific dimensions on containers, this minimizes layout shift. */
-    font-display: swap;   
+    font-display: swap;   /* Text is visible immediately in system font, then swaps */
     src: url('fonts/inter-var.woff2') format('woff2');
 }
 
@@ -24,7 +22,8 @@
     src: url('fonts/material-symbols.woff2') format('woff2');
 }
 
-/* 3. Material Symbols Helper Class */
+/* 3. Material Symbols Helper Class 
+   (Previously provided by the Google CSS link, now we must define it) */
 .material-symbols-outlined {
     font-family: 'Material Symbols Outlined';
     font-weight: normal;
@@ -41,8 +40,6 @@
     text-rendering: optimizeLegibility;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'liga';
-    /* PERF: Optimize icon rendering by strictly containing paint */
-    contain: content;
 }
 
 /* ==========================================================================
@@ -76,8 +73,7 @@ html {
     --slide-error-text-color: hsla(0, 0%, 80%, 0.8);
     --transition-duration-slide-peek: 0.4s;
     --transition-easing-slide-peek: ease-out;
-    /* PERF: Removed blur radius to save GPU cycles (was 5px) */
-    --slide-peek-blur: 0px;
+    --slide-peek-blur: 5px;
     --slide-peek-opacity: 0.4;
     --slide-width-percent: 80%;
     --slide-wrapper-padding: calc((100% - var(--slide-width-percent)) / 2);
@@ -118,8 +114,6 @@ body {
     background-attachment: scroll;
     transition: color var(--transition-duration-base) var(--transition-easing-base), background-image var(--transition-duration-base) var(--transition-easing-base);
     line-height: 1.5; min-height: 100vh; font-size: 1rem;
-    /* PERF: Prioritize speed over geometric precision for body text */
-    text-rendering: optimizeSpeed;
 }
 
 a { text-decoration: none; color: inherit; }
@@ -149,7 +143,7 @@ a:focus-visible, button:focus-visible { outline-color: var(--focus-outline-color
     --base-hue-bg-gradient-start: 0; --base-saturation-bg-gradient-start: 0%; --base-lightness-bg-gradient-start: 97%; --base-opacity-bg-gradient-start: 0.92;
     --base-hue-bg-gradient-end: 0; --base-saturation-bg-gradient-end: 0%; --base-lightness-bg-gradient-end: 65%; --base-opacity-bg-gradient-end: 0.8;
     
-    /* Ball colors */
+    /* Ball colors - critical for CSS background */
     --base-hue-ball-color-light: 45; --base-saturation-ball-color-light: 80%; --base-lightness-ball-color-light: 75%; --base-opacity-ball-color-light: 0.8;
     --base-hue-ball-color-medium: 30; --base-saturation-ball-color-medium: 75%; --base-lightness-ball-color-medium: 70%; --base-opacity-ball-color-medium: 0.8;
     --base-hue-ball-color-dark: 0; --base-saturation-ball-color-dark: 75%; --base-lightness-ball-color-dark: 68%; --base-opacity-ball-color-dark: 0.8;
@@ -216,10 +210,7 @@ a:focus-visible, button:focus-visible { outline-color: var(--focus-outline-color
     position: absolute;
     border-radius: 90%;
     opacity: 0.2;
-    /* PERF: Strictly limiting will-change to transform to avoid memory bloat */
-    will-change: transform; 
-    /* PERF: Ensure this layer is promoted to the GPU */
-    transform: translateZ(0); 
+    will-change: transform; /* Promotes to Compositor Layer */
 }
 
 .blob--1 {
@@ -281,7 +272,7 @@ Utilities & Skeletons
 img.image-load-error, picture.image-load-error { display: none; }
 
 /* Aspect Ratio Enforcement */
-.scroll-gallery__main-item { aspect-ratio: 16 / 9; }
+.scroll-gallery__main-item { aspect-ratio: 16 / 9; /* Default reservation, adjustable */ }
 .scroll-gallery__thumb-item { aspect-ratio: 4 / 3; }
 
 /* ==========================================================================
@@ -331,18 +322,7 @@ Layout & Components
 /* Profile Card */
 .profile { display: flex; flex-direction: column; border-radius: 1.875rem; overflow: hidden; background: var(--gradient-main); transition: background var(--transition-duration-base) var(--transition-easing-base); }
 .profile__container { display: flex; flex-direction: column; align-items: center; padding: 2.5rem; width: 100%; flex-grow: 1; }
-.profile__image { 
-    width: 100%; 
-    aspect-ratio: 1 / 1; 
-    max-height: 18.75rem; 
-    flex-shrink: 0; 
-    border-radius: 1.25rem; 
-    background-color: var(--color-secondary); 
-    overflow: hidden; 
-    margin-block-end: 2.5rem; 
-    /* PERF: Reserve layout space immediately to prevent CLS */
-    contain: size layout;
-}
+.profile__image { width: 100%; aspect-ratio: 1 / 1; max-height: 18.75rem; flex-shrink: 0; border-radius: 1.25rem; background-color: var(--color-secondary); overflow: hidden; margin-block-end: 2.5rem; }
 .profile__image picture, .profile__image img { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: inherit; }
 .profile__info { display: flex; flex-direction: column; align-items: center; text-align: center; margin-block-end: 1.25rem; flex-shrink: 0; }
 .profile__name { font-size: 2.2rem; font-weight: 600; margin: 0; }
@@ -368,10 +348,7 @@ Layout & Components
 #about h2 { color: var(--text-color); font-weight: 500; font-size: 1.3rem; margin-block-end: 0.5rem; }
 #about #role {
     color: var(--color-primary); white-space: nowrap; border-inline-end: 2px solid var(--color-primary);
-    display: inline-block; padding-inline-end: 0.3125rem; 
-    /* PERF: Fix height to prevent CLS when text changes */
-    min-height: 1.5em; min-width: 1rem;
-    vertical-align: bottom;
+    display: inline-block; padding-inline-end: 0.3125rem; min-height: 1.3rem; vertical-align: bottom;
     transition: opacity 0.5s var(--transition-easing-base), color var(--transition-duration-base) var(--transition-easing-base);
     animation: blink-caret 0.75s step-end infinite;
 }
@@ -417,8 +394,6 @@ Layout & Components
     border-radius: 0.5rem; overflow: hidden; position: relative; box-shadow: 0 0.125rem 0.3125rem hsla(0, 0%, 0%, 0.1);
     opacity: 0.5; transform: scale(0.95); transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
     background-color: var(--color-secondary); outline: none;
-    /* PERF: Lightweight containment for thumbs */
-    contain: layout paint;
 }
 .scroll-gallery__thumb-item img { display: block; width: 100%; height: auto; object-fit: contain; transition: transform 0.4s ease; opacity: 1; }
 .scroll-gallery__thumb-item:hover { opacity: 0.75; transform: scale(1); box-shadow: 0 0.25rem 0.625rem hsla(0, 0%, 0%, 0.15); }
@@ -439,19 +414,11 @@ Layout & Components
     box-shadow: 0 0.5rem 1.25rem hsla(0, 0%, 0%, 0.15);
     background-color: var(--color-secondary);
     outline-offset: -3px;
-
-    /* PERF: CRITICAL - Browser-native virtualization. 
-       Skips layout/paint for offscreen items. */
-    content-visibility: auto; 
-    /* PERF: Estimate height (16/9 aspect ratio of typical width) to prevent scrollbar jumping */
-    contain-intrinsic-size: 1000px 600px; 
 }
 .scroll-gallery__main-item:last-child { margin-bottom: 0; }
 .scroll-gallery__main-item img {
     display: block; opacity: 1; width: 100%; height: auto; object-fit: contain;
-    transition: transform var(--transition-duration-zoom) var(--transition-easing-zoom); 
-    /* PERF: Only animate transform for zoom */
-    will-change: transform;
+    transition: transform var(--transition-duration-zoom) var(--transition-easing-zoom); /* Added for smooth zoom */
 }
 .scroll-gallery__main-item--zoomed {
     cursor: zoom-out;
@@ -487,20 +454,10 @@ Layout & Components
 .fullscreen-slide {
     width: var(--slide-width-percent); height: 100%; flex: 0 0 var(--slide-width-percent); scroll-snap-align: center;
     position: relative; display: flex; justify-content: center; align-items: center; box-sizing: border-box;
-    overflow: hidden; cursor: pointer; 
-    opacity: var(--slide-peek-opacity); 
-    /* PERF: Removed 'filter: blur()' - this is a massive GPU bottleneck on large surfaces. */
-    filter: none;
-    transition: opacity var(--transition-duration-slide-peek) var(--transition-easing-slide-peek);
-    /* PERF: Isolate stacking context */
-    isolation: isolate;
+    overflow: hidden; cursor: pointer; opacity: var(--slide-peek-opacity); filter: blur(var(--slide-peek-blur));
+    transition: opacity var(--transition-duration-slide-peek) var(--transition-easing-slide-peek), filter var(--transition-duration-slide-peek) var(--transition-easing-slide-peek);
 }
-.fullscreen-slide.is-active-slide { 
-    opacity: 1; 
-    cursor: default; 
-    /* PERF: Promote active slide to compositor layer */
-    will-change: transform;
-}
+.fullscreen-slide.is-active-slide { opacity: 1; filter: none; cursor: default; }
 .fullscreen-slide img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 0.625rem 1.5625rem hsla(0, 0%, 0%, 0.3); border-radius: 0.25rem; pointer-events: none; }
 .fullscreen-slide picture.is-loading-placeholder { background-color: var(--slide-loading-color); min-height: 12.5rem; min-width: 12.5rem; max-width: 80%; max-height: 80%; border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; }
 .fullscreen-slide.slide-load-error { background-color: var(--slide-error-bg-color); border-radius: 0.25rem; color: var(--slide-error-text-color); padding: 1.25rem; display: flex; justify-content: center; align-items: center; opacity: 1; filter: none; cursor: default; min-height: 12.5rem; min-width: 12.5rem; }
