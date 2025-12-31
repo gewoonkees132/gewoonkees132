@@ -1,548 +1,424 @@
 /**
- * KEES PORTFOLIO - AWWARDS-STANDARD INTERACTIVE SYSTEM v4.2
+ * KEES PORTFOLIO - GOLD STANDARD EDITION (v8.0)
  * ============================================================================
- * This script represents a masterclass in modern, vanilla JavaScript development.
- * It is architected for performance, accessibility, and maintainability, adhering
- * to the highest standards expected for an Awwwards "Site of the Day" submission.
- *
- * CORE PRINCIPLES:
- * - **Performance First:** Every line is written with performance in mind. We use
- *   DocumentFragments for rendering, efficient DOM access, modern APIs
- *   like IntersectionObserver, and GPU-accelerated animations.
- * - **Accessibility (A11Y):** The site is fully keyboard-navigable, uses correct
- *   ARIA attributes, and manages focus meticulously, especially in the modal,
- *   ensuring a seamless experience for all users.
- * - **Maintainability:** The code is organized into logical, documented classes.
- *   Project data is externalized in `project-data.js` for easy updates. Using a
- *   `<template>` for the modal is a key example of separating concerns.
- * - **Buttery-Smooth Animations:** All animations are GPU-accelerated and
- *   orchestrated for a fluid, professional user experience.
+ * PRINCIPLES:
+ * 1. Strict DOM Creation: No `innerHTML` for structural elements (Security).
+ * 2. Event Delegation: Single listeners on containers (Memory).
+ * 3. Layout Thrashing Defense: Batched reads/writes (Performance).
+ * 4. Accessibility: Rigorous focus management and ARIA states.
  * ============================================================================
  */
 
 (function() {
   'use strict';
 
-  // ========================================================================
-  // 1. CONFIGURATION & CONSTANTS
-  // Defines constants used throughout the application for consistency and
-  // easy maintenance. Centralizing these values (e.g., transition durations)
-  // ensures JS and CSS can be kept in sync.
-  // ========================================================================
-
+  // --- CONFIGURATION ---
   const CONFIG = {
-    SCROLL_DEBOUNCE: 10, // ms
-    FILTER_TRANSITION: 300, // ms, should match CSS transition duration
-    MODAL_TRANSITION: 400, // ms, should match CSS transition duration
-    INTERSECTION_THRESHOLD: 0.25,
-    FOCUSABLE_ELEMENTS: 'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])',
-    EAGER_LOAD_LIMIT: 3 // Number of project images to load eagerly for better LCP
+    SCROLL_DEBOUNCE: 15,
+    FILTER_TRANSITION: 300,
+    EAGER_LOAD_LIMIT: 4 // Optimized for LCP
   };
 
-  // ========================================================================
-  // 2. UTILITY FUNCTIONS
-  // A collection of small, reusable helper functions. This promotes DRY
-  // (Don't Repeat Yourself) principles and keeps the main class logic clean.
-  // ========================================================================
-
+  // --- UTILS: STRICT DOM CREATION ---
   const $ = (selector, context = document) => context.querySelector(selector);
   const $$ = (selector, context = document) => Array.from(context.querySelectorAll(selector));
 
   /**
-   * Debounces a function to limit the rate at which it gets called.
-   * Crucial for performance on high-frequency events like 'scroll'.
-   * @param {Function} func The function to debounce.
-   * @param {number} wait The debounce timeout in ms.
-   * @returns {Function} The debounced function.
+   * Safe Element Creator.
+   * Avoids innerHTML parsing overhead and XSS vectors.
    */
-  function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  }
+  const createElement = (tag, className = '', attributes = {}, children = []) => {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    
+    Object.entries(attributes).forEach(([key, value]) => {
+      if (key === 'textContent') el.textContent = value;
+      else if (key === 'dataset') Object.entries(value).forEach(([dKey, dVal]) => el.dataset[dKey] = dVal);
+      else el.setAttribute(key, value);
+    });
 
-  // ========================================================================
-  // 3. SCROLL PROGRESS MODULE
-  // Manages the sidebar's scroll progress bar and current section title.
-  // Uses IntersectionObserver for highly performant section detection,
-  // avoiding expensive scroll event calculations.
-  // ========================================================================
+    children.forEach(child => {
+      if (typeof child === 'string') el.appendChild(document.createTextNode(child));
+      else if (child instanceof Node) el.appendChild(child);
+    });
 
+    return el;
+  };
+
+  // --- MODULE: SCROLL PROGRESS ---
   class ScrollProgress {
     constructor() {
-      this.elements = {
-        progressBar: $('.scroll-progress-bar'),
-        currentTitle: $('#sidebar-current-title'),
-        progressContainer: $('.scroll-progress-container')
-      };
-
-      if (!this.elements.progressBar) return;
-
+      this.progressBar = $('.scroll-progress-bar');
+      this.currentTitle = $('#sidebar-current-title');
+      this.progressContainer = $('.scroll-progress-container');
+      
+      if (!this.progressBar) return;
+      
       this.sections = $$('main section[id]');
-      this.currentSectionId = null;
       this.init();
     }
 
     init() {
-      this.handleScroll = debounce(() => this.updateProgress(), CONFIG.SCROLL_DEBOUNCE);
-      window.addEventListener('scroll', this.handleScroll, { passive: true });
-      this.setupIntersectionObserver();
-      this.updateProgress();
-    }
+      // Throttled Scroll Listener
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            this.updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
 
-    setupIntersectionObserver() {
+      // Intersection Observer for Section Titles
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            const sectionId = entry.target.id;
-            if (sectionId !== this.currentSectionId) {
-              this.currentSectionId = sectionId;
-              this.updateCurrentSection(entry.target);
+            const heading = $('h2', entry.target);
+            if (heading && this.currentTitle) {
+              this.currentTitle.textContent = heading.textContent.trim();
             }
           }
         });
-      }, { rootMargin: '-30% 0px -50% 0px', threshold: 0 });
+      }, { rootMargin: '-20% 0px -60% 0px' });
 
       this.sections.forEach(section => observer.observe(section));
     }
 
     updateProgress() {
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPosition = window.pageYOffset;
-      const progress = scrollHeight > 0 ? (scrollPosition / scrollHeight) * 100 : 0;
-
-      this.elements.progressBar.style.transform = `scaleY(${progress / 100})`;
-      this.elements.progressContainer.setAttribute('aria-valuenow', Math.round(progress));
-    }
-
-    updateCurrentSection(section) {
-      const titleElement = $('h2', section);
-      const defaultTitle = 'Featured Projects';
-      if (this.elements.currentTitle) {
-          // Use the accessible sr-only h2 text content
-          this.elements.currentTitle.textContent = titleElement ? titleElement.textContent.trim() : defaultTitle;
-      }
+      const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollTotal > 0 ? window.pageYOffset / scrollTotal : 0;
+      this.progressBar.style.transform = `scaleY(${progress})`;
+      this.progressContainer.setAttribute('aria-valuenow', Math.round(progress * 100));
     }
   }
 
-  // ========================================================================
-  // 4. PROJECT GRID RENDERER MODULE
-  // This class handles the crucial task of rendering project data into
-  // the DOM. It follows best practices by using a DocumentFragment for
-  // performance and decouples rendering logic from other modules.
-  // ========================================================================
-
-  class ProjectGrid {
-    /**
-     * @param {object} projectData The project data object.
-     * @param {ProjectModal} modalInstance An instance of the ProjectModal to handle clicks.
-     */
-    constructor(projectData, modalInstance) {
-      this.gridElement = $('.projects-grid');
-      if (!this.gridElement || !projectData || !modalInstance) return;
-
-      this.projectData = projectData;
-      this.modal = modalInstance;
-      this.render();
-    }
-
-    /**
-     * Renders all project cards into the grid.
-     * PERFORMANCE: Uses a DocumentFragment to build the grid in memory before
-     * appending to the DOM once, triggering only a single reflow/repaint.
-     */
-    render() {
-      const fragment = document.createDocumentFragment();
-      Object.entries(this.projectData).forEach(([id, project], index) => {
-        const card = this.createCardElement(id, project, index);
-        fragment.appendChild(card);
-      });
-      this.gridElement.appendChild(fragment);
-    }
-
-    /**
-     * Creates a single project card HTML element.
-     * @param {string} id The project's unique ID.
-     * @param {object} project The project data object.
-     * @param {number} index The index of the project in the list.
-     * @returns {HTMLElement} The created article element for the project card.
-     */
-    createCardElement(id, project, index) {
-      const article = document.createElement('article');
-      article.className = 'project-card';
-      article.dataset.category = project.categories.join(' ');
-      article.dataset.project = id;
-
-      // REFACTOR: Set a custom property for the animation delay index.
-      // This makes the staggered animation scalable and controlled by CSS,
-      // removing the need for hardcoded :nth-child selectors.
-      article.style.setProperty('--card-index', index);
-
-      // PERFORMANCE/LCP OPTIMIZATION:
-      // The first few images are loaded eagerly to improve Largest Contentful Paint.
-      // The rest are lazy-loaded to save bandwidth and improve initial load time.
-      const loadingStrategy = index < CONFIG.EAGER_LOAD_LIMIT ? 'eager' : 'lazy';
-
-      // SECURITY NOTE: While using innerHTML, we ensure all dynamic data is
-      // either from a trusted source (our own project-data.js) or would be
-      // sanitized if it were user-generated. Here, we use `textContent` in the
-      // modal, which is the safest method. For this template string, we trust
-      // our own data.
-      const cardHTML = `
-        <button class="project-card-button" aria-label="View ${project.title} project details">
-            <div class="project-image-container">
-                <span class="project-year">${project.year}</span>
-                <img class="project-image"
-                     src="${project.image.replace('w=1200&h=600', 'w=800&h=500')}"
-                     alt="${project.alt}"
-                     loading="${loadingStrategy}"
-                     width="800"
-                     height="500">
-            </div>
-            <div class="project-content">
-                <h3 class="project-title">${project.title}</h3>
-                <p class="project-meta">${project.subtitle}</p>
-                <p class="project-description">${project.description}</p>
-                <div class="project-tech">
-                    ${project.technologies.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
-                </div>
-            </div>
-        </button>
-      `;
-
-      article.innerHTML = cardHTML;
-      // Attach event listener directly. This is more efficient than event delegation
-      // for this specific case, as the cards are rendered once and won't change.
-      article.querySelector('.project-card-button').addEventListener('click', () => this.modal.open(id));
-
-      return article;
-    }
-  }
-
-  // ========================================================================
-  // 5. PROJECT FILTER MODULE
-  // Manages the filtering logic for the project grid. It's initialized
-  // *after* the grid is rendered, ensuring it can find the project cards.
-  // ========================================================================
-
-  class ProjectFilter {
-    constructor() {
-      this.elements = {
-        buttons: $$('.filter-pill'),
-        cards: $$('.project-card'),
-        grid: $('.projects-grid')
-      };
-
-      if (!this.elements.buttons.length || !this.elements.grid) return;
-
-      this.activeFilter = 'all';
-      this.init();
-    }
-
-    init() {
-      this.elements.buttons.forEach(button => {
-        button.addEventListener('click', (e) => this.handleFilterClick(e));
-      });
-    }
-
-    handleFilterClick(e) {
-      const button = e.currentTarget;
-      const newFilter = button.dataset.filter;
-
-      if (newFilter === this.activeFilter) return;
-      this.activeFilter = newFilter;
-
-      // ACCESSIBILITY: Correctly manage ARIA state for active filter button.
-      this.elements.buttons.forEach(btn => {
-        const isActive = btn === button;
-        btn.classList.toggle('active', isActive);
-        btn.setAttribute('aria-pressed', isActive);
-      });
-
-      this.filterProjects();
-    }
-
-    /**
-     * Applies the current filter to the project cards with smooth animations.
-     * Uses a sophisticated two-step process with setTimeout and requestAnimationFrame
-     * to ensure animations are not janky and are correctly orchestrated.
-     */
-    filterProjects() {
-      const { cards } = this.elements;
-      const { FILTER_TRANSITION } = CONFIG;
-
-      // Step 1: Add 'filtering-out' class to cards that need to be hidden.
-      // This triggers the fade-out/scale-down animation defined in the CSS.
-      cards.forEach(card => {
-        const categories = card.dataset.category?.split(' ') || [];
-        const shouldShow = this.activeFilter === 'all' || categories.includes(this.activeFilter);
-        if (!shouldShow) {
-          card.classList.add('filtering-out');
-        }
-      });
-
-      // Step 2: After the fade-out animation completes, hide the elements with `display: none`.
-      // This removes them from the layout, allowing the grid to reflow.
-      setTimeout(() => {
-        cards.forEach(card => {
-          if (card.classList.contains('filtering-out')) {
-            card.classList.add('hidden'); // `display: none`
-          }
-        });
-
-        // Step 3: In the next frame, un-hide the elements that should be shown.
-        // `requestAnimationFrame` ensures the browser has processed the 'hidden'
-        // class and reflow before we start the fade-in animation. This prevents
-        // the fade-in from being skipped.
-        requestAnimationFrame(() => {
-          cards.forEach(card => {
-            const categories = card.dataset.category?.split(' ') || [];
-            const shouldShow = this.activeFilter === 'all' || categories.includes(this.activeFilter);
-            if (shouldShow) {
-              card.classList.remove('hidden', 'filtering-out');
-            }
-          });
-        });
-      }, FILTER_TRANSITION);
-    }
-  }
-
-  // ========================================================================
-  // 6. PROJECT MODAL MODULE
-  // Manages the project details modal, including opening, closing, rendering
-  // content from a template, and crucial accessibility features like focus trapping.
-  // ========================================================================
-
+  // --- MODULE: PROJECT MODAL ---
   class ProjectModal {
     constructor(projectData) {
-      this.elements = {
-        modal: $('#project-modal'),
-        modalBody: $('.modal-body'),
-        closeButton: $('.modal-close'),
-        overlay: $('.modal-overlay'),
-        template: $('#project-modal-template')
-      };
+      this.data = projectData;
+      this.el = $('#project-modal');
+      this.body = $('.modal-body');
+      this.template = $('#project-modal-template');
+      this.closeBtn = $('.modal-close');
+      this.overlay = $('.modal-overlay');
+      this.viewControls = $$('.view-btn', this.el);
+      
+      this.activeProjectId = null;
+      this.lastFocusedElement = null;
+      this.galleryObserver = null;
 
-      if (!this.elements.modal || !this.elements.template) return;
-
-      this.lastFocus = null;
-      this.projectData = projectData;
+      if (!this.el || !this.template) return;
       this.init();
     }
 
     init() {
-      this.elements.closeButton.addEventListener('click', () => this.close());
-      this.elements.overlay.addEventListener('click', () => this.close());
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && this.isOpen()) {
+      // Delegated Close Events
+      this.el.addEventListener('click', (e) => {
+        if (e.target === this.overlay || e.target.closest('.modal-close')) {
           this.close();
         }
       });
-    }
 
-    isOpen() {
-      return this.elements.modal.classList.contains('active');
+      // Keyboard Trap & Escape
+      this.el.addEventListener('keydown', (e) => this.handleKeydown(e));
+
+      // View Switcher Logic (Delegation)
+      $('.modal-view-controls').addEventListener('click', (e) => {
+        const btn = e.target.closest('.view-btn');
+        if (!btn) return;
+        this.switchView(btn);
+      });
     }
 
     open(projectId) {
-      const data = this.projectData[projectId];
-      if (!data) {
-        console.error(`Project data not found for ID: ${projectId}`);
-        return;
-      }
+      const project = this.data[projectId];
+      if (!project) return;
 
-      // ACCESSIBILITY: Store the last focused element to restore it on close.
-      this.lastFocus = document.activeElement;
-      this.render(data);
+      this.activeProjectId = projectId;
+      this.lastFocusedElement = document.activeElement;
 
+      // 1. Render Content (Strict DOM cloning)
+      const content = this.template.content.cloneNode(true);
+      this.hydrateContent(content, project);
+
+      // 2. Clear & Append
+      this.body.innerHTML = '';
+      this.body.appendChild(content);
+
+      // 3. Show Modal
       document.body.style.overflow = 'hidden';
-      this.elements.modal.classList.add('active');
-      this.elements.modal.setAttribute('aria-hidden', 'false');
+      this.el.classList.add('active');
+      this.el.setAttribute('aria-hidden', 'false');
 
-      this.trapFocus();
+      // 4. Focus Management
+      // Wait for layout paint to ensure focus works
+      requestAnimationFrame(() => {
+        this.closeBtn.focus();
+        // Initialize Gallery Observer only when visible
+        this.initGalleryObserver();
+      });
     }
 
     close() {
+      if (!this.el.classList.contains('active')) return;
+
+      this.el.classList.remove('active');
+      this.el.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      this.elements.modal.classList.remove('active');
-      this.elements.modal.setAttribute('aria-hidden', 'true');
 
-      // ACCESSIBILITY: Restore focus to the element that opened the modal.
-      this.lastFocus?.focus();
+      if (this.lastFocusedElement) this.lastFocusedElement.focus();
 
-      // Clean up the modal content after the closing animation finishes.
-      setTimeout(() => {
-        this.elements.modalBody.innerHTML = '';
-      }, CONFIG.MODAL_TRANSITION);
-    }
-
-    /**
-     * Renders project data into the modal using the HTML <template>.
-     * This is far more performant and secure than building HTML strings.
-     * Using `textContent` is the key to preventing XSS vulnerabilities.
-     * @param {object} data The data for the selected project.
-     */
-    render(data) {
-      const templateContent = this.elements.template.content.cloneNode(true);
-      const mappings = {
-        '[data-modal-image]': (el) => { el.src = data.image; el.alt = data.alt; },
-        '[data-modal-title]': (el) => { el.textContent = data.title; },
-        '[data-modal-subtitle]': (el) => { el.textContent = data.subtitle; },
-        '[data-modal-metric-primary]': (el) => { el.textContent = data.metrics.primary; },
-        '[data-modal-metric-secondary]': (el) => { el.textContent = data.metrics.secondary; },
-        '[data-modal-year]': (el) => { el.textContent = data.year; },
-        '[data-modal-description]': (el) => { el.textContent = data.description; },
-        '[data-modal-impact]': (el) => {
-          el.innerHTML = ''; // Clear previous content
-          data.impact.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            el.appendChild(li);
-          });
-        },
-        '[data-modal-technologies]': (el) => {
-          el.innerHTML = ''; // Clear previous content
-          data.technologies.forEach(tech => {
-            const span = document.createElement('span');
-            span.className = 'tech-tag';
-            span.textContent = tech;
-            el.appendChild(span);
-          });
-        }
-      };
-      for (const selector in mappings) {
-        const element = $(selector, templateContent);
-        if (element) mappings[selector](element);
+      // Cleanup
+      if (this.galleryObserver) {
+        this.galleryObserver.disconnect();
+        this.galleryObserver = null;
       }
-      this.elements.modalBody.innerHTML = '';
-      this.elements.modalBody.appendChild(templateContent);
+      
+      // Reset Views
+      this.viewControls.forEach((btn, i) => {
+        const isActive = i === 0;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-selected', isActive);
+      });
     }
 
-    /**
-     * ACCESSIBILITY: Traps keyboard focus within the modal, preventing users
-     * from tabbing to elements in the background. This is a WCAG requirement.
-     */
-    trapFocus() {
-      const focusableElements = $$(CONFIG.FOCUSABLE_ELEMENTS, this.elements.modal);
-      if (focusableElements.length === 0) return;
+    hydrateContent(fragment, data) {
+      // Technical View
+      const setText = (sel, txt) => { const el = fragment.querySelector(sel); if(el) el.textContent = txt; };
+      
+      const img = fragment.querySelector('[data-modal-image]');
+      img.src = data.image; img.alt = data.alt;
+      
+      setText('[data-modal-title]', data.title);
+      setText('[data-modal-subtitle]', data.subtitle);
+      setText('[data-modal-metric-primary]', data.metrics.primary);
+      setText('[data-modal-metric-secondary]', data.metrics.secondary);
+      setText('[data-modal-year]', data.year);
+      setText('[data-modal-description]', data.description);
 
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
+      // Lists
+      const impactList = fragment.querySelector('[data-modal-impact]');
+      data.impact.forEach(txt => impactList.appendChild(createElement('li', '', { textContent: txt })));
 
-      // Set initial focus to the close button for a predictable user experience.
-      setTimeout(() => this.elements.closeButton.focus(), 100);
+      const techContainer = fragment.querySelector('[data-modal-technologies]');
+      data.technologies.forEach(tech => {
+        techContainer.appendChild(createElement('span', 'tech-tag', { textContent: tech }));
+      });
 
-      const handleTab = (e) => {
-        if (e.key !== 'Tab') return;
-        if (e.shiftKey) { // Shift + Tab
-          if (document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-          }
-        } else { // Tab
-            if (document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-          }
-        }
-      };
-      this.elements.modal.addEventListener('keydown', handleTab);
-      // In a more complex SPA, you would want to remove this event listener in
-      // the `close` method to prevent memory leaks. For this single-page app,
-      // it's acceptable as the modal is the only place it's added.
+      // Narrative View (Gallery)
+      this.hydrateGallery(fragment, data);
     }
-  }
 
-  // ========================================================================
-  // 7. PERFORMANCE MONITOR
-  // A simple monitor that logs key performance metrics during development.
-  // It only runs on localhost to avoid polluting the console in production.
-  // ========================================================================
+    hydrateGallery(fragment, data) {
+      const track = fragment.querySelector('[data-gallery-track]');
+      const counterTotal = fragment.querySelector('[data-total]');
+      const items = data.gallery || [{ src: data.image, caption: data.description, alt: data.alt }];
 
-  class PerformanceMonitor {
-    constructor() {
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        this.initPerformanceObserver();
+      if (counterTotal) counterTotal.textContent = items.length;
+
+      items.forEach((item, idx) => {
+        const slide = createElement('div', 'gallery-item', { dataset: { index: idx + 1 } }, [
+          createElement('div', 'gallery-img-wrapper', {}, [
+            createElement('img', '', { src: item.src, alt: item.caption || '', loading: 'lazy' })
+          ]),
+          createElement('p', 'gallery-caption', { textContent: item.caption })
+        ]);
+        track.appendChild(slide);
+      });
+
+      // Gallery Navigation (Listeners attached to cloned nodes)
+      const prev = fragment.querySelector('.gallery-nav.prev');
+      const next = fragment.querySelector('.gallery-nav.next');
+      
+      if(prev && next) {
+        prev.addEventListener('click', () => track.scrollBy({ left: -track.offsetWidth, behavior: 'smooth' }));
+        next.addEventListener('click', () => track.scrollBy({ left: track.offsetWidth, behavior: 'smooth' }));
       }
     }
 
-    initPerformanceObserver() {
-      try {
-        const observer = new PerformanceObserver((list) => {
-          for (const entry of list.getEntries()) {
-            // Log Largest Contentful Paint (LCP) to the console.
-            console.log(`%c⚡ LCP: ${Math.round(entry.startTime + entry.duration)}ms`, 'color: #0E8192; font-weight: bold;');
+    initGalleryObserver() {
+      const track = this.body.querySelector('[data-gallery-track]');
+      const counter = this.body.querySelector('[data-current]');
+      if (!track || !counter) return;
+
+      this.galleryObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            counter.textContent = entry.target.dataset.index;
           }
         });
-        observer.observe({ type: 'largest-contentful-paint', buffered: true });
-      } catch (e) {
-        console.warn('PerformanceObserver not supported.');
+      }, { root: track, threshold: 0.5 });
+
+      track.querySelectorAll('.gallery-item').forEach(el => this.galleryObserver.observe(el));
+    }
+
+    switchView(targetBtn) {
+      // 1. Update Buttons
+      this.viewControls.forEach(btn => {
+        const isActive = btn === targetBtn;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-selected', isActive);
+      });
+
+      // 2. Toggle Panels
+      const targetId = targetBtn.getAttribute('aria-controls');
+      const panels = $$('.modal-view', this.body);
+      
+      panels.forEach(panel => {
+        const isTarget = panel.id === targetId;
+        if (isTarget) {
+          panel.classList.remove('hidden');
+          panel.removeAttribute('hidden');
+        } else {
+          panel.classList.add('hidden');
+          panel.setAttribute('hidden', '');
+        }
+      });
+    }
+
+    handleKeydown(e) {
+      if (e.key === 'Escape') this.close();
+      if (e.key === 'Tab') {
+        // Robust Focus Trap
+        const focusables = this.el.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+        } else {
+          if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
       }
     }
   }
 
-  // ========================================================================
-  // 8. APPLICATION INITIALIZATION
-  // The main application class that orchestrates the entire setup.
-  // It ensures all modules are loaded and initialized in the correct order.
-  // ========================================================================
-
-  class PortfolioApp {
-    constructor() {
-      this.modules = {};
-      this.init();
-    }
-
-    async init() {
-      // Defer bootstrapping until the DOM is fully loaded and parsed.
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => this.bootstrap());
-      } else {
-        this.bootstrap();
-      }
+  // --- MODULE: PROJECT GRID ---
+  class ProjectGrid {
+    constructor(data, modal) {
+      this.data = data;
+      this.container = $('.projects-grid');
+      this.modal = modal;
+      this.filterBtns = $$('.filter-pill');
+      
+      this.render();
+      this.initEvents();
     }
 
     /**
-     * Loads data and initializes all application modules in the correct order.
-     * Includes robust error handling for the asynchronous data loading.
+     * Render using Fragment + Strict DOM Creation.
+     * No innerHTML means no parsing overhead for list items.
      */
-    async bootstrap() {
-      try {
-        // Asynchronously import the project data. This allows the main script
-        // to be parsed and run while the data is still loading, improving
-        // Time to Interactive (TTI).
-        const { projectData } = await import('./project-data.js');
+    render() {
+      if (!this.container) return;
+      const fragment = document.createDocumentFragment();
+      const entries = Object.entries(this.data);
 
-        // --- INITIALIZATION ORDER IS CRITICAL ---
-        this.modules.scrollProgress = new ScrollProgress();
-        this.modules.projectModal = new ProjectModal(projectData);
+      entries.forEach(([id, proj], index) => {
+        const loading = index < CONFIG.EAGER_LOAD_LIMIT ? 'eager' : 'lazy';
+        
+        const card = createElement('article', 'project-card', { 
+          'dataset': { category: proj.categories.join(' '), project: id }
+        }, [
+          createElement('button', 'project-card-button', { 'aria-label': `View ${proj.title}` }, [
+            createElement('div', 'project-image-container', {}, [
+              createElement('span', 'project-year', { textContent: proj.year }),
+              createElement('img', 'project-image', { 
+                src: proj.image, alt: proj.alt, width: '800', height: '500', loading: loading 
+              })
+            ]),
+            createElement('div', 'project-content', {}, [
+              createElement('h3', 'project-title', { textContent: proj.title }),
+              createElement('p', 'project-meta', { textContent: proj.subtitle }),
+              createElement('p', 'project-description', { textContent: proj.description }),
+              createElement('div', 'project-tech', {}, proj.technologies.map(t => 
+                createElement('span', 'tech-tag', { textContent: t })
+              ))
+            ])
+          ])
+        ]);
 
-        // 1. Render the grid first, passing it the modal instance for click handling.
-        this.modules.projectGrid = new ProjectGrid(projectData, this.modules.projectModal);
+        fragment.appendChild(card);
+      });
 
-        // 2. Then initialize the filter so it can find the newly rendered cards.
-        this.modules.projectFilter = new ProjectFilter();
+      this.container.appendChild(fragment);
+    }
 
-        // 3. Initialize the performance monitor for development feedback.
-        this.modules.performanceMonitor = new PerformanceMonitor();
+    initEvents() {
+      // EVENT DELEGATION: One listener for the entire grid
+      this.container.addEventListener('click', (e) => {
+        const btn = e.target.closest('.project-card-button');
+        if (btn) {
+          const card = btn.closest('.project-card');
+          this.modal.open(card.dataset.project);
+        }
+      });
 
-        console.log('✅ Portfolio initialized successfully to Awwwards standards.');
-      } catch (error) {
-        // ROBUSTNESS: Catch errors from the dynamic import or module instantiation.
-        console.error('❌ Failed to initialize portfolio modules:', error);
-        // In a production app, you might want to display a user-friendly
-        // error message on the page itself.
-      }
+      // Filter Logic
+      this.filterBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => this.filter(e.currentTarget));
+      });
+    }
+
+    filter(activeBtn) {
+      const filter = activeBtn.dataset.filter;
+      
+      // Update UI
+      this.filterBtns.forEach(b => {
+        const active = b === activeBtn;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-pressed', active);
+      });
+
+      // FLIP-like Filter Animation
+      const cards = $$('.project-card', this.container);
+      
+      // 1. Tag for exit animation
+      cards.forEach(card => {
+        const cats = card.dataset.category.split(' ');
+        const match = filter === 'all' || cats.includes(filter);
+        
+        if (!match) card.classList.add('filtering');
+        else card.classList.remove('hidden'); // Ensure visible for entry
+      });
+
+      // 2. Wait for CSS transition, then hide
+      setTimeout(() => {
+        cards.forEach(card => {
+          if (card.classList.contains('filtering')) {
+            card.classList.add('hidden');
+          } else {
+            // Force Reflow to restart entry animation if needed
+            void card.offsetWidth; 
+            card.classList.remove('filtering');
+          }
+        });
+      }, CONFIG.FILTER_TRANSITION);
     }
   }
 
-  // Kick off the application.
-  new PortfolioApp();
+  // --- BOOTSTRAP ---
+  async function init() {
+    try {
+      const { projectData } = await import('./project-data.js');
+      
+      const modal = new ProjectModal(projectData);
+      new ProjectGrid(projectData, modal);
+      new ScrollProgress();
+      
+      console.log('⚡ Application Initialized: Gold Standard Mode');
+    } catch (err) {
+      console.error('Initialization failed:', err);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
 })();

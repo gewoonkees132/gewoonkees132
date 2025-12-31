@@ -12,18 +12,17 @@
 
     <title>Portfolio | Kees Leemeijer - Robotics & Computational Design</title>
 
-    <!-- Resource Hints for Performance -->
+    <!-- Resource Hints -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Optimized Font Loading -->
+    <!-- Font Loading -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="portfolio-print.css" media="print">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
 <body class="page-portfolio" itemscope itemtype="http://schema.org/Person">
@@ -31,7 +30,7 @@
     <meta itemprop="jobTitle" content="Robotics & Computational Design Specialist">
     <link itemprop="url" href="https://keesleemeijer.github.io/CV/portfolio.html">
 
-    <!-- Skip to main content for accessibility -->
+    <!-- Skip Link (A11y) -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <!-- Mobile Header -->
@@ -43,7 +42,7 @@
         </a>
     </header>
 
-    <!-- Main Layout Container -->
+    <!-- Layout Container -->
     <div class="layout-container">
         <!-- Sidebar Navigation -->
         <aside class="sidebar-nav" aria-label="Portfolio navigation">
@@ -71,9 +70,8 @@
             </nav>
         </aside>
 
-        <!-- Main Content Area -->
+        <!-- Main Content -->
         <main class="main-content" id="main-content" aria-labelledby="main-title">
-            <!-- Page Header -->
             <header class="page-header">
                 <div class="header-content-wrapper">
                     <div class="header-text-container">
@@ -90,7 +88,7 @@
                              loading="eager">
                     </div>
                     <ul class="contact-info">
-                         <li><a href="mailto:kees_leemeijer@hotmail.com" itemprop="email" aria-label="Email Kees Leemeijer">kees_leemeijer@hotmail.com</a></li>
+                        <li><a href="mailto:kees_leemeijer@hotmail.com" itemprop="email" aria-label="Email Kees Leemeijer">kees_leemeijer@hotmail.com</a></li>
                         <li><a href="tel:+31657202230" itemprop="telephone" aria-label="Call Kees Leemeijer">+31 657202230</a></li>
                         <li><a href="https://linkedin.com/in/keesleemeijer" target="_blank" rel="noopener noreferrer" itemprop="sameAs" aria-label="LinkedIn Profile">LinkedIn</a></li>
                         <li><a href="index.html" aria-label="View Resume" itemprop="mainEntityOfPage">Resume</a></li>
@@ -98,12 +96,9 @@
                 </div>
             </header>
 
-            <!-- Projects Section -->
             <section id="projects" aria-labelledby="projects-heading">
                 <h2 id="projects-heading" class="sr-only">Featured Projects</h2>
 
-                <!-- Filter Controls -->
-                <!-- Find the div with class "filter-container" and replace inner HTML -->
                 <div class="filter-container" aria-label="Filter projects by category">
                     <button class="filter-pill active" data-filter="all" aria-pressed="true">All Projects</button>
                     <button class="filter-pill" data-filter="structural" aria-pressed="false">Engineering</button>
@@ -111,9 +106,8 @@
                     <button class="filter-pill" data-filter="fabrication" aria-pressed="false">Digital Fabrication</button>
                 </div>
 
-                <!-- Projects Grid -->
                 <div class="projects-grid">
-                    <!-- Project cards will be dynamically inserted here by portfolio.js -->
+                    <!-- Dynamic Content -->
                 </div>
             </section>
         </main>
@@ -132,71 +126,97 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body">
-                <!-- Content will be dynamically inserted here from the template -->
+                <!-- Template Content Injection -->
+            </div>
+            
+            <!-- View Controls (Outside Body for Stacking Context) -->
+            <div class="modal-view-controls-wrapper">
+                <div class="modal-view-controls" role="tablist" aria-label="View Toggle">
+                    <button class="view-btn active" role="tab" aria-selected="true" aria-controls="view-technical">Overview</button>
+                    <button class="view-btn" role="tab" aria-selected="false" aria-controls="view-narrative">Gallery</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL TEMPLATE -->
+    <!-- Modal Template -->
     <template id="project-modal-template">
-        <div class="modal-hero">
-            <img data-modal-image src="" alt="" loading="lazy" width="900" height="350">
-            <div class="modal-hero-overlay">
-                <h2 class="modal-hero-title" id="modal-hero-title" data-modal-title></h2>
-                <p class="modal-hero-subtitle" data-modal-subtitle></p>
+        <div class="modal-card-surface">
+            <!-- Technical View -->
+            <div id="view-technical" class="modal-view active" role="tabpanel">
+                <div class="modal-hero">
+                    <img data-modal-image src="" alt="" loading="lazy" width="900" height="350">
+                    <div class="modal-hero-overlay">
+                        <h2 class="modal-hero-title" id="modal-hero-title" data-modal-title></h2>
+                        <p class="modal-hero-subtitle" data-modal-subtitle></p>
+                    </div>
+                </div>
+
+                <div class="modal-inner-content">
+                    <div class="modal-stats">
+                        <div class="modal-stat">
+                            <span class="modal-stat-value" data-modal-metric-primary></span>
+                            <span class="modal-stat-label" data-modal-metric-secondary></span>
+                        </div>
+                        <div class="modal-stat">
+                            <span class="modal-stat-value" data-modal-year></span>
+                            <span class="modal-stat-label">Year</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>Overview</h3>
+                        <p data-modal-description></p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>Key Achievements</h3>
+                        <ul data-modal-impact></ul>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>Technologies & Methods</h3>
+                        <div class="project-tech" data-modal-technologies></div>
+                    </div>
+                    
+                    <!-- Spacer for floating pill -->
+                    <div style="height: 80px;" aria-hidden="true"></div>
+                </div>
             </div>
-        </div>
 
-        <div class="modal-stats">
-            <div class="modal-stat">
-                <span class="modal-stat-value" data-modal-metric-primary></span>
-                <span class="modal-stat-label" data-modal-metric-secondary></span>
+            <!-- Narrative View -->
+            <div id="view-narrative" class="modal-view hidden" role="tabpanel" hidden>
+                <div class="gallery-container" data-gallery-track tabindex="0" aria-label="Image Gallery">
+                    <!-- Gallery Items -->
+                </div>
+                
+                <div class="gallery-controls">
+                    <button class="gallery-nav prev" aria-label="Previous image">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <div class="gallery-counter">
+                        <span data-current>1</span> / <span data-total></span>
+                    </div>
+                    <button class="gallery-nav next" aria-label="Next image">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                </div>
+                
+                <!-- Spacer for floating pill -->
+                <div style="height: 80px;" aria-hidden="true"></div>
             </div>
-            <div class="modal-stat">
-                <span class="modal-stat-value" data-modal-year></span>
-                <span class="modal-stat-label">Year</span>
-            </div>
-        </div>
-
-        <div class="modal-section">
-            <h3>Overview</h3>
-            <p data-modal-description></p>
-        </div>
-
-        <div class="modal-section">
-            <h3>Key Achievements</h3>
-            <ul data-modal-impact></ul>
-        </div>
-
-        <div class="modal-section">
-            <h3>Technologies & Methods</h3>
-            <div class="project-tech" data-modal-technologies></div>
         </div>
     </template>
 
-    <!-- SVG Logo Definition -->
+    <!-- SVG Definitions -->
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;" aria-hidden="true">
         <symbol id="kees-logo-svg" viewBox="0 0 52.16 61.46">
             <title>Kees Leemeijer Logomark</title>
-            <g>
-                <path d="M18.5,23.97c9.94-.87,12.45-15.95,23.11-22.78,2.99-1.92,7.08-1.36,9.21,1.49,2.39,3.21,1.49,7.7-1.84,9.76-4.18,2.58-11.25,7.98-14.79,11.49-3.53,3.52-3.53,5.16-3.53,6.8s0,3.28,3.53,6.79c3.47,3.46,10.36,8.73,14.57,11.36,3.08,1.92,4.33,5.95,2.56,9.12-1.88,3.37-6.16,4.46-9.41,2.46-10.81-6.67-13.33-21.8-23.13-22.94-.68-.08-1.19-.64-1.19-1.33v-11.23c0-.52.39-.95.91-1Z"/>
-                <rect width="13.44" height="61.46" rx="3.66"/>
-            </g>
+            <path d="M18.5,23.97c9.94-.87,12.45-15.95,23.11-22.78,2.99-1.92,7.08-1.36,9.21,1.49,2.39,3.21,1.49,7.7-1.84,9.76-4.18,2.58-11.25,7.98-14.79,11.49-3.53,3.52-3.53,5.16-3.53,6.8s0,3.28,3.53,6.79c3.47,3.46,10.36,8.73,14.57,11.36,3.08,1.92,4.33,5.95,2.56,9.12-1.88,3.37-6.16,4.46-9.41,2.46-10.81-6.67-13.33-21.8-23.13-22.94-.68-.08-1.19-.64-1.19-1.33v-11.23c0-.52.39-.95.91-1Z"/>
+            <rect width="13.44" height="61.46" rx="3.66"/>
         </symbol>
     </svg>
 
-    <!--
-      SCRIPT LOADING OPTIMIZATION (v2.0):
-      The `type="module"` attribute is a modern best practice that provides two
-      key benefits for free:
-      1. DEFERRED BY DEFAULT: Scripts with `type="module"` behave as if they have
-         the `defer` attribute. They are downloaded in parallel with HTML parsing
-         and are executed only after the document has been fully parsed, preventing
-         them from blocking the rendering of the page.
-      2. NATIVE MODULE SUPPORT: It enables the use of modern ES Modules (`import`
-         and `export` syntax) directly in the browser, allowing for cleaner,
-         more maintainable code without requiring a build step.
-    -->
     <script type="module" src="portfolio.js"></script>
 </body>
 </html>

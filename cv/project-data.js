@@ -1,7 +1,6 @@
 export const projectData = {
   // -------------------------------------------------------------------------
-  // CATEGORY: STRUCTURAL ENGINEERING (Target: ZPF, wh-p)
-  // Focus: FEA, Optimization, Statics, Material Science
+  // CATEGORY: STRUCTURAL ENGINEERING
   // -------------------------------------------------------------------------
   'mega-highrise': {
     title: 'Highrise Timber Diagrid',
@@ -16,8 +15,22 @@ export const projectData = {
       'Successfully passed all ultimate and serviceability limit states'
     ],
     technologies: ['Karamba3D', 'FEA', 'Structural Optimization', 'Parametric Modeling', 'Hybrid Structures'],
-    categories: ['structural'], // PURE STRUCTURAL
-    metrics: { primary: '169m', secondary: 'Tower Height' }
+    categories: ['structural'],
+    metrics: { primary: '169m', secondary: 'Tower Height' },
+    gallery: [
+      {
+        src: 'images/mega-highrise_timber_Render_2.png',
+        caption: 'Global View: The diagrid structure optimizes material usage by following principal stress lines.'
+      },
+      {
+        src: 'images/mega-highrise_timber_Render_1.png', 
+        caption: 'Node Detail: A hybrid steel-timber connection designed to withstand high wind loads at 100m+ elevation.'
+      },
+      {
+        src: 'images/mega-highrise_construction.jpg', 
+        caption: 'Phased Construction: Computational analysis of stability during the erection sequence.'
+      }
+    ]
   },
   'biosphere-optimization': {
     title: 'Biosphere Structural Design',
@@ -32,7 +45,7 @@ export const projectData = {
       'Rationalized the print geometry to balance a 40% lightweight infill with necessary structural flange stiffness'
     ],
     technologies: ['Parametric Design', 'RFEM', 'Structural Analysis', 'Material Testing', '3DCP'],
-    categories: ['structural', 'fabrication'], // HYBRID
+    categories: ['structural', 'fabrication'],
     metrics: { primary: '5m', secondary: 'Span Diameter' }
   },
   'floor-optimization': {
@@ -48,7 +61,7 @@ export const projectData = {
       'Validated results through a comprehensive Life-Cycle Analysis (LCA)'
     ],
     technologies: ['Optimization', 'FEA', 'Life-Cycle Analysis', 'Parametric Design', 'Concrete Structures'],
-    categories: ['structural'], // PURE STRUCTURAL
+    categories: ['structural'], 
     metrics: { primary: '60-80%', secondary: 'Footprint Reduction' }
   },
   'earthy-vault': {
@@ -64,13 +77,12 @@ export const projectData = {
       'Developed a comprehensive, IKEA-style manual for easy assembly'
     ],
     technologies: ['Material Testing', 'Dynamic Relaxation', 'FEA', 'Humanitarian Engineering', 'Computational Design'],
-    categories: ['structural'], // MOVED FROM RESEARCH TO STRUCTURAL
+    categories: ['structural'], 
     metrics: { primary: '3 N/mm²', secondary: 'Compression Strength' }
   },
 
   // -------------------------------------------------------------------------
-  // CATEGORY: SOFTWARE & TOOLS (Target: HdM Digital Technologies)
-  // Focus: C#, Full Stack, Algorithms, Geometry Kernels
+  // CATEGORY: SOFTWARE & TOOLS
   // -------------------------------------------------------------------------
   'vertico-slicer': {
     title: 'Vertico Slicer Plugin',
@@ -85,7 +97,7 @@ export const projectData = {
       'Eliminated dependencies on commercial software by internalizing Robotcode generation'
     ],
     technologies: ['Grasshopper', 'C# development', '6-Axis Robotics', 'Robotics', 'Computational Geometry'],
-    categories: ['software', 'fabrication'], // SOFTWARE FOCUS
+    categories: ['software', 'fabrication'],
     metrics: { primary: '6-Axis', secondary: 'Non-Planar Logic' }
   },
   'vasecreator-web-platform': {
@@ -101,7 +113,7 @@ export const projectData = {
       'Achieved top 3 global search rankings by optimizing UI latency to under 16ms'
     ],
     technologies: ['Three.js', 'WebGL', 'Procedural Geometry', 'JavaScript', 'Product Management'],
-    categories: ['software'], // PURE SOFTWARE
+    categories: ['software'],
     metrics: { primary: '1,000+', secondary: 'Monthly Users' }
   },
   'vertico-hub-platform': {
@@ -117,7 +129,7 @@ export const projectData = {
       'Automated the sales-to-activation workflow, reducing administrative overhead for the internal team'
     ],
     technologies: ['Google Cloud', 'REST API', 'SaaS', 'Grasshopper', 'Full Stack'],
-    categories: ['software'], // PURE SOFTWARE
+    categories: ['software'],
     metrics: { primary: 'SaaS', secondary: 'Business Model' }
   },
   'optimized-foundation': {
@@ -133,7 +145,7 @@ export const projectData = {
       'Validated the system as a TRL 5 demonstrator, proving feasibility for industrial infrastructure'
     ],
     technologies: ['Structural Optimization', 'Web Configurator', '3DCP', 'Automated Workflow', 'Rapid Code Generation'],
-    categories: ['software', 'fabrication', 'structural'], // TRIFECTA
+    categories: ['software', 'fabrication', 'structural'],
     metrics: { primary: '70-90%', secondary: 'Material Reduction' }
   },
   'parametric-bench-configurator': {
@@ -154,16 +166,15 @@ export const projectData = {
   },
 
   // -------------------------------------------------------------------------
-  // CATEGORY: DIGITAL FABRICATION (Target: All - Proof of capability)
-  // Focus: Robotics, Material constraints, Real-world execution
+  // CATEGORY: DIGITAL FABRICATION
   // -------------------------------------------------------------------------
   'zaha-hadid-aevum': {
     title: 'Aevum Pavilion',
-    subtitle: 'Vertico, Zaha Hadid Architects & Eckersley O\'Callaghan\'s — Structural Fabrication',
+    subtitle: 'Vertico, ZHA & EOC — Structural Fabrication',
     year: '2024',
     image: 'images/zaha-hadid-aevum_corner-detail.jpg',
     alt: 'Complex 3D-printed concrete corner node with internal post-tensioning channels.',
-    description: "Translated 2D structural drawings from Eckersley O'Callaghan into a feasible 3D post-tensioning system for the Aevum pavilion, designed by Zaha Hadid Architects. Engineered the complex internal geometry of critical corner nodes where multiple ducts intersect, utilizing non-planar slicing, realising a state of the the art post-tensioned shell structure.",
+    description: "Translated 2D structural drawings from Eckersley O'Callaghan into a feasible 3D post-tensioning system for the Aevum pavilion, designed by Zaha Hadid Architects. Engineered the complex internal geometry of critical corner nodes where multiple ducts intersect, utilizing non-planar slicing.",
     impact: [
       'Resolved complex internal collisions where dual post-tensioning ducts crossed within a single node',
       'Implemented non-planar, variable layer height slicing to ensure duct alignment without support',
@@ -202,7 +213,7 @@ export const projectData = {
       'Optimized the design to transfer loads through compression, removing the need for steel reinforcement'
     ],
     technologies: ['3DCP', 'Structural Testing', 'Prototyping', 'Design Engineering', 'Compression Structures'],
-    categories: ['fabrication', 'structural'], // HYBRID
+    categories: ['fabrication', 'structural'],
     metrics: { primary: '1,000kg', secondary: 'Load Tested' }
   },
   'disassemblable-beam': {
@@ -323,14 +334,14 @@ export const projectData = {
     year: '2023',
     image: 'images/bioreceptive-wall_moss-texture.jpg',
     alt: 'Textured 3D-printed concrete surface successfully hosting various types of moss.',
-    description: 'Led a collaborative research initiative to prove that 3D-printed concrete can host various types of mosses. The project resulted in a successful demonstrator showcasing active biological growth, validating the potential of using natural evapotranspiration to combat the Urban Heat Island effect. The research is now continued at TU Delft in a Master\'s thesis to further define the critical biological drivers.',
+    description: 'Led a collaborative research initiative to prove that 3D-printed concrete can host various types of mosses. The project resulted in a successful demonstrator showcasing active biological growth, validating the potential of using natural evapotranspiration to combat the Urban Heat Island effect.',
     impact: [
       'Kickstarted an R&D initiative that successfully validated 3DCP as a viable substrate for biological growth',
       'Demonstrated the potential for passive urban cooling through natural evapotranspiration by optimizing surface biomarkers',
       'Translated industrial research into an academic track, serving on the committee for the continued Master\'s thesis'
     ],
     technologies: ['Bioreceptivity', 'Evapotranspiration', 'Urban Heat Island', 'Surface Topology', 'Material Science'],
-    categories: ['research', 'fabrication'], // KEEP RESEARCH IF IT'S ACADEMIC
+    categories: ['research', 'fabrication'],
     metrics: { primary: 'Passive', secondary: 'Urban Cooling' }
   },
   'overhang-printing': {
@@ -378,11 +389,11 @@ export const projectData = {
       'Formulated technical modules integrating building physics with design decision-making',
     ],
     technologies: ['Building Physics', 'Sustainability', 'Energy Modeling', 'Curriculum Design', 'Zero-Energy'],
-    categories: ['structural'], // Fits best in engineering/physics
+    categories: ['structural'],
     metrics: { primary: 'Global', secondary: 'Learner Reach' }
   },
   'vertico-training': {
-    title: 'Training 3DCP, Parametric design and Data structures',
+    title: 'Training 3DCP, Parametric design',
     subtitle: 'Vertico — Client Enablement',
     year: '2021',
     image: 'images/vertico-training_workshop.jpg',
@@ -394,7 +405,7 @@ export const projectData = {
       'Empowered users to master strict DfM constraints required for successful robotic fabrication'
     ],
     technologies: ['Rhino', 'Grasshopper', 'DfM', 'Education', 'Knowledge Transfer'],
-    categories: ['software'], // Focus on teaching the TOOLS
+    categories: ['software'],
     metrics: { primary: '40+', secondary: 'Organizations Trained' }
   },
   'placemaking-vr': {
