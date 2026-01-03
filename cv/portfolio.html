@@ -8,7 +8,7 @@
     <meta name="author" content="Kees Leemeijer">
     <meta name="theme-color" content="#0E8192">
     <meta name="color-scheme" content="light">
-    <meta name="robots" content="noindex, nofollow">  
+    <meta name="robots" content="noindex, nofollow">
 
     <title>Portfolio | Kees Leemeijer - Robotics & Computational Design</title>
 
@@ -79,13 +79,16 @@
                         <p class="lead" itemprop="jobTitle">Portfolio of Kees Leemeijer - Robotics & Computational Design Specialist</p>
                     </div>
                     <div class="header-portrait-container">
+                        <!-- AUDIT FIX: Added fetchpriority="high" for LCP optimization -->
                         <img src="images/portrait.png"
                              alt="Kees Leemeijer"
                              class="portrait-image"
                              itemprop="image"
                              width="144"
                              height="144"
-                             loading="eager">
+                             loading="eager"
+                             fetchpriority="high"
+                             decoding="async">
                     </div>
                     <ul class="contact-info">
                         <li><a href="mailto:kees_leemeijer@hotmail.com" itemprop="email" aria-label="Email Kees Leemeijer">kees_leemeijer@hotmail.com</a></li>
@@ -99,15 +102,15 @@
             <section id="projects" aria-labelledby="projects-heading">
                 <h2 id="projects-heading" class="sr-only">Featured Projects</h2>
 
-                <div class="filter-container" aria-label="Filter projects by category">
-                    <button class="filter-pill active" data-filter="all" aria-pressed="true">All Projects</button>
-                    <button class="filter-pill" data-filter="structural" aria-pressed="false">Engineering</button>
-                    <button class="filter-pill" data-filter="software" aria-pressed="false">Software & Tools</button>
-                    <button class="filter-pill" data-filter="fabrication" aria-pressed="false">Digital Fabrication</button>
+                <div class="filter-container" role="group" aria-label="Filter projects by category">
+                    <button class="filter-pill active" data-filter="all" aria-pressed="true" type="button">All Projects</button>
+                    <button class="filter-pill" data-filter="structural" aria-pressed="false" type="button">Engineering</button>
+                    <button class="filter-pill" data-filter="software" aria-pressed="false" type="button">Software & Tools</button>
+                    <button class="filter-pill" data-filter="fabrication" aria-pressed="false" type="button">Digital Fabrication</button>
                 </div>
 
                 <div class="projects-grid">
-                    <!-- Dynamic Content -->
+                    <!-- Dynamic Content Injected by JavaScript -->
                 </div>
             </section>
         </main>
@@ -132,8 +135,8 @@
             <!-- View Controls (Outside Body for Stacking Context) -->
             <div class="modal-view-controls-wrapper">
                 <div class="modal-view-controls" role="tablist" aria-label="View Toggle">
-                    <button class="view-btn active" role="tab" aria-selected="true" aria-controls="view-technical">Overview</button>
-                    <button class="view-btn" role="tab" aria-selected="false" aria-controls="view-narrative">Gallery</button>
+                    <button class="view-btn active" role="tab" aria-selected="true" aria-controls="view-technical" type="button">Overview</button>
+                    <button class="view-btn" role="tab" aria-selected="false" aria-controls="view-narrative" type="button">Gallery</button>
                 </div>
             </div>
         </div>
@@ -145,7 +148,7 @@
             <!-- Technical View -->
             <div id="view-technical" class="modal-view active" role="tabpanel">
                 <div class="modal-hero">
-                    <img data-modal-image src="" alt="" loading="lazy" width="900" height="350">
+                    <img data-modal-image src="" alt="" loading="lazy" decoding="async" width="900" height="350">
                     <div class="modal-hero-overlay">
                         <h2 class="modal-hero-title" id="modal-hero-title" data-modal-title></h2>
                         <p class="modal-hero-subtitle" data-modal-subtitle></p>
@@ -179,31 +182,35 @@
                         <div class="project-tech" data-modal-technologies></div>
                     </div>
                     
-                    <!-- Spacer for floating pill -->
-                    <div style="height: 80px;" aria-hidden="true"></div>
+                    <!-- AUDIT FIX: Replaced inline style with CSS class -->
+                    <div class="modal-footer-spacer" aria-hidden="true"></div>
                 </div>
             </div>
 
             <!-- Narrative View -->
             <div id="view-narrative" class="modal-view hidden" role="tabpanel" hidden>
                 <div class="gallery-container" data-gallery-track tabindex="0" aria-label="Image Gallery">
-                    <!-- Gallery Items -->
+                    <!-- Gallery Items Injected by JavaScript -->
                 </div>
                 
                 <div class="gallery-controls">
-                    <button class="gallery-nav prev" aria-label="Previous image">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    <button class="gallery-nav prev" type="button" aria-label="Previous image">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M15 18l-6-6 6-6"/>
+                        </svg>
                     </button>
-                    <div class="gallery-counter">
+                    <div class="gallery-counter" aria-live="polite" aria-atomic="true">
                         <span data-current>1</span> / <span data-total></span>
                     </div>
-                    <button class="gallery-nav next" aria-label="Next image">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                    <button class="gallery-nav next" type="button" aria-label="Next image">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M9 18l6-6-6-6"/>
+                        </svg>
                     </button>
                 </div>
                 
-                <!-- Spacer for floating pill -->
-                <div style="height: 80px;" aria-hidden="true"></div>
+                <!-- AUDIT FIX: Replaced inline style with CSS class -->
+                <div class="modal-footer-spacer" aria-hidden="true"></div>
             </div>
         </div>
     </template>

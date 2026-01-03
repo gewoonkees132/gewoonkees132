@@ -36,7 +36,7 @@ export const projectData = {
     title: 'Biosphere Structural Design',
     subtitle: 'Vertico & TU Delft & Eigenraam engineering — Structural design',
     year: '2024',
-    image: 'images/biosphere-optimization_fem-analysis.jpg',
+    image: 'images/biosphere-Visualisation.png',
     alt: 'Finite element analysis visualization of a 5-meter spherical structure composed of hexagonal concrete elements.',
     description: 'Acted as the technical bridge between artistic design and structural engineer for a 5-meter 3D printed concrete sphere. Developed the parametric logic to generate direct inputs for FEM analysis (RFEM), allowing the structural engineer to validate the unreinforced, epoxy-bonded shell based on real-world material data.',
     impact: [
@@ -47,6 +47,22 @@ export const projectData = {
     technologies: ['Parametric Design', 'RFEM', 'Structural Analysis', 'Material Testing', '3DCP'],
     categories: ['structural', 'fabrication'],
     metrics: { primary: '5m', secondary: 'Span Diameter' }
+  },
+        'HPA-pavilion': {
+    title: 'Formwork-Free Shell Pavilion',
+    subtitle: 'De Huizenprinters — Fabrication Lead',
+    year: '2022',
+    image: 'images/huizenprinters-pavilion_assembled-shell.gif',
+    alt: 'A segmented, vault-shaped concrete pavilion assembled from 3D-printed parts without internal molds.',
+    description: 'Orchestrated the complete fabrication logic for a compression-only concrete vault, translating a parametric shell design into printable reality. By segmenting the constant-stress arch into eight double-curved parts with integrated stiffening ribs, the project eliminated the need for reinforcement and wasteful single-use support structures.',
+    impact: [
+      'Eliminated 100% of single-use formwork and falsework by engineering a self-supporting assembly method',
+      'Solved critical buckling and shrinkage issues by integrating structural ribs directly into the print path',
+      'Segmented a complex monolithic geometry into 8 printable components, bridging design and production'
+    ],
+    technologies: ['3DCP', 'Shell Structures', 'Segmentation', 'Sustainable Construction', 'Parametric Design'],
+    categories: ['fabrication', 'structural'],
+    metrics: { primary: 'Zero', secondary: 'Single-Use Formwork' }
   },
   'floor-optimization': {
     title: 'Floorslab Optimization',
@@ -88,7 +104,7 @@ export const projectData = {
     title: 'Vertico Slicer Plugin',
     subtitle: 'Vertico — Software Development',
     year: '2021',
-    image: 'images/vertico-slicer_toolpath-simulation.jpg',
+    image: 'images/vertico-slicer_toolpath-simulation.gif',
     alt: 'Grasshopper interface visualizing simultaneous toolpaths for multiple non-planar geometries.',
     description: 'Engineered a proprietary CAM solution for 6-axis robotic printing, overcoming standard 3-axis slicing limitations. The software enables simultaneous batch processing of multiple geometries and generates complex non-planar toolpaths, unlocking industrial-scale efficiency and unrestricted geometric freedom.',
     impact: [
@@ -247,22 +263,6 @@ export const projectData = {
     technologies: ['3DCP', 'Robotic Automation', 'Parametric Design', 'Digital Fabrication'],
     categories: ['fabrication'],
     metrics: { primary: '106', secondary: 'Unique Elements' }
-  },
-  'HPA-pavilion': {
-    title: 'Formwork-Free Shell Pavilion',
-    subtitle: 'De Huizenprinters — Fabrication Lead',
-    year: '2022',
-    image: 'images/huizenprinters-pavilion_assembled-shell.jpg',
-    alt: 'A segmented, vault-shaped concrete pavilion assembled from 3D-printed parts without internal molds.',
-    description: 'Orchestrated the complete fabrication logic for a compression-only concrete vault, translating a parametric shell design into printable reality. By segmenting the constant-stress arch into eight double-curved parts with integrated stiffening ribs, the project eliminated the need for reinforcement and wasteful single-use support structures.',
-    impact: [
-      'Eliminated 100% of single-use formwork and falsework by engineering a self-supporting assembly method',
-      'Solved critical buckling and shrinkage issues by integrating structural ribs directly into the print path',
-      'Segmented a complex monolithic geometry into 8 printable components, bridging design and production'
-    ],
-    technologies: ['3DCP', 'Shell Structures', 'Segmentation', 'Sustainable Construction', 'Parametric Design'],
-    categories: ['fabrication', 'structural'],
-    metrics: { primary: 'Zero', secondary: 'Single-Use Formwork' }
   },
   'concrete-canoe': {
     title: '3D Printed Concrete Canoe',
