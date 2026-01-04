@@ -1,18 +1,20 @@
 /* ==========================================================================
-Kees Leemeijer — Print Styles v10.2
+   Kees Leemeijer — Print Styles v10.3
 
-- Full-bleed background (all pages)
-- Consistent safe margins on every page via padding
-- Reliable page numbers using the @page rule
-- Two-column grid with paired sections
-========================================================================== */
+   - Full-bleed background (all pages)
+   - Consistent safe margins on every page via padding
+   - Reliable page numbers using the @page rule
+   - Two-column grid with paired sections
+   - Extra Curriculars in right column
+   - References section support
+   ========================================================================== */
 
 /*
-*   This setup enables a full-bleed background and reliable page numbers.
-*   1. Margins are set to 0 on top/left/right to allow the background to fill the page.
-*   2. A bottom margin is reserved exclusively for the page number area.
-*   3. Padding is applied to .main-content to create the content "safe area".
-*/
+ *   This setup enables a full-bleed background and reliable page numbers.
+ *   1. Margins are set to 0 on top/left/right to allow the background to fill the page.
+ *   2. A bottom margin is reserved exclusively for the page number area.
+ *   3. Padding is applied to .main-content to create the content "safe area".
+ */
 @page {
   size: A4 portrait;
   margin: 0 0 0 0; /* top, right, bottom, left */
@@ -29,8 +31,8 @@ Kees Leemeijer — Print Styles v10.2
 
 @media print {
   /* ==========================================================================
-   Design Tokens (Print)
-  ========================================================================== */
+     Design Tokens (Print)
+     ========================================================================== */
   :root {
     /* Colors */
     --color-background: #ffffff;
@@ -83,8 +85,8 @@ Kees Leemeijer — Print Styles v10.2
   }
 
   /* ==========================================================================
-   Reset & Base
-  ========================================================================== */
+     Reset & Base
+     ========================================================================== */
   *, *::before, *::after {
     print-color-adjust: exact !important;
     -webkit-print-color-adjust: exact !important;
@@ -116,8 +118,8 @@ Kees Leemeijer — Print Styles v10.2
   .layout-container::before { content: none !important; background: none !important; }
 
   /* ==========================================================================
-   Full-bleed brand background (fixed across all pages)
-  ========================================================================== */
+     Full-bleed brand background (fixed across all pages)
+     ========================================================================== */
   html::before {
     content: '';
     position: fixed;
@@ -134,7 +136,6 @@ Kees Leemeijer — Print Styles v10.2
       url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52.16 61.46' fill='%230E8192' opacity='.09'><g><path d='M18.5,23.97c9.94-.87,12.45-15.95,23.11-22.78,2.99-1.92,7.08-1.36,9.21,1.49,2.39,3.21,1.49,7.7-1.84,9.76-4.18,2.58-11.25,7.98-14.79,11.49-3.53,3.52-3.53,5.16-3.53,6.8s0,3.28,3.53,6.79c3.47,3.46,10.36,8.73,14.57,11.36,3.08,1.92,4.33,5.95,2.56,9.12-1.88,3.37-6.16,4.46-9.41,2.46-10.81-6.67-13.33-21.8-23.13-22.94-.68-.08-1.19-.64-1.19-1.33v-11.23c0-.52.39-.95.91-1Z'/><rect width='13.44' height='61.46' rx='3.66'/></g></svg>");
     background-repeat: no-repeat, no-repeat;
     background-size: cover, 20mm auto;
-    /* Position watermark within the safe area defined by padding/margin */
     background-position: center, right var(--print-safe-margin) bottom 10mm;
   }
 
@@ -145,21 +146,17 @@ Kees Leemeijer — Print Styles v10.2
     color: var(--color-text-primary) !important;
   }
 
-  /*
-  *   The content's "safe area" is now created with padding, as the @page
-  *   margin is 0 on the top and sides to allow for the full-bleed background.
-  */
   .main-content {
     padding: var(--print-safe-margin);
-    padding-bottom: 0; /* Bottom is handled by @page margin */
+    padding-bottom: 0;
     box-sizing: border-box;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
   }
 
   /* ==========================================================================
-   Main Layout
-  ========================================================================== */
+     Main Layout - Two Column Grid
+     ========================================================================== */
   .page-resume .main-content {
     display: grid;
     grid-template-columns: 30fr 70fr;
@@ -168,7 +165,7 @@ Kees Leemeijer — Print Styles v10.2
     align-items: start;
   }
 
-  /* Header spans both columns */
+  /* Row 1: Header spans both columns */
   .page-resume .page-header {
     grid-row: 1;
     grid-column: 1 / -1;
@@ -176,7 +173,9 @@ Kees Leemeijer — Print Styles v10.2
     margin: 0 0 var(--space-sm) 0;
   }
 
-  /* Left column: Summary, Skills */
+  /* -------------------------------------------------------------------------
+     Left Column: Summary, Skills, Awards, Languages, References
+     ------------------------------------------------------------------------- */
   .page-resume #summary {
     grid-row: 2;
     grid-column: 1;
@@ -184,6 +183,7 @@ Kees Leemeijer — Print Styles v10.2
     break-inside: avoid;
     page-break-inside: avoid;
   }
+
   .page-resume #skills {
     grid-row: 3;
     grid-column: 1;
@@ -192,16 +192,6 @@ Kees Leemeijer — Print Styles v10.2
     page-break-inside: avoid;
   }
 
-  /* Right column: Experience spanning Summary + Skills */
-  .page-resume #experience {
-    grid-row: 2 / 4;
-    grid-column: 2;
-    margin: 0;
-    break-inside: auto;
-    page-break-inside: auto;
-  }
-
-  /* Left column: Awards, Languages */
   .page-resume #awards {
     grid-row: 4;
     grid-column: 1;
@@ -209,6 +199,7 @@ Kees Leemeijer — Print Styles v10.2
     break-inside: avoid;
     page-break-inside: avoid;
   }
+
   .page-resume #languages {
     grid-row: 5;
     grid-column: 1;
@@ -217,9 +208,35 @@ Kees Leemeijer — Print Styles v10.2
     page-break-inside: avoid;
   }
 
-  /* Right column: Education spanning Awards + Languages */
+  .page-resume #references {
+    grid-row: 6;
+    grid-column: 1;
+    margin: 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* -------------------------------------------------------------------------
+     Right Column: Experience, Extracurriculars, Education
+     ------------------------------------------------------------------------- */
+  .page-resume #experience {
+    grid-row: 2 / 5; /* Spans rows alongside Summary, Skills, Awards */
+    grid-column: 2;
+    margin: 0;
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .page-resume #extracurriculars {
+    grid-row: 5; /* Alongside Languages */
+    grid-column: 2;
+    margin: 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
   .page-resume #education {
-    grid-row: 4 / 6;
+    grid-row: 6 / 8; /* Alongside References and beyond */
     grid-column: 2;
     margin: 0;
     break-inside: auto;
@@ -235,7 +252,7 @@ Kees Leemeijer — Print Styles v10.2
   /* Headings within sections should not add extra top spacing */
   .page-resume .main-content > section h2 { margin-top: 0; }
 
-  /* Keep each job entry together */
+  /* Keep each job/education entry together */
   .page-resume .cv-item {
     break-inside: avoid;
     page-break-inside: avoid;
@@ -244,8 +261,8 @@ Kees Leemeijer — Print Styles v10.2
   .page-resume .cv-item:last-child { margin-bottom: 0; }
 
   /* ==========================================================================
-   Compact Header (Logo-free)
-  ========================================================================== */
+     Compact Header (Logo-free)
+     ========================================================================== */
   .header-content-wrapper {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -290,6 +307,11 @@ Kees Leemeijer — Print Styles v10.2
     line-height: var(--line-height-tight);
   }
 
+  /* Hide relocation badge in print */
+  .page-header .sub-lead {
+    display: none;
+  }
+
   .contact-info {
     grid-area: contact;
     list-style: none;
@@ -306,8 +328,8 @@ Kees Leemeijer — Print Styles v10.2
   .contact-info a { color: var(--color-text-secondary); text-decoration: none; }
 
   /* ==========================================================================
-   Typography & Sections
-  ========================================================================== */
+     Typography & Sections
+     ========================================================================== */
   h1, h2, h3, h4 {
     font-weight: var(--font-weight-bold);
     line-height: var(--line-height-heading);
@@ -351,10 +373,16 @@ Kees Leemeijer — Print Styles v10.2
   section:last-of-type { margin-bottom: 0; }
 
   /* ==========================================================================
-   Résumé-Specific
-  ========================================================================== */
-  .page-resume #summary p { line-height: var(--line-height-snug); font-size: var(--font-size-sm); }
+     Résumé-Specific Styles
+     ========================================================================== */
 
+  /* Summary */
+  .page-resume #summary p {
+    line-height: var(--line-height-snug);
+    font-size: var(--font-size-sm);
+  }
+
+  /* Skills */
   .page-resume .skills-list {
     list-style: none;
     padding: 0;
@@ -377,7 +405,11 @@ Kees Leemeijer — Print Styles v10.2
     color: var(--color-text-secondary);
   }
 
-  .page-resume .cv-item > h3 { margin: 0 0 var(--space-2xs) 0; font-size: var(--font-size-h3); }
+  /* Experience & Education Items */
+  .page-resume .cv-item > h3 {
+    margin: 0 0 var(--space-2xs) 0;
+    font-size: var(--font-size-h3);
+  }
 
   .page-resume .experience-header {
     display: flex;
@@ -398,25 +430,88 @@ Kees Leemeijer — Print Styles v10.2
     flex-shrink: 0;
   }
 
-  .page-resume .language-list { list-style: none; padding: 0; margin: 0; }
-  .page-resume .language-list li { font-size: var(--font-size-sm); margin: var(--space-2xs) 0; }
+  /* Languages */
+  .page-resume .language-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .page-resume .language-list li {
+    font-size: var(--font-size-sm);
+    margin: var(--space-2xs) 0;
+  }
 
+  /* Awards */
   .page-resume #awards .cv-item { margin-bottom: var(--space-sm); }
   .page-resume #awards .cv-item h3 {
     display: inline;
     margin-right: var(--space-xs);
     font-size: var(--font-size-h4);
   }
-  .page-resume #awards .cv-item h3 span {
+  .page-resume #awards .cv-item h3 .award-year {
     color: var(--color-text-secondary);
     font-size: var(--font-size-xs);
     margin-left: var(--space-xs);
   }
-  .page-resume #awards .cv-item p { margin-top: var(--space-2xs); font-size: var(--font-size-sm); }
+  .page-resume #awards .cv-item p {
+    margin-top: var(--space-2xs);
+    font-size: var(--font-size-sm);
+  }
+
+  /* References */
+  .page-resume #references .references-grid {
+    display: block;
+  }
+  .page-resume #references .reference-item {
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-sm);
+    border-bottom: var(--border-width) solid var(--color-border-light);
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .page-resume #references .reference-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .page-resume #references .reference-item h3 {
+    font-size: var(--font-size-h4);
+    margin: 0 0 var(--space-2xs) 0;
+  }
+  .page-resume #references .reference-item p {
+    font-size: var(--font-size-sm);
+    margin: 0 0 var(--space-2xs) 0;
+    line-height: var(--line-height-snug);
+  }
+  .page-resume #references .reference-item p:last-child {
+    margin-bottom: 0;
+  }
+  .page-resume #references .reference-item a {
+    color: var(--color-text-secondary);
+  }
+
+  /* Extracurriculars - compact styling */
+  .page-resume #extracurriculars .cv-item {
+    margin-bottom: var(--space-sm);
+  }
+  .page-resume #extracurriculars .cv-item h3 {
+    font-size: var(--font-size-h4);
+  }
+  .page-resume #extracurriculars .cv-item ul {
+    margin-top: var(--space-xs);
+  }
+
+  /* Education - Relevant Coursework compact list */
+  .page-resume #education .cv-item ul {
+    margin-top: var(--space-xs);
+  }
+  .page-resume #education .cv-item ul li {
+    font-size: var(--font-size-sm);
+  }
 
   /* ==========================================================================
-   Portfolio (Print)
-  ========================================================================== */
+     Portfolio (Print)
+     ========================================================================== */
   .page-portfolio .filter-container,
   .page-portfolio .project-image-container { display: none !important; }
 
@@ -478,4 +573,16 @@ Kees Leemeijer — Print Styles v10.2
     color: var(--color-text-primary);
   }
   .page-portfolio .tech-tag:not(:last-child)::after { content: ", "; }
+}
+/* Compact CV items - reduced spacing for minor roles */
+.cv-item-compact {
+    margin-bottom: var(--space-sm);
+}
+
+.cv-item-compact h3 {
+    font-size: 1rem;
+}
+
+.cv-item-compact p {
+    margin-bottom: 0;
 }
