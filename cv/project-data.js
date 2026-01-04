@@ -20,11 +20,11 @@ export const projectData = {
     gallery: [
       {
         src: 'images/mega-highrise_timber_Render_2.png',
-        caption: 'Global View: The diagrid structure optimizes material usage by following principal stress lines.'
+        caption: 'Global View: 169m tall timber diagrid skyscraper with hybrid core.'
       },
       {
-        src: 'images/mega-highrise_timber_Render_1.png', 
-        caption: 'Node Detail: A hybrid steel-timber connection designed to withstand high wind loads at 100m+ elevation.'
+        src: 'images/mega-highrise_timber_optimization_1.gif', 
+        caption: 'computational Optimization: Derivative-free algorithm iteratively refines diagrid angles and cross-sections.'
       },
       {
         src: 'images/mega-highrise_construction.jpg', 
@@ -46,7 +46,13 @@ export const projectData = {
     ],
     technologies: ['Parametric Design', 'RFEM', 'Structural Analysis', 'Material Testing', '3DCP'],
     categories: ['structural', 'fabrication'],
-    metrics: { primary: '5m', secondary: 'Span Diameter' }
+    metrics: { primary: '5m', secondary: 'Span Diameter' },
+    gallery: [
+      {
+        src: 'images/biosphere-optimization_fem-analysis.jpg',
+        caption: 'FEM Analysis: Structural validation of the 3D-printed concrete sphere'
+      },
+    ]
   },
         'HPA-pavilion': {
     title: 'Formwork-Free Shell Pavilion',
@@ -84,7 +90,7 @@ export const projectData = {
     title: 'Earthy Vault Optimization',
     subtitle: 'TU Delft — Humanitarian Design',
     year: '2019',
-    image: 'images/compression-testing-earthy-vault.webp',
+    image: 'images/earthy-vault.png',
     alt: 'Compression testing of an adobe brick reinforced with straw.',
     description: 'Developed an optimized ribbed vault shelter system for refugee camps using local, weak materials. The process integrated hands-on material tests of straw-reinforced adobe with computational analysis to inform the design.',
     impact: [
