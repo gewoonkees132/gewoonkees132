@@ -127,34 +127,21 @@ export const projectData = {
       },
     ]
   },
-
-
-  'earthy-vault': {
-    title: 'Earthy Vault Optimization',
-    subtitle: 'TU Delft — Humanitarian Design',
-    year: '2019',
-    image: 'images/earthy-vault.png',
-    alt: 'Compression testing of an adobe brick reinforced with straw.',
-    description: 'Developed an optimized ribbed vault shelter system for refugee camps using local, weak materials. The process integrated hands-on material tests of straw-reinforced adobe with computational analysis to inform the design.',
+  'zaha-hadid-aevum': {
+    title: 'Aevum Pavilion',
+    subtitle: 'Vertico, ZHA & EOC — Structural Fabrication',
+    year: '2024',
+    image: 'images/zaha-hadid-aevum.jpg',
+    alt: 'Complex 3D-printed concrete corner node with internal post-tensioning channels.',
+    description: "Translated 2D structural drawings from Eckersley O'Callaghan into a feasible 3D post-tensioning system for the Aevum pavilion, designed by Zaha Hadid Architects. Engineered the complex internal geometry of critical corner nodes where multiple ducts intersect, utilizing non-planar slicing.",
     impact: [
-      'Directly linked physical material testing to the computational optimization loop',
-      'Created a community-buildable design using local materials and techniques',
-      'Developed a comprehensive, IKEA-style manual for easy assembly'
+      'Resolved complex internal collisions where dual post-tensioning ducts crossed within a single node',
+      'Implemented non-planar, variable layer height slicing to ensure duct alignment without support',
+      'Delivered high-precision structural components under a critical deadline for an industry-leading client'
     ],
-    technologies: ['Material Testing', 'Dynamic Relaxation', 'FEA', 'Humanitarian Engineering', 'Computational Design'],
-    categories: ['structural'], 
-    metrics: { primary: '3 N/mm²', secondary: 'Compression Strength' },
-    gallery: [         
-            {
-        src: 'images/compression-testing-earthy-vault.webp',
-        caption: 'Material Testing: Compression test setup for straw-reinforced adobe bricks.'  
-      },   
-      {
-        src: 'images/earthy-vault-grasshopper script of computational optimization.jpg',
-        caption: 'Computational Optimization: Grasshopper script showcasing multi-objective optimization for the vault design.'
-      },
-      
-  ]
+    technologies: ['Post-Tensioning', 'Structural design', 'Complex Topology', 'Parametric design', 'Concrete'],
+    categories: ['fabrication'],
+    metrics: { primary: 'Crossing', secondary: 'Internal Ducts' }
   },
 
   // -------------------------------------------------------------------------
@@ -192,13 +179,41 @@ export const projectData = {
     categories: ['software'],
     metrics: { primary: '1,000+', secondary: 'Monthly Users' }
   },
+    
+  'earthy-vault': {
+    title: 'Earthy Vault Optimization',
+    subtitle: 'TU Delft — Humanitarian Design',
+    year: '2019',
+    image: 'images/earthy-vault.png',
+    alt: 'Compression testing of an adobe brick reinforced with straw.',
+    description: 'Developed an optimized ribbed vault shelter system for refugee camps using local, weak materials. The process integrated hands-on material tests of straw-reinforced adobe with computational analysis to inform the design.',
+    impact: [
+      'Directly linked physical material testing to the computational optimization loop',
+      'Created a community-buildable design using local materials and techniques',
+      'Developed a comprehensive, IKEA-style manual for easy assembly'
+    ],
+    technologies: ['Material Testing', 'Dynamic Relaxation', 'FEA', 'Humanitarian Engineering', 'Computational Design'],
+    categories: ['structural'], 
+    metrics: { primary: '3 N/mm²', secondary: 'Compression Strength' },
+    gallery: [         
+            {
+        src: 'images/compression-testing-earthy-vault.webp',
+        caption: 'Material Testing: Compression test setup for straw-reinforced adobe bricks.'  
+      },   
+      {
+        src: 'images/earthy-vault-grasshopper script of computational optimization.jpg',
+        caption: 'Computational Optimization: Grasshopper script showcasing multi-objective optimization for the vault design.'
+      },
+      
+  ]
+  },
   'vertico-hub-platform': {
     title: 'SaaS Licensing Infrastructure',
     subtitle: 'Vertico — Cloud Architecture',
     year: '2023',
     image: 'images/vertico-hub-platform_dashboard.jpg',
     alt: 'Web-based dashboard interface for managing software licenses and user subscriptions.',
-    description: 'Architected the full-stack infrastructure to transition Vertico’s proprietary software into a scalable SaaS product. Built a secure REST API on Google Cloud Run to validate Rhino/Grasshopper sessions against a central database, enabling real-time license management for sales teams and end-users.',
+    description: 'Built the full-stack infrastructure to transition Vertico’s proprietary software into a scalable SaaS product. Built a secure REST API on Google Cloud Run to validate Rhino/Grasshopper sessions against a central database, enabling real-time license management for sales teams and end-users.',
     impact: [
       'Operationalized a Recurring Revenue (SaaS) model by centralizing software license control',
       'Engineered a secure cloud-to-desktop bridge, validating Grasshopper plugins via Google Cloud Run',
@@ -244,22 +259,6 @@ export const projectData = {
   // -------------------------------------------------------------------------
   // CATEGORY: DIGITAL FABRICATION
   // -------------------------------------------------------------------------
-  'zaha-hadid-aevum': {
-    title: 'Aevum Pavilion',
-    subtitle: 'Vertico, ZHA & EOC — Structural Fabrication',
-    year: '2024',
-    image: 'images/zaha-hadid-aevum_corner-detail.jpg',
-    alt: 'Complex 3D-printed concrete corner node with internal post-tensioning channels.',
-    description: "Translated 2D structural drawings from Eckersley O'Callaghan into a feasible 3D post-tensioning system for the Aevum pavilion, designed by Zaha Hadid Architects. Engineered the complex internal geometry of critical corner nodes where multiple ducts intersect, utilizing non-planar slicing.",
-    impact: [
-      'Resolved complex internal collisions where dual post-tensioning ducts crossed within a single node',
-      'Implemented non-planar, variable layer height slicing to ensure duct alignment without support',
-      'Delivered high-precision structural components under a critical deadline for an industry-leading client'
-    ],
-    technologies: ['Post-Tensioning', 'Structural design', 'Complex Topology', 'Parametric design', 'Concrete'],
-    categories: ['fabrication'],
-    metrics: { primary: 'Crossing', secondary: 'Internal Ducts' }
-  },
   'printed-formwork': {
     title: '3D-Printed Formwork',
     subtitle: 'Vertico & TU/e — Hybrid Construction',
@@ -298,7 +297,7 @@ export const projectData = {
     year: '2022',
     image: 'images/disassemblable-beam_interlocking-segments.webp',
     alt: 'Modular, interlocking components of a post-tensioned beam, demonstrating design for disassembly.',
-    description: 'Designed and printed a two-meter, post-tensioned beam composed of five interlocking segments with double-curved dry joints. The project demonstrates circular construction principles, enabling easy disassembly and reuse.',
+    description: 'rationalized the design of a disassemblable beamm, composed of five interlocking segments with double-curved dry joints. The project demonstrates circular construction principles, enabling easy disassembly and reuse.',
     impact: [
       'Demonstrated a successful "Design for Disassembly" approach in concrete',
       'Engineered high-precision, non-planar interlocking joints for a perfect fit',
