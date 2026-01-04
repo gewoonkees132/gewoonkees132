@@ -27,8 +27,8 @@ export const projectData = {
         caption: 'computational Optimization: Derivative-free algorithm iteratively refines diagrid angles and cross-sections.'
       },
       {
-        src: 'images/mega-highrise_construction.jpg', 
-        caption: 'Phased Construction: Computational analysis of stability during the erection sequence.'
+        src: 'images/mega-highrise_timber_beampacking and final structure.jpg', 
+        caption: 'optimized cross sections based on Unity Checks: Final structural layout showcasing optimized beam cross-sections for material efficiency.'
       }
     ]
   },
@@ -52,6 +52,14 @@ export const projectData = {
         src: 'images/biosphere-optimization_fem-analysis.jpg',
         caption: 'FEM Analysis: Structural validation of the 3D-printed concrete sphere'
       },
+      {
+        src: 'images/biosphere-optimization_variable thickness.gif',
+        caption: 'Variable Thickness: Demonstrates the optimized thickness distribution for compression dominance while roundness is maintained'
+      },
+      {
+        src: 'images/biosphere-small scale prototype.jpg',
+        caption: 'Small Scale Prototype: demonstrator of final aesthetic of 3D printed stones, test case for bioreceptivity'
+      },
     ]
   },
         'HPA-pavilion': {
@@ -68,7 +76,22 @@ export const projectData = {
     ],
     technologies: ['3DCP', 'Shell Structures', 'Segmentation', 'Sustainable Construction', 'Parametric Design'],
     categories: ['fabrication', 'structural'],
-    metrics: { primary: 'Zero', secondary: 'Single-Use Formwork' }
+    metrics: { primary: 'Zero', secondary: 'Single-Use Formwork' },
+    gallery: [
+      {
+        src: 'images/huizenprinters-pavilion_assembled-shell.gif',
+        caption: 'Assembled Pavilion: Completed vault structure showcasing the seamless integration of 3D-printed segments.'
+      },
+      {
+        src: 'images/huizenprinters-pavilion_during construction.jpg',
+        caption: 'Construction Phase: On-site assembly of the pavilion, showcasing the formwork-free construction process.'
+      },
+      {
+        src: 'images/huizenprinters-pavilion_3D printing of elements.jpeg',
+        caption: '3D Printing Process: Close-up of the 3D printing in action, demonstrating the first non-planar concrete prints in the world'
+      },
+
+    ]
   },
   'floor-optimization': {
     title: 'Floorslab Optimization',
@@ -84,8 +107,28 @@ export const projectData = {
     ],
     technologies: ['Optimization', 'FEA', 'Life-Cycle Analysis', 'Parametric Design', 'Concrete Structures'],
     categories: ['structural'], 
-    metrics: { primary: '60-80%', secondary: 'Footprint Reduction' }
+    metrics: { primary: '60-80%', secondary: 'Footprint Reduction' },
+    gallery: [
+            {
+        src: 'images/floor-optimization_concrete-shell.webp',
+        caption: 'Optimized Floor Slab: Showcasing structural verification in Ansys.'
+      },
+      {
+        src: 'images/floor-optimization_concrete-overall co2 emissions per flooring system in shadow cost.jpg',
+        caption: 'LCA Results: Comparative analysis of CO2 emissions across different flooring systems.'
+      },
+      {
+        src: 'images/floor-optimization_concrete-overall emissions of flooring system in shadow cost.jpg',
+        caption: 'Environmental Impact: Visualization of overall (shadow cost) emissions for various flooring systems'
+      },
+            {
+        src: 'images/floor-optimization_concrete-shell final shadow cost.jpg ',
+        caption: 'An overview of the overall shadow cost of the newly proposed flooring system'
+      },
+    ]
   },
+
+
   'earthy-vault': {
     title: 'Earthy Vault Optimization',
     subtitle: 'TU Delft — Humanitarian Design',
@@ -100,7 +143,18 @@ export const projectData = {
     ],
     technologies: ['Material Testing', 'Dynamic Relaxation', 'FEA', 'Humanitarian Engineering', 'Computational Design'],
     categories: ['structural'], 
-    metrics: { primary: '3 N/mm²', secondary: 'Compression Strength' }
+    metrics: { primary: '3 N/mm²', secondary: 'Compression Strength' },
+    gallery: [         
+            {
+        src: 'images/compression-testing-earthy-vault.webp',
+        caption: 'Material Testing: Compression test setup for straw-reinforced adobe bricks.'  
+      },   
+      {
+        src: 'images/earthy-vault-grasshopper script of computational optimization.jpg',
+        caption: 'Computational Optimization: Grasshopper script showcasing multi-objective optimization for the vault design.'
+      },
+      
+  ]
   },
 
   // -------------------------------------------------------------------------
