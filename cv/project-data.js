@@ -127,7 +127,7 @@ export const projectData = {
       },
     ]
   },
-  'zaha-hadid-aevum': {
+'zaha-hadid-aevum': {
     title: 'Aevum Pavilion',
     subtitle: 'Vertico, ZHA & EOC — Structural Fabrication',
     year: '2024',
@@ -141,9 +141,26 @@ export const projectData = {
     ],
     technologies: ['Post-Tensioning', 'Structural design', 'Complex Topology', 'Parametric design', 'Concrete'],
     categories: ['fabrication'],
-    metrics: { primary: 'Crossing', secondary: 'Internal Ducts' }
+    metrics: { primary: 'Crossing', secondary: 'Internal Ducts' },
+    gallery: [
+      {
+        src: 'images/zaha-hadid-aevum_corner-detail.gif',
+        caption: 'Robotic Fabrication: 6-axis printing of the complex corner node, showcasing the internal voids generated for post-tensioning cables.'
+      },
+      {
+        src: 'images/zaha-hadid-aevum during construction.jpeg',
+        caption: 'On-Site Assembly: Integration of the 3D-printed concrete nodes with the timber lattice structure.'
+      },
+      {
+        src: 'images/zaha-hadid-aevum during construction 2.jpeg',
+        caption: 'Structural Connection: Final positioning of the nodes, which act as the primary load-transfer points for the pavilion.'
+      },
+            {
+        src: 'images/zaha-hadid-aevum.jpg',
+        caption: 'Final pavilion in Milan, Italy'
+      }
+    ]
   },
-
   // -------------------------------------------------------------------------
   // CATEGORY: SOFTWARE & TOOLS
   // -------------------------------------------------------------------------
@@ -386,6 +403,36 @@ export const projectData = {
     technologies: ['3DCP', 'Robotics', 'Post-Processing', 'Automation', 'Toolpath Generation'],
     categories: ['fabrication'],
     metrics: { primary: 'Industrial', secondary: 'Scale' }
+  },
+  'algorithmic-timber-milling': {
+    title: 'Algorithmic Timber Milling',
+    subtitle: 'TU Delft — Robotic Fabrication',
+    year: '2019',
+    image: 'images/robotic-timber-milling_fabrication.gif', // Placeholder
+    alt: 'CNC milled timber block displaying two distinct textures: a smooth topographic surface and a chaotic, noise-based texture.',
+    description: 'Investigated computational strategies to convert unstructured geometric data into continuous robotic toolpaths. To solve the inefficiency of milling raw point clouds, the Traveling Salesman Problem (TSP) algorithm was implemented to organize random set points into a single, continuous path, minimizing machine airtime. This was contrasted with a K-Means clustering approach to segment and smooth complex surface topographies.',
+    impact: [
+      'Solved the "airtime" inefficiency of milling unstructured point clouds by organizing toolpaths via the Traveling Salesman Algorithm',
+      'Implemented K-Means clustering to rationalize complex surface curvature into distinct, machine-readable milling zones',
+      'Developed a theoretical beam-packing framework (Karamba3D) to align timber anisotropy with force vectors, informing the stock material assembly'
+    ],
+    technologies: ['Robotic Milling', 'Traveling Salesman Algo', 'K-Means Clustering', 'Karamba3D', 'Python'],
+    categories: ['fabrication', 'software'],
+    metrics: { primary: 'TSP', secondary: 'Path Optimization' },
+    gallery: [
+      {
+        src: 'images/robotic-timber-milling_texture.jpeg',
+        caption: 'Algorithmic Textures: Comparison of K-Means clustering for smooth topography (left) vs. TSP optimization for continuous processing of unstructured data (right).'
+      },
+      {
+        src: 'images/robotic-timber-milling_diagram.jpg', 
+        caption: 'Beam Packing Logic: Computational analysis using Karamba3D to align wood grain direction with internal stress vectors.'
+      },
+      {
+        src: 'images/robotic-timber-milling_rough.gif', 
+        caption: 'Robotic Fabrication: Rough material removal, using larger bits to quickly approach the final geometry.'
+      }
+    ]
   },
   'bioreceptive-wall': {
     title: 'Bioreceptive Living Wall',
