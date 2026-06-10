@@ -5,60 +5,60 @@ export const projectData = {
   'mega-highrise': {
     title: 'Highrise Timber Diagrid',
     subtitle: 'TU Delft — Most Innovative Design Award',
-    year: '2018',
+    year: '2017',
     image: 'images/mega-highrise_timber_Render_2.png',
     alt: 'A model of a tall skyscraper with a wooden diagrid structural system.',
-    description: 'As a structural engineer in an interdisciplinary team, designed a 169m sustainable tower with a wooden diagrid. Used a derivative-free algorithm to optimize structural angles and cross-sections, significantly reducing the carbon footprint.',
+    description: 'Stiffness, not strength, governs a 169 m timber tower. As one of two structural engineers in an eight-person team, designed an LVL diagrid with CLT floors and steel tension rings, tuning the diagrid angle with RBFMOpt against Karamba FEA. The TU Delft reviewer who had called the height impossible in timber approved the structural system.',
     impact: [
-      'Won the "Most Innovative Design Award" from Stichting Hoogbouw',
-      'Engineered a hybrid structure with 70% wood composition',
-      'Successfully passed all ultimate and serviceability limit states'
+      'Won the Stichting Hoogbouw Most Innovative Design Award, best of 15 teams',
+      '70% wood by mass; concrete limited to the core, for fire safety only',
+      'Reduced vortex shedding with a CFD roundness study of the tower top'
     ],
-    technologies: ['Karamba3D', 'FEA', 'Structural Optimization', 'Parametric Modeling', 'Hybrid Structures'],
+    technologies: ['Karamba3D', 'RBFMOpt', 'FEA', 'CFD', 'Grasshopper'],
     categories: ['structural'],
     metrics: { primary: '169m', secondary: 'Tower Height' },
     gallery: [
       {
         src: 'images/mega-highrise_timber_Render_2.png',
-        caption: 'Global View: 169m tall timber diagrid skyscraper with hybrid core.'
+        caption: 'Global view: the 169 m diagrid tower with concrete core, CLT floors, and steel tension rings.'
       },
       {
-        src: 'images/mega-highrise_timber_optimization_1.gif', 
-        caption: 'computational Optimization: Derivative-free algorithm iteratively refines diagrid angles and cross-sections.'
+        src: 'images/mega-highrise_timber_optimization_1.gif',
+        caption: 'Optimization loop: RBFMOpt iterates diagrid angles and cross-sections against Karamba FEA.'
       },
       {
-        src: 'images/mega-highrise_timber_beampacking and final structure.jpg', 
-        caption: 'optimized cross sections based on Unity Checks: Final structural layout showcasing optimized beam cross-sections for material efficiency.'
+        src: 'images/mega-highrise_timber_beampacking and final structure.jpg',
+        caption: 'Cross-section sizing: members sized to unity checks in the final structural layout.'
       }
     ]
   },
   'biosphere-optimization': {
     title: 'Biosphere Structural Design',
-    subtitle: 'Vertico & TU Delft & Eigenraam engineering — Structural design',
+    subtitle: 'Vertico, TU Delft & Eigenraam — Structural Design',
     year: '2024',
     image: 'images/biosphere-Visualisation.png',
     alt: 'Finite element analysis visualization of a 5-meter spherical structure composed of hexagonal concrete elements.',
-    description: 'Acted as the technical bridge between artistic design and structural engineer for a 5-meter 3D printed concrete sphere. Developed the parametric logic to generate direct inputs for FEM analysis (RFEM), allowing the structural engineer to validate the unreinforced, epoxy-bonded shell based on real-world material data.',
+    description: "An unreinforced sphere of printed stones only works if every joint stays in compression. Ran a shape optimization varying wall thickness so the 5 m shell stays compressive under load while the outer surface remains round, and built the parametric model behind Eigenraam's RFEM verification. The final design was accepted, checked against hand calculations.",
     impact: [
-      'Generated the parametric models to quickly iterate between various design alternatives, automating the design to structural calculation workflow',
-      'Quantified material properties through physical testing, generating the required material values for the structural analysis',
-      'Rationalized the print geometry to balance a 40% lightweight infill with necessary structural flange stiffness'
+      'Optimized wall thickness per stone: compression under load, round on the outside',
+      "Fed geometry straight into Eigenraam's RFEM model, so each design iteration could be re-verified",
+      'Tested the in-house printing material with SIKA to supply verified strength values'
     ],
-    technologies: ['Parametric Design', 'RFEM', 'Structural Analysis', 'Material Testing', '3DCP'],
+    technologies: ['Grasshopper', 'RFEM', '3DCP', 'Material Testing', 'Shell Structures'],
     categories: ['structural', 'fabrication'],
-    metrics: { primary: '5m', secondary: 'Span Diameter' },
+    metrics: { primary: '5m', secondary: 'Diameter' },
     gallery: [
       {
         src: 'images/biosphere-optimization_fem-analysis.jpg',
-        caption: 'FEM Analysis: Structural validation of the 3D-printed concrete sphere'
+        caption: 'RFEM verification: the unreinforced shell checked by Eigenraam Engineering.'
       },
       {
         src: 'images/biosphere-optimization_variable thickness.gif',
-        caption: 'Variable Thickness: Demonstrates the optimized thickness distribution for compression dominance while roundness is maintained'
+        caption: 'Variable thickness: wall thickness varies per stone to stay in compression while the outer surface remains spherical.'
       },
       {
         src: 'images/biosphere-small scale prototype.jpg',
-        caption: 'Small Scale Prototype: demonstrator of final aesthetic of 3D printed stones, test case for bioreceptivity'
+        caption: 'Prototype: small-scale printed stones testing the final surface finish and its bioreceptivity.'
       },
     ]
   },
@@ -68,27 +68,27 @@ export const projectData = {
     year: '2022',
     image: 'images/huizenprinters-pavilion_assembled-shell.gif',
     alt: 'A segmented, vault-shaped concrete pavilion assembled from 3D-printed parts without internal molds.',
-    description: 'Orchestrated the complete fabrication logic for a compression-only concrete vault, translating a parametric shell design into printable reality. By segmenting the constant-stress arch into eight double-curved parts with integrated stiffening ribs, the project eliminated the need for reinforcement and wasteful single-use support structures.',
+    description: 'Summum Engineering form-found a compression-only concrete vault; turning it into printable parts was the open problem. Split the 3 m shell into eight double-curved segments with stiffening ribs integrated into the print path, so the thin walls would not buckle or crack while curing. The segmentation removed all single-use formwork and falsework from construction; only reusable scaffolding supported assembly.',
     impact: [
-      'Eliminated 100% of single-use formwork and falsework by engineering a self-supporting assembly method',
-      'Solved critical buckling and shrinkage issues by integrating structural ribs directly into the print path',
-      'Segmented a complex monolithic geometry into 8 printable components, bridging design and production'
+      'Produced the first non-planar 3D-printed concrete elements',
+      'Segmented the shell into 8 double-curved parts, removing single-use formwork and falsework',
+      'Integrated ribs into the print path, preventing buckling and shrinkage cracking during curing'
     ],
-    technologies: ['3DCP', 'Shell Structures', 'Segmentation', 'Sustainable Construction', 'Parametric Design'],
+    technologies: ['3DCP', 'Non-Planar Printing', 'Shell Structures', 'Segmentation', 'Grasshopper'],
     categories: ['fabrication', 'structural'],
-    metrics: { primary: 'Zero', secondary: 'Single-Use Formwork' },
+    metrics: { primary: '8', secondary: 'Double-Curved Segments' },
     gallery: [
       {
         src: 'images/huizenprinters-pavilion_assembled-shell.gif',
-        caption: 'Assembled Pavilion: Completed vault structure showcasing the seamless integration of 3D-printed segments.'
+        caption: 'Assembled vault: eight printed segments form the completed compression-only shell, 3 m tall and 2.5 m wide.'
       },
       {
         src: 'images/huizenprinters-pavilion_during construction.jpg',
-        caption: 'Construction Phase: On-site assembly of the pavilion, showcasing the formwork-free construction process.'
+        caption: 'Assembly: segments placed on reusable scaffolding, with no single-use formwork or falsework.'
       },
       {
         src: 'images/huizenprinters-pavilion_3D printing of elements.jpeg',
-        caption: '3D Printing Process: Close-up of the 3D printing in action, demonstrating the first non-planar concrete prints in the world'
+        caption: 'Printing: non-planar deposition of a vault segment, with stiffening ribs built in the same path.'
       },
 
     ]
@@ -99,31 +99,31 @@ export const projectData = {
     year: '2020',
     image: 'images/floor-optimization_concrete-shell.webp',
     alt: 'Optimized thin-shell concrete floor slab, demonstrating efficient structural form.',
-    description: "Developed a derivative-free, fabrication-aware optimization methodology for thin-shell flooring systems. The approach combines shape and size optimization to drastically reduce the environmental impact of concrete construction.",
+    description: "A flat concrete slab carries load in bending, the least efficient way to use the material. Developed a derivative-free optimization method coupling FEA (ULS and SLS), casting constraints, and life-cycle assessment to shape variable-thickness thin shells that work through membrane action. The optimized floors cut total environmental footprint by 60.1% to 79.8% against conventional office flooring.",
     impact: [
-      'Achieved a 60-80% reduction in environmental footprint compared to conventional floors',
-      'Demonstrated high efficiency by prioritizing axial force distribution',
-      'Validated results through a comprehensive Life-Cycle Analysis (LCA)'
+      'Cut total environmental footprint 60.1% to 79.8% versus conventional office floors',
+      'Outperformed timber flooring alternatives on total life-cycle assessment',
+      'Verified the optimized shells in Ansys with casting constraints inside the optimization loop'
     ],
-    technologies: ['Optimization', 'FEA', 'Life-Cycle Analysis', 'Parametric Design', 'Concrete Structures'],
-    categories: ['structural'], 
-    metrics: { primary: '60-80%', secondary: 'Footprint Reduction' },
+    technologies: ['Structural Optimization', 'Ansys', 'LCA', 'Grasshopper', 'Concrete Shells'],
+    categories: ['structural'],
+    metrics: { primary: '60–80%', secondary: 'Footprint Reduction' },
     gallery: [
             {
         src: 'images/floor-optimization_concrete-shell.webp',
-        caption: 'Optimized Floor Slab: Showcasing structural verification in Ansys.'
+        caption: 'Optimized slab: the variable-thickness shell floor, verified in Ansys.'
       },
       {
         src: 'images/floor-optimization_concrete-overall co2 emissions per flooring system in shadow cost.jpg',
-        caption: 'LCA Results: Comparative analysis of CO2 emissions across different flooring systems.'
+        caption: 'LCA results: CO2 emissions compared across flooring systems in shadow cost.'
       },
       {
         src: 'images/floor-optimization_concrete-overall emissions of flooring system in shadow cost.jpg',
-        caption: 'Environmental Impact: Visualization of overall (shadow cost) emissions for various flooring systems'
+        caption: 'Environmental impact: overall shadow-cost emissions per flooring system.'
       },
             {
         src: 'images/floor-optimization_concrete-shell final shadow cost.jpg ',
-        caption: 'An overview of the overall shadow cost of the newly proposed flooring system'
+        caption: 'Result: total shadow cost of the proposed shell floor against conventional systems.'
       },
     ]
   },
@@ -133,31 +133,31 @@ export const projectData = {
     year: '2024',
     image: 'images/zaha-hadid-aevum.jpg',
     alt: 'Complex 3D-printed concrete corner node with internal post-tensioning channels.',
-    description: "Translated 2D structural drawings from Eckersley O'Callaghan into a feasible 3D post-tensioning system for the Aevum pavilion, designed by Zaha Hadid Architects. Engineered the complex internal geometry of critical corner nodes where multiple ducts intersect, utilizing non-planar slicing.",
+    description: "Zaha Hadid Architects' Aevum pavilion is held together by post-tensioning, and Eckersley O'Callaghan's structural input existed only as 2D drawings. Translated those drawings into 3D duct geometry and machine toolpaths, resolving the corner nodes where two ducts cross inside a single printed part. EOC approved the geometry; three weeks separated structural concept from fabrication on site.",
     impact: [
-      'Resolved complex internal collisions where dual post-tensioning ducts crossed within a single node',
-      'Implemented non-planar, variable layer height slicing to ensure duct alignment without support',
-      'Delivered high-precision structural components under a critical deadline for an industry-leading client'
+      'Resolved duct crossings in every corner node; one node carried three ducts',
+      'Used non-planar, variable layer-height slicing to keep ducts aligned without supports',
+      'Delivered from 2D structural concept to on-site fabrication in three weeks'
     ],
-    technologies: ['Post-Tensioning', 'Structural design', 'Complex Topology', 'Parametric design', 'Concrete'],
-    categories: ['fabrication'],
-    metrics: { primary: 'Crossing', secondary: 'Internal Ducts' },
+    technologies: ['Post-Tensioning', '3DCP', 'Non-Planar Slicing', '6-Axis Robotics', 'Grasshopper'],
+    categories: ['structural', 'fabrication'],
+    metrics: { primary: '3 Weeks', secondary: 'Concept to Fabrication' },
     gallery: [
       {
         src: 'images/zaha-hadid-aevum_corner-detail.gif',
-        caption: 'Robotic Fabrication: 6-axis printing of the complex corner node, showcasing the internal voids generated for post-tensioning cables.'
+        caption: 'Robotic fabrication: 6-axis printing of a corner node, with internal voids for the post-tensioning ducts.'
       },
       {
         src: 'images/zaha-hadid-aevum during construction.jpeg',
-        caption: 'On-Site Assembly: Integration of the 3D-printed concrete nodes with the timber lattice structure.'
+        caption: 'On-site assembly: printed elements positioned before post-tensioning.'
       },
       {
         src: 'images/zaha-hadid-aevum during construction 2.jpeg',
-        caption: 'Structural Connection: Final positioning of the nodes, which act as the primary load-transfer points for the pavilion.'
+        caption: 'Load transfer: corner nodes carry the post-tensioning forces that keep the concrete in compression.'
       },
             {
         src: 'images/zaha-hadid-aevum.jpg',
-        caption: 'Final pavilion in Milan, Italy'
+        caption: 'Completed pavilion: Aevum at Milan Design Week 2024.'
       }
     ]
   },
@@ -167,34 +167,34 @@ export const projectData = {
   'vertico-slicer': {
     title: 'Vertico Slicer Plugin',
     subtitle: 'Vertico — Software Development',
-    year: '2021',
+    year: '2021–present',
     image: 'images/vertico-slicer_toolpath-simulation.gif',
     alt: 'Grasshopper interface visualizing simultaneous toolpaths for multiple non-planar geometries.',
-    description: 'Engineered a proprietary CAM solution for 6-axis robotic printing, overcoming standard 3-axis slicing limitations. The software enables simultaneous batch processing of multiple geometries and generates complex non-planar toolpaths, unlocking industrial-scale efficiency and unrestricted geometric freedom.',
+    description: "Off-the-shelf slicers produce planar 3-axis toolpaths and choke on robot-scale instruction counts. Led development of Vertico's C# slicer for gantry, ABB, and KUKA systems, including an analytical OPW inverse-kinematics solver that simulates non-planar toolpaths of 65,000+ instructions in real time inside Rhino, where conventional tools crash. Now used by 40+ companies worldwide.",
     impact: [
-      'Automated the simultaneous slicing of multiple objects to maximize production throughput',
-      'Enabled the execution of complex non-planar toolpaths specifically for 6-axis kinematics',
-      'Eliminated dependencies on commercial software by internalizing Robotcode generation'
+      'Used by 40+ companies worldwide on gantry, ABB, and KUKA printing systems',
+      'Runs up to 32 slicing jobs in parallel on production batches',
+      'Generates RAPID, KRL, and G-code directly, replacing ABB RobotStudio in the workflow'
     ],
-    technologies: ['Grasshopper', 'C# development', '6-Axis Robotics', 'Robotics', 'Computational Geometry'],
+    technologies: ['C#', 'Grasshopper', 'Inverse Kinematics (OPW)', 'RAPID (ABB)', 'KRL (KUKA)'],
     categories: ['software', 'fabrication'],
-    metrics: { primary: '6-Axis', secondary: 'Non-Planar Logic' }
+    metrics: { primary: '40+', secondary: 'Companies Using It' }
   },
   'vasecreator-web-platform': {
-    title: 'Web-Based Parametric Configurator',
-    subtitle: 'Independent Developer — Full Stack Product',
+    title: 'VaseCreator Web App',
+    subtitle: 'Independent Project — Web App',
     year: '2025',
     image: 'images/vasecreator-web-platform_ui-render.gif',
     alt: 'User interface of a web-based parametric design tool displaying a generated 3D vase geometry.',
-    description: 'Engineered a standalone parametric design tool featuring a lightweight, client-side geometry engine. This zero-dependency architecture enables thousands of users to generate production-ready, watertight meshes directly in the browser, eliminating server-side computation costs while securing top-tier organic search rankings.',
+    description: 'Most people with a 3D printer download models instead of designing them; CAD is the barrier. Built a free browser tool that generates printable vases: an HTML/JavaScript site with a custom geometry engine, Three.js for rendering only, and no backend, exporting watertight STL files. Used by 5,500 people this year, ranking top 3 on Google for six vase-design searches.',
     impact: [
-      'Engineered a zero-dependency procedural geometry engine ensuring consistent manifold topology for 12,000+ annual users',
-      'Scaled a production-grade application with 100% client-side execution, reducing cloud compute costs to zero',
-      'Achieved top 3 global search rankings by optimizing UI latency to under 16ms'
+      '5,500 users this year, with 4,000 clicks arriving from Google search',
+      'Ranks top 3 on Google for six vase-design search terms',
+      'Runs fully in the browser with no backend, including on mid-range phones'
     ],
-    technologies: ['Three.js', 'WebGL', 'Procedural Geometry', 'JavaScript', 'Product Management'],
+    technologies: ['JavaScript', 'Three.js', 'Procedural Geometry', 'HTML/CSS', 'SEO'],
     categories: ['software'],
-    metrics: { primary: '1,000+', secondary: 'Monthly Users' }
+    metrics: { primary: '5,500', secondary: 'Users This Year' }
   },
     
   'earthy-vault': {
@@ -203,25 +203,25 @@ export const projectData = {
     year: '2019',
     image: 'images/earthy-vault.png',
     alt: 'Compression testing of an adobe brick reinforced with straw.',
-    description: 'Developed an optimized ribbed vault shelter system for refugee camps using local, weak materials. The process integrated hands-on material tests of straw-reinforced adobe with computational analysis to inform the design.',
+    description: "Shelter at the Zaatari refugee camp must be built from what is on site: earth, straw, and the residents' own labor. Tested straw-reinforced adobe to 3.24 MPa in compression, fed the measured values into a form-found ribbed vault using dynamic relaxation, and optimized the design across span, mass, and usable height. The result was documented as an illustrated booklet for local construction.",
     impact: [
-      'Directly linked physical material testing to the computational optimization loop',
-      'Created a community-buildable design using local materials and techniques',
-      'Developed a comprehensive, IKEA-style manual for easy assembly'
+      'Measured 3.24 MPa compression on straw-reinforced adobe and used it as the FEA input',
+      'Form-found the ribbed vault with dynamic relaxation, optimized for span, mass, and usable height',
+      'Produced a step-by-step assembly booklet for construction by camp residents'
     ],
-    technologies: ['Material Testing', 'Dynamic Relaxation', 'FEA', 'Humanitarian Engineering', 'Computational Design'],
-    categories: ['structural'], 
-    metrics: { primary: '3 N/mm²', secondary: 'Compression Strength' },
-    gallery: [         
+    technologies: ['Material Testing', 'Dynamic Relaxation', 'FEA', 'Multi-Objective Optimization', 'Grasshopper'],
+    categories: ['structural'],
+    metrics: { primary: '3.24 MPa', secondary: 'Adobe Strength' },
+    gallery: [
             {
         src: 'images/compression-testing-earthy-vault.webp',
-        caption: 'Material Testing: Compression test setup for straw-reinforced adobe bricks.'  
-      },   
+        caption: 'Material testing: compression test of straw-reinforced adobe bricks, measured at 3.24 MPa.'
+      },
       {
         src: 'images/earthy-vault-grasshopper script of computational optimization.jpg',
-        caption: 'Computational Optimization: Grasshopper script showcasing multi-objective optimization for the vault design.'
+        caption: 'Optimization: Grasshopper script balancing span, mass, and usable height of the vault.'
       },
-      
+
   ]
   },
   'vertico-hub-platform': {
@@ -230,15 +230,15 @@ export const projectData = {
     year: '2023',
     image: 'images/vertico-hub-platform_dashboard.jpg',
     alt: 'Web-based dashboard interface for managing software licenses and user subscriptions.',
-    description: 'Built the full-stack infrastructure to transition Vertico’s proprietary software into a scalable SaaS product. Built a secure REST API on Google Cloud Run to validate Rhino/Grasshopper sessions against a central database, enabling real-time license management for sales teams and end-users.',
+    description: 'Desktop Grasshopper plugins generate no recurring revenue without license infrastructure behind them. Built that system solo: a REST API on Google Cloud Run that validates each Rhino/Grasshopper session against a central database, with a web dashboard where admins issue or revoke licenses and users manage their own. In production since September 2025, serving 7 licensed companies and around 25 users.',
     impact: [
-      'Operationalized a Recurring Revenue (SaaS) model by centralizing software license control',
-      'Engineered a secure cloud-to-desktop bridge, validating Grasshopper plugins via Google Cloud Run',
-      'Automated the sales-to-activation workflow, reducing administrative overhead for the internal team'
+      'In production since September 2025: 7 licensed companies, around 25 users',
+      'Validates every Grasshopper session against a Cloud Run REST API and central database',
+      'Sales issue licenses from the dashboard; customers activate instantly, with no manual key handling'
     ],
-    technologies: ['Google Cloud', 'REST API', 'SaaS', 'Grasshopper', 'Full Stack'],
+    technologies: ['Google Cloud Run', 'REST API', 'C#', 'JavaScript', 'Grasshopper'],
     categories: ['software'],
-    metrics: { primary: 'SaaS', secondary: 'Business Model' }
+    metrics: { primary: '7', secondary: 'Licensed Companies' }
   },
   'optimized-foundation': {
     title: 'Automated Foundation Configurator',
@@ -246,15 +246,15 @@ export const projectData = {
     year: '2023',
     image: 'images/optimized-foundation_ribbed-structure.jpg',
     alt: 'A topologically optimized, rib-stiffened 3D-printed concrete foundation block.',
-    description: 'Engineered an automated design-to-production pipeline replacing standard cast foundations with structurally-optimized 3D-printed alternatives. The system links a web-based configurator directly to robotic Rapid code (ABB) generation, reducing concrete consumption by 70-90% through load-specific geometry.',
+    description: 'Every controller cabinet along an ERTMS railway line needs a concrete foundation, and casting makes them one-size-fits-all. Built a pipeline that takes load inputs from a web form, generates load-specific ribbed geometry, and writes the ABB RAPID print code with no engineer in between. The printed prototype used 70% less concrete than its cast equivalent.',
     impact: [
-      'Automated the engineering workflow by linking web-based inputs directly to robotic toolpath generation',
-      'Achieved 70-90% material savings by tailoring geometry strictly to structural load requirements',
-      'Validated the system as a TRL 5 demonstrator, proving feasibility for industrial infrastructure'
+      'Cut concrete use 70% against the standard cast foundation',
+      'Generates ABB RAPID code directly from web-form load inputs, fully automatic',
+      'Reached TRL 5 with a printed working prototype'
     ],
-    technologies: ['Structural Optimization', 'Web Configurator', '3DCP', 'Automated Workflow', 'Rapid Code Generation'],
+    technologies: ['Structural Optimization', '3DCP', 'RAPID (ABB)', 'Web Configurator', 'Grasshopper'],
     categories: ['software', 'fabrication', 'structural'],
-    metrics: { primary: '70-90%', secondary: 'Material Reduction' }
+    metrics: { primary: '70%', secondary: 'Material Reduction' }
   },
   'parametric-bench-configurator': {
     title: 'Parametric Bench Configurator',
@@ -262,15 +262,15 @@ export const projectData = {
     year: '2023',
     image: 'images/parametric-bench-configurator_curved-seating.jpg',
     alt: 'A customizable 3D-printed concrete bench with a ribbed texture and organic curves.',
-    description: 'Developed a full-stack design-to-fabrication pipeline for customizable public benches. The web-based configurator enables clients to manipulate geometric parameters, which in turn instantly generates the fabrication files for the bench, taking into account manufacturing constraints. Thereby eliminating engineering lead times, enabling cost-effective fabrication of public furniture.',
+    description: 'A custom concrete bench normally needs its own engineering pass before it can be printed. Built a demonstrator pipeline where a web front end drives a Grasshopper model that applies the fabrication constraints and outputs print files directly, making structurally sound custom designs accessible without an engineer per iteration. Seven demonstrator benches were printed from it.',
     impact: [
-      'Compressed design-to-production lead times from weeks to mere hours via automated file generation',
-      'Enabled cost-effective mass customization, removing the need for unique molds per iteration',
-      'Integrated specific fabrication constraints into the algorithmic logic to ensure structural integrity'
+      'Printed 7 demonstrator benches directly from configurator output',
+      'Encoded fabrication constraints into the model, so every configuration stays printable',
+      'No molds: each bench geometry prints directly, with no per-design tooling'
     ],
-    technologies: ['Web Configurator', 'Parametric Design', '3DCP', 'Rapid code', 'Mass Customization'],
+    technologies: ['Grasshopper', 'Web Configurator', '3DCP', 'Parametric Design', 'Mass Customization'],
     categories: ['software', 'fabrication'],
-    metrics: { primary: 'Hours', secondary: 'Design-to-Print' }
+    metrics: { primary: '7', secondary: 'Demonstrator Benches' }
   },
 
   // -------------------------------------------------------------------------
