@@ -278,131 +278,131 @@ export const projectData = {
   // -------------------------------------------------------------------------
   'printed-formwork': {
     title: '3D-Printed Formwork',
-    subtitle: 'Vertico & TU/e — Hybrid Construction',
+    subtitle: 'Vertico & University of Liverpool — Lost Formwork',
     year: '2021',
     image: 'images/printed-formwork_concrete-rebar.webp',
     alt: 'A concrete column with internal steel reinforcement, cast within a 3D-printed shell.',
-    description: 'Used 3D-printed shells as permanent, lost formwork for conventionally cast, steel-reinforced columns. This hybrid method overcomes reinforcement challenges in 3DCP, enabling efficient and geometrically complex structural shapes.',
+    description: 'Reinforcing printed concrete is the field\'s open problem. For a University of Liverpool research project, printed shells served as permanent lost formwork: rebar cage inside, conventional concrete cast in. Printing, casting, and reinforcement ran at Vertico; compression testing at TU Eindhoven confirmed the hybrid column works.',
     impact: [
-      'Developed a viable hybrid construction method combining 3DCP and cast concrete',
-      'Enabled complex geometries like integrated column heads at no extra cost',
-      'Structurally validated at TU/e, proving the printed-cast interface remained intact'
+      'Interface between printed shell and cast core never cracked under compression testing',
+      'Column outperformed the PhD researcher\'s calculated capacity; the printed shell carries load',
+      'Outer 2 cm doubles as rebar cover, so the printed formwork adds no material'
     ],
-    technologies: ['3DCP', 'Formwork', 'Reinforced Concrete', 'Hybrid Construction', 'Structural Testing'],
+    technologies: ['3DCP', 'Lost Formwork', 'Reinforced Concrete', 'Structural Testing'],
     categories: ['fabrication'],
-    metrics: { primary: 'Hybrid', secondary: 'Construction' }
+    metrics: { primary: '2 cm', secondary: 'Cover as Formwork' }
   },
   'design-by-testing': {
     title: 'Design-by-Testing Bench',
-    subtitle: 'Vertico — Structural Validation',
+    subtitle: 'Vertico for Kiki & Joost — Singer Laren',
     year: '2021',
     image: 'images/design-by-testing_load-test.webp',
     alt: 'A creatively designed concrete bench undergoing a physical load test with over 1000kg of weight.',
-    description: "Translated an artistic design from Kiki & Joost into a feasible structural concept for a museum bench. Utilized a \"design-by-testing\" approach to validate the unreinforced structure's strength and integrity.",
+    description: "Kiki & Joost's bench had no precedent to calculate from, so proof came from testing instead. Translated the artistic intent into a printable, compression-led structure, then validated it by manually loading the prototype with a tonne of material. The bench now sits in Singer Laren's permanent collection.",
     impact: [
-      'Successfully translated an artistic concept into an engineered, printable object',
-      'Proved a load capacity of over 1,000 kg through physical testing',
-      'Optimized the design to transfer loads through compression, removing the need for steel reinforcement'
+      'Carried a 1,000 kg test load without reinforcement',
+      'Rebar added only for exceptional cases, such as lifting the bench from one side',
+      "Part of the Singer Laren museum's permanent collection"
     ],
-    technologies: ['3DCP', 'Structural Testing', 'Prototyping', 'Design Engineering', 'Compression Structures'],
+    technologies: ['3DCP', 'Load Testing', 'Compression Structures', 'Design Engineering'],
     categories: ['fabrication', 'structural'],
-    metrics: { primary: '1,000kg', secondary: 'Load Tested' }
+    metrics: { primary: '1,000 kg', secondary: 'Test Load' }
   },
   'disassemblable-beam': {
     title: 'Disassemblable Beam',
-    subtitle: 'Vertico — Circular Design',
+    subtitle: 'Vertico — Circular Construction',
     year: '2022',
     image: 'images/disassemblable-beam_interlocking-segments.webp',
     alt: 'Modular, interlocking components of a post-tensioned beam, demonstrating design for disassembly.',
-    description: 'rationalized the design of a disassemblable beamm, composed of five interlocking segments with double-curved dry joints. The project demonstrates circular construction principles, enabling easy disassembly and reuse.',
+    description: 'Concrete gets demolished, not disassembled, because monolithic casting allows nothing else. This 2.5-metre prototype splits a post-tensioned beam into five interlocking printed segments with double-curved dry joints, the curvature on both faces achieved by printing onto printed supports. Assembled, tensioned, loaded, and shown at Dutch Design Week 2024.',
     impact: [
-      'Demonstrated a successful "Design for Disassembly" approach in concrete',
-      'Engineered high-precision, non-planar interlocking joints for a perfect fit',
-      'Pioneered a method to print non-planar surfaces on both sides of a component'
+      'First post-tensioned beam assembled from separate interlocking printed segments',
+      'Double-curved joints on both faces, printed onto printed supports',
+      'Assembled, post-tensioned, load-tested, then exhibited at Dutch Design Week 2024'
     ],
-    technologies: ['3DCP', 'Circular Economy', 'Dry Joints', 'Non-Planar Printing', 'Post-Tensioning'],
+    technologies: ['3DCP', 'Post-Tensioning', 'Dry Joints', 'Non-Planar Printing', 'Circular Construction'],
     categories: ['fabrication', 'structural'],
-    metrics: { primary: '5', secondary: 'Segments' }
+    metrics: { primary: '2.5 m', secondary: 'Five Dry-Joint Segments' }
   },
   'hexastone-pavilion': {
-    title: '3D-Printed Concrete Pavilion',
+    title: 'Hexastone Pavilion',
     subtitle: 'Vertico — Fabrication Lead',
     year: '2022',
     image: 'images/hexastone-pavilion_concrete-blocks.webp',
     alt: 'An assembly of 106 unique 3D-printed hexagonal concrete blocks forming a complex shell structure.',
-    description: 'Oversaw the complete design-to-fabrication process for a discrete shell structure of 106 unique 3D-printed stones. The project demonstrates how material is used efficiently in its primary strength, where form follows force.',
+    description: "A discrete compression shell only stands if its stones meet precisely, and across 106 unique blocks the print tolerances stack. Translated the student design into fabrication data through the slicer's serial-production workflow and printed all stones in two days, seven minutes each on average. Dry-stacked with filler mortar, the pavilion now stands at its third location.",
     impact: [
-      'Printed 106 unique components in just two days, with a 7-minute average print time',
-      'Achieved a high manufacturing precision of 0.5mm tolerance per panel',
-      'Managed an efficient workflow for a force-following discrete structural system'
+      '106 unique stones printed in two days, averaging seven minutes per stone',
+      'Dry-stacked with debonding oil and filler mortar, so the shell stays demountable',
+      'Taken down and rebuilt twice; now standing at its third location'
     ],
-    technologies: ['3DCP', 'Robotic Automation', 'Parametric Design', 'Digital Fabrication'],
+    technologies: ['3DCP', 'Slicer Automation', 'Discrete Shells', 'Serial Production'],
     categories: ['fabrication'],
-    metrics: { primary: '106', secondary: 'Unique Elements' }
+    metrics: { primary: '106', secondary: 'Unique Stones' }
   },
   'concrete-canoe': {
-    title: '3D Printed Concrete Canoe',
+    title: '3D-Printed Concrete Canoe',
     subtitle: 'Vertico — Applied R&D',
     year: '2022',
     image: 'images/concrete-canoe_floating.jpg',
     alt: 'A watertight 3D-printed concrete canoe floating on water with two occupants.',
-    description: 'Engineered a functional, watertight concrete canoe by adapting ancient Nubian vaulting techniques to robotic fabrication. By orienting the print plane at a 45-degree inclination, the process overcame standard gravity constraints, enabling effective horizontal spans (100% overhangs) without support structures.',
+    description: 'Print a hull in flat layers and the unsupported spans collapse; concrete cannot print horizontal overhangs. Borrowing from Nubian vault construction, the hull was printed under a 45-degree inclination, turning 100% overhangs into stacked inclined layers. The canoe floated watertight and carried two people — at the time, a first for printed concrete.',
     impact: [
-      'Adapted ancient Nubian vaulting principles to solve modern layer-deformation constraints',
-      'Achieved a continuous 45-degree print inclination, enabling unsupported horizontal geometry',
-      'Validated structural buoyancy for a 250kg payload (two adults + cargo) with a 1.5 safety factor'
+      'Printed at 45° inclination, reaching 100% overhang without support material',
+      'Designed for a 250 kg payload and tested afloat with two paddlers',
+      'Application of in-house inclined-printing R&D in a working, watertight product'
     ],
-    technologies: ['Inclined Slicing', 'Nubian Vaults', 'Buoyancy Calc', '3DCP', 'Structural Design'],
+    technologies: ['3DCP', 'Inclined Slicing', 'Nubian Vaults', 'Buoyancy Design'],
     categories: ['fabrication'],
     metrics: { primary: '45°', secondary: 'Print Inclination' }
   },
   'nonplanar-facade': {
     title: 'Non-Planar Facade Panels',
-    subtitle: 'Vertico & TU/e — Collaboration',
+    subtitle: 'Vertico, TU/e & Neutelings Riedijk — Project Lead',
     year: '2023',
     image: 'images/nonplanar-facade_curved-panels.webp',
     alt: 'A modern building facade featuring curved, organic panels with a smooth, non-layered finish.',
-    description: 'Led the fabrication of complex facade panels using non-planar toolpaths on robotically shaped sand formwork. This innovative approach eliminates wasteful molds and achieves smooth, organic surfaces for architectural applications.',
+    description: "Double-curved facade panels normally cost a milled mold each, discarded after casting. In NWO-funded design research with Neutelings Riedijk Architects and TU Eindhoven, a robot first shaped a reusable sand bed, then printed concrete non-planar on top of it. Led the project from Vertico's side; five test panels proved the mold-free workflow.",
     impact: [
-      'Produced an architectural-grade, smooth non-layered surface finish',
-      'Eliminated the need for expensive and wasteful custom molds',
-      'Supervised printing and sand-forming processes in a key industry-academia collaboration'
+      'Robot-shaped, reusable sand bed replaces single-use milled molds',
+      'Five double-curved test panels produced in the research programme',
+      'NWO-funded collaboration with Neutelings Riedijk Architects and TU Eindhoven'
     ],
-    technologies: ['Non-Planar Printing', 'Sand Formwork', 'Rapid code generation', 'Facade Systems', 'Robotics'],
+    technologies: ['Non-Planar Printing', 'Sand Formwork', 'Robotics', 'Facade Systems'],
     categories: ['fabrication'],
-    metrics: { primary: 'Smooth', secondary: 'Surface Finish' }
+    metrics: { primary: '5', secondary: 'Test Panels' }
   },
   'efficient-bench': {
     title: 'Material-Efficient Bench',
-    subtitle: 'Vertico — Sustainable Application',
+    subtitle: 'Vertico — Public Installation, Delft',
     year: '2021',
     image: 'images/efficient-bench_curved-concrete-bench.webp',
     alt: "A smoothly curved 22-meter concrete retaining wall and bench in a children's playground.",
-    description: "Oversaw the design and fabrication of a 22-meter curved retaining wall and bench for a playground. The structure was printed hollow, showcasing a prime example of sustainable and mass-customized 3D concrete printing.",
+    description: "A solid cast retaining wall spends most of its concrete doing nothing. Printed with Vertico's set-on-demand system, this 22-metre curved wall-and-bench is hollow, cutting material use by up to 95%, and its seating height varies along the curve to suit children. Installed at a children's playground in Delft.",
     impact: [
-      'Reduced material usage by over 90% and emissions by over 40%',
-      'Integrated varying seating heights for children and adults at no extra cost',
-      'Successfully delivered a large-scale, functional piece of public furniture'
+      'Hollow print cuts material use by up to 95% versus solid casting',
+      'Seating height varies along the length, sized for children where needed',
+      "In public use at a children's playground in Delft"
     ],
-    technologies: ['3DCP', 'Sustainable Design', 'Public Furniture', 'Mass Customization'],
+    technologies: ['3DCP', 'Set-on-Demand Printing', 'Public Furniture', 'Mass Customization'],
     categories: ['fabrication'],
-    metrics: { primary: '90%', secondary: 'Material Saved' }
+    metrics: { primary: '95%', secondary: 'Material Saved' }
   },
   'manhole-finishing': {
     title: 'Robotic Manhole Finishing',
-    subtitle: 'Vertico — Industrial Automation',
+    subtitle: 'Vertico & Summum Engineering — Execution Lead',
     year: '2023',
     image: 'images/manhole-finishing_robot-arm.webp',
     alt: 'An industrial robot arm with a specialized tool finishing the interior of a large concrete pipe.',
-    description: 'Developed an innovative, automated robotic post-processing method for the interior of 3D-printed concrete manholes. This solution solved a key production bottleneck by enabling smooth finishing inside existing manhole pits.',
+    description: 'Sewer manholes need smooth flow profiles, and the Netherlands alone counts 50,000 with unique geometry. Hand-smoothing is heavy work that fails occupational-health standards; CNC milling the prints broke the budget. Built a rounded sponge end-effector and the slicing algorithm that presses the concrete smooth while still malleable, shaping rather than cutting. The process advanced from TRL 3 to 6.',
     impact: [
-      'Eliminated a critical production bottleneck, enabling industrial-scale application',
-      'Created a fully automated finishing process with a specialized robotic tool',
-      'Successfully integrated 3D printing into existing industrial fabrication lines'
+      'Advanced robotic manhole fabrication from TRL 3 to TRL 6',
+      'Built the end-effector and wrote the slicing algorithm for the smoothing paths',
+      'Formative smoothing met surface requirements within budget where CNC milling could not'
     ],
-    technologies: ['3DCP', 'Robotics', 'Post-Processing', 'Automation', 'Toolpath Generation'],
+    technologies: ['3DCP', 'Robotics', 'End-Effector Design', 'Toolpath Generation', 'Post-Processing'],
     categories: ['fabrication'],
-    metrics: { primary: 'Industrial', secondary: 'Scale' }
+    metrics: { primary: 'TRL 3→6', secondary: 'Process Maturity' }
   },
   'algorithmic-timber-milling': {
     title: 'Algorithmic Timber Milling',
@@ -410,124 +410,124 @@ export const projectData = {
     year: '2019',
     image: 'images/robotic-timber-milling_fabrication.gif', // Placeholder
     alt: 'CNC milled timber block displaying two distinct textures: a smooth topographic surface and a chaotic, noise-based texture.',
-    description: 'Investigated computational strategies to convert unstructured geometric data into continuous robotic toolpaths. To solve the inefficiency of milling raw point clouds, the Traveling Salesman Problem (TSP) algorithm was implemented to organize random set points into a single, continuous path, minimizing machine airtime. This was contrasted with a K-Means clustering approach to segment and smooth complex surface topographies.',
+    description: 'A TU Delft pavilion course left the team with unstructured milling points and no usable path through them. Ordering the points with a traveling-salesman heuristic produced one continuous robotic toolpath, and since the tool angle follows the previous position, the ordering itself became a surface pattern. K-means clustering rationalized the smoother topography zones.',
     impact: [
-      'Solved the "airtime" inefficiency of milling unstructured point clouds by organizing toolpaths via the Traveling Salesman Algorithm',
-      'Implemented K-Means clustering to rationalize complex surface curvature into distinct, machine-readable milling zones',
-      'Developed a theoretical beam-packing framework (Karamba3D) to align timber anisotropy with force vectors, informing the stock material assembly'
+      'TSP ordering turned unstructured points into a single continuous milling path',
+      'Tool angle depends on path order, so the ordering produced an emergent surface texture',
+      'Aligned timber grain with principal stress lines using Karamba3D beam packing'
     ],
-    technologies: ['Robotic Milling', 'Traveling Salesman Algo', 'K-Means Clustering', 'Karamba3D', 'Python'],
+    technologies: ['Robotic Milling', 'TSP', 'K-Means Clustering', 'Karamba3D'],
     categories: ['fabrication', 'software'],
-    metrics: { primary: 'TSP', secondary: 'Path Optimization' },
+    metrics: { primary: 'TSP', secondary: 'Toolpath Ordering' },
     gallery: [
       {
         src: 'images/robotic-timber-milling_texture.jpeg',
-        caption: 'Algorithmic Textures: Comparison of K-Means clustering for smooth topography (left) vs. TSP optimization for continuous processing of unstructured data (right).'
+        caption: 'Milled textures: K-means clustered topography (left) beside the TSP-ordered point pattern (right).'
       },
       {
         src: 'images/robotic-timber-milling_diagram.jpg', 
-        caption: 'Beam Packing Logic: Computational analysis using Karamba3D to align wood grain direction with internal stress vectors.'
+        caption: 'Beam packing: timber grain aligned with principal stress lines in Karamba3D.'
       },
       {
         src: 'images/robotic-timber-milling_rough.gif', 
-        caption: 'Robotic Fabrication: Rough material removal, using larger bits to quickly approach the final geometry.'
+        caption: 'Roughing pass: larger bits remove stock before the finishing toolpath.'
       }
     ]
   },
   'bioreceptive-wall': {
     title: 'Bioreceptive Living Wall',
-    subtitle: 'Vertico & TU Delft — Ecological Research',
+    subtitle: 'Vertico & TU Delft — Research Collaboration',
     year: '2023',
     image: 'images/bioreceptive-wall_moss-texture.jpg',
-    alt: 'Textured 3D-printed concrete surface successfully hosting various types of moss.',
-    description: 'Led a collaborative research initiative to prove that 3D-printed concrete can host various types of mosses. The project resulted in a successful demonstrator showcasing active biological growth, validating the potential of using natural evapotranspiration to combat the Urban Heat Island effect.',
+    alt: 'Textured 3D-printed concrete surface hosting living moss.',
+    description: "Moss could cool facades through evapotranspiration, but standard concrete gives it nowhere to take hold. Set up a research collaboration with TU Delft PhD researcher Max Veeger to test printed concrete's layered texture as a moss substrate. The demonstrator panel sustained living moss under indoor conditions with occasional wetting, and the work continued as a master's thesis.",
     impact: [
-      'Kickstarted an R&D initiative that successfully validated 3DCP as a viable substrate for biological growth',
-      'Demonstrated the potential for passive urban cooling through natural evapotranspiration by optimizing surface biomarkers',
-      'Translated industrial research into an academic track, serving on the committee for the continued Master\'s thesis'
+      'Demonstrator panel sustained living moss indoors with occasional wetting',
+      'Initiated the Vertico–TU Delft collaboration; served on the follow-up thesis committee',
+      'Now growing into a joint research proposal to scale the system toward market'
     ],
-    technologies: ['Bioreceptivity', 'Evapotranspiration', 'Urban Heat Island', 'Surface Topology', 'Material Science'],
-    categories: ['research', 'fabrication'],
-    metrics: { primary: 'Passive', secondary: 'Urban Cooling' }
+    technologies: ['3DCP', 'Bioreceptivity', 'Surface Texture', 'Evapotranspiration'],
+    categories: ['fabrication'],
+    metrics: { primary: 'Moss', secondary: 'Sustained Growth' }
   },
   'overhang-printing': {
-    title: 'Advanced Overhang Printing',
-    subtitle: 'Vertico — R&D',
+    title: 'Overhangs Beyond 90°',
+    subtitle: 'Vertico & SIKA — Material R&D',
     year: '2022',
     image: 'images/overhang-printing_abstract-concrete.webp',
-    alt: 'An abstract, flowing concrete form with a dramatic unsupported overhang, inspired by Nubian vaults.',
-    description: 'Pioneered a technique for printing concrete at a 45-degree angle to create extreme overhangs without support structures. This method, inspired by traditional Nubian vaults, dramatically expands the geometric freedom of 3D concrete printing.',
+    alt: 'An abstract, flowing concrete form with a steep unsupported overhang.',
+    description: "Wet concrete deforms under the next layer's weight, which caps how far a print can lean. A two-year material collaboration with SIKA produced controlled-setting mixes for Vertico's set-on-demand system, so setting happens on command rather than on the mix's own clock. The result is overhangs beyond 90 degrees, geometry that was unprintable five years earlier.",
     impact: [
-      'Achieved a 100% effective overhang angle without any support material',
-      'Expanded geometric possibilities for creating new architectural forms',
-      'Demonstrated how traditional construction methods can inspire advanced manufacturing'
+      'Controlled-setting mixes print overhangs beyond 90° without support material',
+      'Binder content cut by 65% in the same material programme',
+      'Embodied carbon down by up to 80% on realised projects'
     ],
-    technologies: ['3DCP', 'R&D', 'Toolpath Generation', 'Digital Fabrication'],
+    technologies: ['3DCP', 'Set-on-Demand', 'Controlled-Setting Mixes', 'Material Development'],
     categories: ['fabrication'],
-    metrics: { primary: '45°', secondary: 'Print Angle' }
+    metrics: { primary: '90°+', secondary: 'Overhang Angle' }
   },
   'technoledge': {
     title: 'Interactive Bio-Pavilion',
-    subtitle: 'TU Delft — Interactive Fabrication',
+    subtitle: 'TU Delft — Interactive Design',
     year: '2018',
     image: 'images/interactive Bio-Pavilion.webp',
-    alt: 'An interactive light installation within a modern architectural structure.',
-    description: 'In a 40+ person collaboration, developed the human-computer interaction (HCI) for a robotically woven bio-composite pavilion. Employed motion-tracking to enable visitors to engage with 46 embedded LEDs.',
+    alt: 'An interactive light installation within a woven pavilion structure.',
+    description: "A pavilion woven from hemp and bone glue needed a way to respond to the people walking under it. As part of the interaction team, connected an Xbox Kinect to Arduino-driven LEDs: hand positions are tracked as points in space, and each light's intensity follows its proximity to them. Exhibited at full scale in Prague, the pavilion drew visitors into movement — some danced with it.",
     impact: [
-      'Created a dynamic and immersive visitor experience through interactive lighting',
-      'Successfully integrated motion-tracking sensors with custom Arduino electronics',
-      'Contributed to a large-scale international project, blending advanced fabrication with HCI'
+      "Kinect hand tracking drives each LED's intensity by proximity in 3D space",
+      'Pavilion built from woven hemp and bone glue, a bio-based composite',
+      'Exhibited at full scale on a university campus in Prague'
     ],
-    technologies: ['HCI', 'Motion Tracking', 'Robotic Weaving', 'Arduino', 'LED Integration'],
+    technologies: ['Kinect', 'Arduino', 'Motion Tracking', 'HCI', 'Bio-Composites'],
     categories: ['software', 'fabrication'],
-    metrics: { primary: '46', secondary: 'Interactive LEDs' }
+    metrics: { primary: 'Kinect', secondary: 'Hand Tracking' }
   },
   'zero-energy-mooc': {
     title: 'Zero-Energy Design MOOC',
-    subtitle: 'TU Delft — Educational Content',
+    subtitle: 'TU Delft — Freelance Course Author',
     year: '2019',
     image: 'images/zero-energy-mooc_course-hero.jpg',
     alt: 'Digital course interface showing zero-energy building concepts and energy analysis modules.',
-    description: 'Co-developed a Massive Open Online Course (MOOC) focused on sustainable building physics. Translated complex energy-neutrality strategies into accessible, actionable modules, bridging the gap between theoretical analysis and practical architectural application.',
+    description: 'Co-authored the content of TU Delft\'s "Zero-Energy Design" MOOC, a seven-week course spanning passive and active energy reduction, energy reuse, and on-site production. Free on edX, it reaches 30,000+ learners a year. In 2020 the course won the edX Prize for Exceptional Contributions in Online Teaching, selected from 10 finalists out of 3,000+ edX courses.',
     impact: [
-      'Won the 2020 "edX Prize for Exceptional Contributions in Online Teaching and Learning"',
-      'Disseminated advanced sustainable engineering methodologies to a global audience of professionals',
-      'Formulated technical modules integrating building physics with design decision-making',
+      'Course won the 2020 edX Prize, selected from 10 global finalists among 3,000+ courses',
+      'Reaches 30,000+ learners a year, 25,594 of them enrolled on edX',
+      'Written freelance alongside a building-physics teaching position at TU Delft'
     ],
-    technologies: ['Building Physics', 'Sustainability', 'Energy Modeling', 'Curriculum Design', 'Zero-Energy'],
+    technologies: ['Building Physics', 'Energy Modeling', 'Curriculum Design', 'edX'],
     categories: ['structural'],
-    metrics: { primary: 'Global', secondary: 'Learner Reach' }
+    metrics: { primary: '30,000+', secondary: 'Learners per Year' }
   },
   'vertico-training': {
-    title: 'Training 3DCP, Parametric design',
-    subtitle: 'Vertico — Client Enablement',
+    title: '3DCP Training Program',
+    subtitle: 'Vertico — Curriculum & Delivery',
     year: '2021',
     image: 'images/vertico-training_workshop.jpg',
     alt: 'A technical workshop session teaching parametric design principles for concrete printing.',
-    description: 'Developed a specialized technical curriculum on Parametric Design and Design for Manufacturing (DfM) for 3D Concrete Printing. This initiative bridged the critical hardware-software skills gap, enabling clients to transition from basic operation to independent, complex geometric production.',
+    description: 'Clients who buy a printer or slicer still have to learn to design for it: printable geometry follows strict manufacturing rules. Built Vertico\'s three-day training program covering parametric modeling, design-for-manufacturing rules, slicing, and on-site robot operation. Colleagues now deliver the standard program while I curate the curriculum and teach the advanced sessions.',
     impact: [
-      'Trained over 40 organizations, including 15+ universities, facilitating widespread technology adoption',
-      'Systemized personal expertise into a scalable educational module now delivered by the wider team',
-      'Empowered users to master strict DfM constraints required for successful robotic fabrication'
+      'Trained 20+ companies and universities in parametric design, slicing, and robotic fabrication',
+      'Three-day format ending in hands-on robot operation on site',
+      'Standard program now delivered by the wider team; advanced trainings remain mine'
     ],
-    technologies: ['Rhino', 'Grasshopper', 'DfM', 'Education', 'Knowledge Transfer'],
+    technologies: ['Rhino', 'Grasshopper', 'DfM', 'Robot Operation', 'Curriculum Design'],
     categories: ['software'],
-    metrics: { primary: '40+', secondary: 'Organizations Trained' }
+    metrics: { primary: '20+', secondary: 'Organizations Trained' }
   },
   'placemaking-vr': {
-    title: 'VR Urban Experience',
-    subtitle: 'BFAS — Placemaking Week',
+    title: 'VR for Urban Decision-Making',
+    subtitle: 'BFAS — Visualization',
     year: '2017',
     image: 'images/placemaking-vr_workshop.jpg',
-    alt: 'User wearing a VR headset participating in an urban design workshop.',
-    description: 'Represented BFAS at the international Placemaking Week 2017, leading a workshop on immersive urban analysis. The initiative demonstrated how Virtual Reality shifts planning from abstract birds-eye views to a human-centric "City at Eye Level" perspective, validating public space quality and spatial equity before construction.',
+    alt: 'User wearing a VR headset experiencing an urban design study at eye level.',
+    description: 'A proposed building-height increase had stalled: 2D solar studies could not convey its impact to the client and municipality. Modeling the project in Revit and bringing stakeholders into VR through Enscape let them experience the shadows at eye level, and the standstill broke. Presented the approach at Placemaking Week 2017, when eye-level VR review was still uncommon.',
     impact: [
-      'Represented BFAS at a global forum focusing on community-driven public space innovation',
-      'Demonstrated the value of 1:1 scale immersion to prioritize the human experience in urban planning',
-      'Advocated for VR as a critical tool to validate spatial equity and design impact'
+      'VR solar studies broke a planning standstill where 2D drawings had failed',
+      'Argued at Placemaking Week 2017 for eye-level VR review, before it became common practice',
+      "Approach later used to show Amsterdam's municipality streets with and without added greenery"
     ],
-    technologies: ['Virtual Reality', 'Urban Design', 'Public Space', 'Visualization', 'Participatory Design'],
+    technologies: ['VR', 'Enscape', 'Revit', 'Solar Studies', 'Urban Design'],
     categories: ['software'],
-    metrics: { primary: 'International', secondary: 'Conference' }
+    metrics: { primary: '1:1', secondary: 'Eye-Level Scale' }
   },
 };
