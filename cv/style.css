@@ -485,18 +485,33 @@ section:nth-child(3) { --section-index: 3; }
 
 /* Nav Links */
 .main-nav {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
 }
 
 .main-nav a {
+  position: relative;
   color: var(--color-text-secondary);
   font-weight: var(--font-weight-medium);
   text-decoration: none;
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--border-radius-md);
-  border-inline-start: var(--border-width-thick) solid transparent;
+  transition: var(--transition-all-fast);
+}
+
+.main-nav a::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--border-width-heavy);
+  height: 60%;
+  border-radius: var(--border-radius-full);
+  background: var(--color-accent-gradient);
+  opacity: 0;
   transition: var(--transition-all-fast);
 }
 
@@ -504,15 +519,52 @@ section:nth-child(3) { --section-index: 3; }
   color: var(--color-text-primary);
   background-color: var(--color-surface-hover);
   transform: translateX(4px);
-  border-inline-start-color: var(--color-accent-light);
 }
 
 .main-nav a.active {
   color: var(--color-text-primary);
-  background-color: var(--color-background);
-  border-inline-start-color: var(--color-accent);
   font-weight: var(--font-weight-semibold);
-  box-shadow: var(--shadow-sm);
+}
+
+.main-nav a.active::before {
+  opacity: 1;
+}
+
+/* Thin divider before links that leave the page (e.g. Portfolio) */
+.main-nav .nav-divider {
+  border: none;
+  border-block-start: var(--border-width) solid var(--color-border-light);
+  margin: var(--space-xs) var(--space-md);
+}
+
+/* Travelling indicator: a single pill (created by resume.js) that glides between
+   chapters. The per-link ::before above remains as the no-JS fallback. */
+.main-nav.has-indicator a::before {
+  display: none;
+}
+
+/* Calm glide: the edge facing the travel direction departs first; the other edge
+   trails on a delayed, gentler curve. Default = moving up (top edge leads). */
+.nav-indicator {
+  position: absolute;
+  inset-inline-start: 2px;
+  width: var(--border-width-heavy);
+  border-radius: var(--border-radius-full);
+  background: var(--color-accent-gradient);
+  pointer-events: none;
+  transition:
+    top var(--duration-slow) var(--ease-out-expo),
+    bottom calc(var(--duration-slow) * 0.65) var(--ease-in-out-quart) calc(var(--duration-slow) * 0.35);
+}
+
+.nav-indicator.is-moving-down {
+  transition:
+    top calc(var(--duration-slow) * 0.65) var(--ease-in-out-quart) calc(var(--duration-slow) * 0.35),
+    bottom var(--duration-slow) var(--ease-out-expo);
+}
+
+.nav-indicator.is-static {
+  transition: none;
 }
 
 /* Mobile Header */
@@ -600,6 +652,7 @@ a:hover {
 ul, ol {
   padding-inline-start: var(--space-lg);
   margin-block: 0 var(--space-md);
+  max-width: var(--layout-content-width);
 }
 
 li {
@@ -1465,6 +1518,7 @@ li::marker {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
 }
