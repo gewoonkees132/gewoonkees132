@@ -63,15 +63,15 @@ Insert after the closing brace of `.sidebar-identity-title` (line 495):
   margin-inline-start: 1px;
   vertical-align: -0.1em;
   background: var(--color-accent);
-  animation: identity-caret-blink 1.06s steps(1) infinite;
-  transition: opacity 600ms ease;
+  animation: identityCaretBlink 1.06s steps(1) infinite;
+  transition: opacity var(--duration-slow) var(--ease-out-expo);
 }
 
 .identity-intro-caret.is-done {
   opacity: 0;
 }
 
-@keyframes identity-caret-blink {
+@keyframes identityCaretBlink {
   50% { opacity: 0; }
 }
 ```
@@ -130,7 +130,7 @@ git commit -m "Add styles for sidebar typewriter intro layer and caret"
   var ERASE_MS = 25;        // per character
   var HOLD_MS = 950;        // finished phrase rests before erasing
   var SETTLE_HOLD_MS = 600; // rest before the caret fades out
-  var CARET_FADE_MS = 700;  // matches the 600ms CSS opacity transition + margin
+  var CARET_FADE_MS = 700;  // covers the --duration-slow (600ms) caret fade + margin
 
   function start() {
     var identity = document.querySelector('.sidebar-identity');
