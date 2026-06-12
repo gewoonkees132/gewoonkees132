@@ -33,7 +33,6 @@
       this.elements = {
         progressBar: $('.scroll-progress-bar'),
         progressContainer: $('.scroll-progress-container'),
-        currentTitle: $('#sidebar-current-title'),
         nav: $('.main-nav'),
         navLinks: $$('.main-nav a')
       };
@@ -185,12 +184,7 @@
         link.setAttribute('aria-current', isActive ? 'page' : 'false');
       });
 
-      // Update the sidebar title
       const activeLink = this.elements.navLinks.find(link => link.classList.contains('active'));
-      if (activeLink && this.elements.currentTitle) {
-        this.elements.currentTitle.textContent = activeLink.textContent.trim();
-      }
-
       this.positionIndicator(activeLink);
     }
   }

@@ -307,11 +307,6 @@
     line-height: var(--line-height-tight);
   }
 
-  /* Hide relocation badge in print */
-  .page-header .sub-lead {
-    display: none;
-  }
-
   .contact-info {
     grid-area: contact;
     list-style: none;

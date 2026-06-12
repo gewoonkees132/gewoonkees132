@@ -27,7 +27,7 @@
   
   --color-text-primary: #1a1f24;
   --color-text-secondary: #586069;
-  --color-text-muted: #8b949e;
+  --color-text-muted: #6b7480;
   
   --color-accent: #0E8192;
   --color-accent-hover: #0a6473;
@@ -390,9 +390,13 @@ section {
   }
 }
 
-section:nth-child(1) { --section-index: 1; }
-section:nth-child(2) { --section-index: 2; }
-section:nth-child(3) { --section-index: 3; }
+main > section:nth-of-type(1) { --section-index: 1; }
+main > section:nth-of-type(2) { --section-index: 2; }
+main > section:nth-of-type(3) { --section-index: 3; }
+main > section:nth-of-type(4) { --section-index: 4; }
+main > section:nth-of-type(5) { --section-index: 5; }
+main > section:nth-of-type(6) { --section-index: 6; }
+main > section:nth-of-type(7) { --section-index: 7; }
 
 /* ==========================================================================
    4. Navigation (Sidebar & Mobile)
@@ -471,16 +475,23 @@ section:nth-child(3) { --section-index: 3; }
   transition: transform 100ms linear;
 }
 
-.sidebar-current-section {
+.sidebar-identity {
+  min-width: 0;
+}
+
+.sidebar-identity-name {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+  margin: 0;
+}
+
+.sidebar-identity-title {
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  opacity: 0.8;
+  line-height: var(--line-height-tight);
+  margin: 0;
 }
 
 /* Nav Links */
@@ -1415,6 +1426,13 @@ li::marker {
   
   .main-content {
     padding: var(--space-3xl) var(--space-4xl);
+  }
+
+  /* Resume page: cap the content measure so dates and rules stay close to the
+     text instead of floating at the edge of a 1400px container. The portfolio
+     keeps the full width for its card grid. */
+  .page-resume .main-content {
+    max-width: 70rem;
   }
 
   .header-content-wrapper {

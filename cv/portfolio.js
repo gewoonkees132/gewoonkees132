@@ -71,12 +71,10 @@
   class ScrollProgress {
     constructor() {
       this.progressBar = $('.scroll-progress-bar');
-      this.currentTitle = $('#sidebar-current-title');
       this.progressContainer = $('.scroll-progress-container');
 
       if (!this.progressBar) return;
 
-      this.sections = $$('main section[id]');
       this.ticking = false;
       this.init();
     }
@@ -92,20 +90,6 @@
           this.ticking = true;
         }
       }, { passive: true });
-
-      // Intersection Observer for Section Titles
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const heading = $('h2', entry.target);
-            if (heading && this.currentTitle) {
-              this.currentTitle.textContent = heading.textContent.trim();
-            }
-          }
-        });
-      }, { rootMargin: '-20% 0px -60% 0px' });
-
-      this.sections.forEach(section => observer.observe(section));
     }
 
     updateProgress() {
