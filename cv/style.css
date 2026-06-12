@@ -494,6 +494,43 @@ main > section:nth-of-type(7) { --section-index: 7; }
   margin: 0;
 }
 
+/* Typewriter intro (identity-intro.js) — animated, aria-hidden layer that
+   temporarily replaces the static name/title on first load of a session. */
+.identity-intro {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+  overflow-wrap: break-word;
+}
+
+.identity-intro .identity-intro-title-part {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-secondary);
+}
+
+.identity-intro-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-inline-start: 1px;
+  vertical-align: -0.1em;
+  background: var(--color-accent);
+  animation: identity-caret-blink 1.06s steps(1) infinite;
+  transition: opacity 600ms ease;
+}
+
+.identity-intro-caret.is-done {
+  opacity: 0;
+}
+
+@keyframes identity-caret-blink {
+  50% { opacity: 0; }
+}
+
 /* Nav Links */
 .main-nav {
   position: relative;
