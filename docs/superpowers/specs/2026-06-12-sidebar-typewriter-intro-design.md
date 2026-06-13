@@ -12,20 +12,21 @@ Three directions were prototyped in the visual companion (typewriter introductio
 
 ## Behavior
 
-On desktop, on the **first page load of a browser session**, the `.sidebar-identity` block plays a typewriter sequence:
+On desktop, on the **first page load of a browser session**, the `.sidebar-identity` block types a three-line statement that **stacks** line by line:
 
-1. `Hallo.`
-2. `Welcome.`
-3. `I'm Kees.`
-4. `I teach robots to build.`
-5. Settles: **Kees Leemeijer** (name line) + *Computational Design & Fabrication Engineer* (title line) — identical to the current static block.
+1. `I rationalize geometry.`
+2. `I optimize structures.`
+3. `I teach robots to build.`
+4. Holds the full stack briefly, then **crossfades** into the static block: **Kees Leemeijer** (name line) + *Computational Design & Fabrication Engineer* (title line) — identical to the current static block.
+
+Each line types onto its own line below the previous one (the lines accumulate rather than erasing between phrases); the caret drops to the start of each new line. The framing is a short capability "manifesto" tailored toward engineering / computational-design / fabrication employers.
 
 Timing:
 
 - Type: 55–100 ms per character (random jitter for a natural feel)
-- Hold each phrase: ~950 ms
-- Erase: ~25 ms per character
-- Caret: 2 px accent-colored bar, blinking (~1 s steps), fades out after the final settle
+- Pause between lines: ~260 ms
+- Hold the full stack: ~1200 ms before the crossfade
+- Caret: 2 px accent-colored bar, blinking (~1 s steps), fades out as the stack crossfades to the static block
 
 Session behavior: a `sessionStorage` flag (`kees-intro-played`) is set when the sequence starts. Any later page load in the same session — including navigating between CV and Portfolio — renders the static block instantly. A new browser session plays the sequence again, on whichever of the two pages the visitor lands first.
 
@@ -35,16 +36,16 @@ Scope: both pages, desktop only. On mobile the sidebar is `display: none`; the s
 
 - **Progressive enhancement:** the static name + title stay in the HTML exactly as today. The script replaces the content only when it runs. With JS disabled, the page behaves as it does now.
 - **Reduced motion:** if `prefers-reduced-motion: reduce` matches, skip the animation entirely and show the static block.
-- **Screen readers:** the animated container is `aria-hidden="true"`; a visually-hidden static name + title remains in the DOM at all times so assistive tech announces the real identity once, never letter-by-letter output.
-- **No layout shift:** `.sidebar-identity` gets a `min-height` reserving the two-line settled size, so the nav below never moves during the animation.
+- **Screen readers:** the animated container is `aria-hidden="true"`; the real name + title stay in normal flow (rendered at `opacity: 0`) so assistive tech announces the real identity once, never the letter-by-letter output.
+- **No layout shift:** the typed stack is an absolutely-positioned overlay, and `.sidebar-identity` gets a `min-height` reserving the taller of (stacked, settled) size, so the nav below never jolts line-by-line during typing. (It sits a few px lower for the duration of the intro, then returns to baseline on settle.)
 - **Print:** no changes — the sidebar is not part of the print layout.
 
 ## Implementation
 
-- **New file `cv/identity-intro.js`** (~80 lines): IIFE with `'use strict'`, matching the structure and comment style of `resume.js` / `portfolio.js`. Self-contained state machine: type → hold → erase → next phrase → settle. No dependencies on, or changes to, the scroll-spy code.
+- **New file `cv/identity-intro.js`**: IIFE with `'use strict'`, matching the structure and comment style of `resume.js` / `portfolio.js`. Self-contained state machine: type line → pause → next line → hold → crossfade → cleanup. No dependencies on, or changes to, the scroll-spy code. The lines are a `LINES` array constant at the top of the file (swap it to retarget the message).
 - **Script tags:** `<script src="identity-intro.js" defer></script>` added to both `index.html` and `portfolio.html`.
-- **Markup:** current `.sidebar-identity` children become the visually-hidden accessible copy; an `aria-hidden` sibling hosts the animated text and caret. (Exact structure decided at implementation; the constraint is the two robustness bullets above.)
-- **CSS (`style.css`):** caret element + blink keyframes; `min-height` on `.sidebar-identity`. Use existing custom properties (`--color-accent`, font sizes) — no new tokens.
+- **Markup:** the existing `.sidebar-identity` children stay in place as the accessible copy (`opacity: 0` while the intro plays); an `aria-hidden` `<p class="identity-intro">` overlay (absolutely positioned) hosts one `.identity-intro-line` span per phrase plus the caret. On settle the overlay is removed and the static children are revealed.
+- **CSS (`style.css`):** overlay + per-line block, caret element + blink keyframes, crossfade opacity transitions, and `is-introducing` / `is-revealing` state classes on `.sidebar-identity`. Uses existing custom properties (`--color-accent`, `--duration-*`, `--ease-out-expo`, font sizes) — no new tokens.
 
 ## Verification
 

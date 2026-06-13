@@ -1,9 +1,9 @@
 /**
- * KEES SIDEBAR IDENTITY INTRO v1.0
+ * KEES SIDEBAR IDENTITY INTRO v2.0
  * ============================================================================
  * Progressive enhancement for the desktop sidebar identity block.
- * On the first page load of a browser session it types a short welcome
- * sequence, then settles into the static name + title.
+ * On the first page load of a browser session it types a three-line statement
+ * that stacks line by line, then crossfades into the static name + title.
  *
  * Skips entirely (leaving the static markup untouched) when:
  * - the sidebar is hidden (viewport below 62em),
@@ -19,14 +19,13 @@
   'use strict';
 
   var STORAGE_KEY = 'kees-intro-played';
-  var PHRASES = ['Hallo.', 'Welcome.', "I'm Kees.", 'I teach robots to build.'];
+  var LINES = ['I rationalize geometry.', 'I optimize structures.', 'I teach robots to build.'];
 
   var TYPE_MIN_MS = 55;     // per-character lower bound
   var TYPE_JITTER_MS = 45;  // random extra per character, for a human feel
-  var ERASE_MS = 25;        // per character
-  var HOLD_MS = 950;        // finished phrase rests before erasing
-  var SETTLE_HOLD_MS = 600; // rest before the caret fades out
-  var CARET_FADE_MS = 700;  // matches the 600ms CSS opacity transition + margin
+  var LINE_PAUSE_MS = 260;  // rest before the next line starts typing
+  var HOLD_MS = 1200;       // the full stack rests before the crossfade
+  var FADE_MS = 650;        // crossfade duration (covers the CSS opacity transitions)
 
   function start() {
     var identity = document.querySelector('.sidebar-identity');
@@ -44,13 +43,12 @@
     if (!sidebarVisible || reducedMotion || played) return;
     try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (e) { /* storage blocked: may replay next load */ }
 
-    // Reserve the settled height so the nav below never shifts while typing.
-    identity.style.minHeight = identity.offsetHeight + 'px';
+    // Settled (two-line) height, measured before anything is hidden.
+    var settledHeight = identity.offsetHeight;
 
-    // Screen readers keep the real identity (sr-only removes it from flow
-    // but not from the accessibility tree); the animation is aria-hidden.
-    nameEl.classList.add('sr-only');
-    titleEl.classList.add('sr-only');
+    // Relative positioning hosts the absolute overlay; the static name/title
+    // stay in flow (announced by screen readers) but rendered invisible.
+    identity.classList.add('is-introducing');
 
     var layer = document.createElement('p');
     layer.className = 'identity-intro';
@@ -59,15 +57,25 @@
     var caret = document.createElement('span');
     caret.className = 'identity-intro-caret';
 
-    var nameSpan = document.createElement('span');
-    nameSpan.appendChild(document.createTextNode(''));
-    nameSpan.appendChild(caret);
-    layer.appendChild(nameSpan);
+    var lineEls = LINES.map(function (text) {
+      var line = document.createElement('span');
+      line.className = 'identity-intro-line';
+      line.appendChild(document.createTextNode(text)); // final text, for measuring
+      return line;
+    });
+    lineEls.forEach(function (line) { layer.appendChild(line); });
     identity.appendChild(layer);
 
-    // --- typing primitives -------------------------------------------------
-    // Each target span keeps its text in firstChild (a text node); the caret
-    // sits at the end of whichever span is currently being typed into.
+    // Measure the tallest state (all three lines) and reserve it so the nav
+    // below never shifts, then clear the text — all synchronously, so the
+    // fully-typed stack is never painted.
+    var stackHeight = layer.offsetHeight;
+    identity.style.minHeight = Math.max(settledHeight, stackHeight) + 'px';
+    lineEls.forEach(function (line) { line.firstChild.data = ''; });
+
+    // --- typing primitive --------------------------------------------------
+    // Each line keeps its text in firstChild (a text node); the caret is moved
+    // to the end of whichever line is currently being typed into.
 
     function typeInto(el, str, done) {
       var node = el.firstChild;
@@ -83,61 +91,38 @@
       })();
     }
 
-    function eraseFrom(el, done) {
-      var node = el.firstChild;
-      (function step() {
-        if (node.data.length > 0) {
-          node.data = node.data.slice(0, -1);
-          window.setTimeout(step, ERASE_MS);
-        } else {
-          done();
-        }
-      })();
-    }
-
     // --- sequence ----------------------------------------------------------
 
-    var phraseIndex = 0;
+    var lineIndex = 0;
 
-    function nextPhrase() {
-      if (phraseIndex < PHRASES.length) {
-        typeInto(nameSpan, PHRASES[phraseIndex], function () {
-          phraseIndex++;
-          window.setTimeout(function () {
-            eraseFrom(nameSpan, nextPhrase);
-          }, HOLD_MS);
-        });
-      } else {
-        settle();
+    function nextLine() {
+      if (lineIndex >= LINES.length) {
+        window.setTimeout(settle, HOLD_MS);
+        return;
       }
-    }
-
-    function settle() {
-      typeInto(nameSpan, nameEl.textContent, function () {
-        var titleSpan = document.createElement('span');
-        titleSpan.className = 'identity-intro-title-part';
-        titleSpan.appendChild(document.createTextNode(''));
-        titleSpan.appendChild(caret); // caret jumps to the title line
-        layer.appendChild(titleSpan);
-        typeInto(titleSpan, titleEl.textContent, function () {
-          window.setTimeout(finish, SETTLE_HOLD_MS);
-        });
+      var el = lineEls[lineIndex];
+      el.appendChild(caret); // caret drops to the start of the new line
+      typeInto(el, LINES[lineIndex], function () {
+        lineIndex++;
+        window.setTimeout(nextLine, LINE_PAUSE_MS);
       });
     }
 
-    function finish() {
-      caret.classList.add('is-done');
-      window.setTimeout(function () {
-        // Swap the typed replica for the real static block. The typography
-        // matches, so this is visually seamless.
-        identity.removeChild(layer);
-        nameEl.classList.remove('sr-only');
-        titleEl.classList.remove('sr-only');
-        identity.style.minHeight = '';
-      }, CARET_FADE_MS);
+    function settle() {
+      caret.classList.add('is-done');         // caret fades out
+      layer.classList.add('is-fading');        // typed stack fades out
+      identity.classList.add('is-revealing');  // static name + title fade in
+      window.setTimeout(finish, FADE_MS);
     }
 
-    nextPhrase();
+    function finish() {
+      // Crossfade complete: drop the overlay and restore the natural layout.
+      if (layer.parentNode) layer.parentNode.removeChild(layer);
+      identity.classList.remove('is-introducing', 'is-revealing');
+      identity.style.minHeight = '';
+    }
+
+    nextLine();
   }
 
   if (document.readyState === 'loading') {
