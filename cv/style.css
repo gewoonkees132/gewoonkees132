@@ -494,6 +494,64 @@ main > section:nth-of-type(7) { --section-index: 7; }
   margin: 0;
 }
 
+/* Typewriter intro (identity-intro.js) — animated, aria-hidden overlay that
+   types a three-line statement on first load of a session, then crossfades
+   into the static name + title. */
+.identity-intro {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+  overflow-wrap: break-word;
+}
+
+.identity-intro-line {
+  display: block;
+}
+
+/* Settle: the typed title line mirrors .sidebar-identity-title so the swap to
+   the real static block is seamless. */
+.identity-intro .identity-intro-title-part {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-secondary);
+}
+
+.identity-intro-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-inline-start: 1px;
+  vertical-align: -0.1em;
+  background: var(--color-accent);
+  animation: identityCaretBlink 1.06s steps(1) infinite;
+  transition: opacity var(--duration-slow) var(--ease-out-expo);
+}
+
+.identity-intro-caret.is-done {
+  opacity: 0;
+}
+
+@keyframes identityCaretBlink {
+  50% { opacity: 0; }
+}
+
+/* While the intro plays, the real name/title stay in flow (so screen readers
+   still announce them) but invisible; they fade in as the overlay fades out. */
+.sidebar-identity.is-introducing {
+  position: relative;
+}
+
+.sidebar-identity.is-introducing .sidebar-identity-name,
+.sidebar-identity.is-introducing .sidebar-identity-title {
+  opacity: 0;
+}
+
 /* Nav Links */
 .main-nav {
   position: relative;
