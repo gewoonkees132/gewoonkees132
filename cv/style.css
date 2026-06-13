@@ -507,15 +507,19 @@ main > section:nth-of-type(7) { --section-index: 7; }
   color: var(--color-text-primary);
   line-height: var(--line-height-tight);
   overflow-wrap: break-word;
-  transition: opacity var(--duration-moderate) var(--ease-out-expo);
-}
-
-.identity-intro.is-fading {
-  opacity: 0;
 }
 
 .identity-intro-line {
   display: block;
+}
+
+/* Settle: the typed title line mirrors .sidebar-identity-title so the swap to
+   the real static block is seamless. */
+.identity-intro .identity-intro-title-part {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-secondary);
 }
 
 .identity-intro-caret {
@@ -546,12 +550,6 @@ main > section:nth-of-type(7) { --section-index: 7; }
 .sidebar-identity.is-introducing .sidebar-identity-name,
 .sidebar-identity.is-introducing .sidebar-identity-title {
   opacity: 0;
-}
-
-.sidebar-identity.is-revealing .sidebar-identity-name,
-.sidebar-identity.is-revealing .sidebar-identity-title {
-  opacity: 1;
-  transition: opacity var(--duration-slow) var(--ease-out-expo);
 }
 
 /* Nav Links */

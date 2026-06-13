@@ -12,21 +12,24 @@ Three directions were prototyped in the visual companion (typewriter introductio
 
 ## Behavior
 
-On desktop, on the **first page load of a browser session**, the `.sidebar-identity` block types a three-line statement that **stacks** line by line:
+On desktop, on the **first page load of a browser session**, the `.sidebar-identity` block plays a three-phase intro:
 
-1. `I rationalize geometry.`
-2. `I optimize structures.`
-3. `I teach robots to build.`
-4. Holds the full stack briefly, then **crossfades** into the static block: **Kees Leemeijer** (name line) + *Computational Design & Fabrication Engineer* (title line) — identical to the current static block.
+1. **Greeting** — `Welcome.` then `I'm Kees.` each type on a single line, hold, and erase.
+2. **Manifesto** — three statements type and **stack**, each on its own line below the previous one (they accumulate; the caret drops to the start of each new line):
+   - `I rationalize geometry.`
+   - `I optimize structures.`
+   - `I teach robots to build.`
+3. **Settle** — the stack holds briefly, then clears (erases bottom-up) and the real identity **types in**: **Kees Leemeijer** (name line) + *Computational Design & Fabrication Engineer* (title line). The caret fades, and the typed replica is swapped for the static markup — seamless because the typography matches.
 
-Each line types onto its own line below the previous one (the lines accumulate rather than erasing between phrases); the caret drops to the start of each new line. The framing is a short capability "manifesto" tailored toward engineering / computational-design / fabrication employers.
+The manifesto framing is a short capability statement tailored toward engineering / computational-design / fabrication employers.
 
 Timing:
 
-- Type: 55–100 ms per character (random jitter for a natural feel)
-- Pause between lines: ~260 ms
-- Hold the full stack: ~1200 ms before the crossfade
-- Caret: 2 px accent-colored bar, blinking (~1 s steps), fades out as the stack crossfades to the static block
+- Type: ~45–80 ms per character (random jitter for a natural feel)
+- Erase: ~18 ms per character; a greeting holds ~700 ms before erasing
+- Pause between stacked lines: ~220 ms; the full stack holds ~1000 ms before clearing
+- Caret: 2 px accent-colored bar, blinking (~1 s steps), fades out after the name + title finish typing
+- Full sequence is roughly 14–16 s (one-time per session); all durations are constants at the top of `identity-intro.js`
 
 Session behavior: a `sessionStorage` flag (`kees-intro-played`) is set when the sequence starts. Any later page load in the same session — including navigating between CV and Portfolio — renders the static block instantly. A new browser session plays the sequence again, on whichever of the two pages the visitor lands first.
 
@@ -42,10 +45,10 @@ Scope: both pages, desktop only. On mobile the sidebar is `display: none`; the s
 
 ## Implementation
 
-- **New file `cv/identity-intro.js`**: IIFE with `'use strict'`, matching the structure and comment style of `resume.js` / `portfolio.js`. Self-contained state machine: type line → pause → next line → hold → crossfade → cleanup. No dependencies on, or changes to, the scroll-spy code. The lines are a `LINES` array constant at the top of the file (swap it to retarget the message).
+- **New file `cv/identity-intro.js`**: IIFE with `'use strict'`, matching the structure and comment style of `resume.js` / `portfolio.js`. Self-contained state machine across three phases: greeting (type → hold → erase, per phrase) → stack (type → pause, per line) → settle (clear → type name → type title → cleanup). No dependencies on, or changes to, the scroll-spy code. The text lives in `GREETINGS` and `LINES` array constants at the top of the file (swap them to retarget the message).
 - **Script tags:** `<script src="identity-intro.js" defer></script>` added to both `index.html` and `portfolio.html`.
-- **Markup:** the existing `.sidebar-identity` children stay in place as the accessible copy (`opacity: 0` while the intro plays); an `aria-hidden` `<p class="identity-intro">` overlay (absolutely positioned) hosts one `.identity-intro-line` span per phrase plus the caret. On settle the overlay is removed and the static children are revealed.
-- **CSS (`style.css`):** overlay + per-line block, caret element + blink keyframes, crossfade opacity transitions, and `is-introducing` / `is-revealing` state classes on `.sidebar-identity`. Uses existing custom properties (`--color-accent`, `--duration-*`, `--ease-out-expo`, font sizes) — no new tokens.
+- **Markup:** the existing `.sidebar-identity` children stay in place as the accessible copy (`opacity: 0` while the intro plays); an `aria-hidden` `<p class="identity-intro">` overlay (absolutely positioned) hosts the active line(s) — `.identity-intro-line` spans during greeting/stack/name, a `.identity-intro-title-part` span for the typed title — plus the caret. On settle the overlay is removed and the static children are revealed.
+- **CSS (`style.css`):** absolutely-positioned overlay, per-line block, title-part styling (mirrors `.sidebar-identity-title`), caret element + blink keyframes, and an `is-introducing` state class on `.sidebar-identity` (relative positioning + hides the static text). Uses existing custom properties (`--color-accent`, font sizes) — no new tokens.
 
 ## Verification
 
