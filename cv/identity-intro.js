@@ -65,16 +65,15 @@
     var caret = document.createElement('span');
     caret.className = 'identity-intro-caret';
 
-    // Reserve the tallest state (the three-line stack) so the nav below never
-    // shifts line-by-line. Measure with the text in place, then clear — all
-    // synchronously, so the filled stack is never painted.
-    LINES.forEach(function (text) {
-      var probe = makeLine('identity-intro-line', text);
-      layer.appendChild(probe);
-    });
-    var stackHeight = layer.offsetHeight;
-    identity.style.minHeight = Math.max(settledHeight, stackHeight) + 'px';
-    layer.innerHTML = '';
+    // Hold the settled (name + title) height while the intro plays. The typed
+    // overlay is absolutely positioned, so it never contributes to flow — the
+    // real name/title (in flow, invisible) already keep the box at exactly this
+    // height. Reserving the taller stack height instead would inflate the box,
+    // and because .sidebar-header and .scroll-indicator-group center their
+    // children, the logo / scroll-progress beside the text (and the nav below)
+    // would visibly re-center when finish() releases the hold. Reserving the
+    // settled height keeps the header at its resting size the whole time.
+    identity.style.minHeight = settledHeight + 'px';
 
     // --- primitives --------------------------------------------------------
     // Each line keeps its text in firstChild (a text node); the caret is moved
