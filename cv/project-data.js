@@ -164,6 +164,32 @@ export const projectData = {
   // -------------------------------------------------------------------------
   // CATEGORY: SOFTWARE & TOOLS
   // -------------------------------------------------------------------------
+  'agentic-mesh-audit': {
+    title: 'Agentic Mesh Audit',
+    subtitle: 'Vertico — Agentic Tooling',
+    year: '2026',
+    image: 'images/agentic-mesh-audit_issue-5.png',
+    alt: 'A GitHub issue titled "Inverted (inside-out) link meshes — flipped normals render grey/back-faced", authored by the agent, showing the matplotlib audit render and the affected-link table.',
+    description: "A robot-simulation library accretes models faster than anyone re-checks them, and one arm in Vertico's Robosim rendered grey and inside-out from a flipped-normal mesh. Set Opus 4.8 to run the audit end to end and in parallel, exporting each from Rhino over MCP. It caught the reported flaw and a second, unreported one on a KUKA arm, and filed each as a clear GitHub issue.",
+    impact: [
+      'Confirmed both defects, on KUKA and ABB arms, with two geometry metrics',
+      'Audited all ten arms in parallel in 45 minutes, not days',
+      'Traced the root cause to the C# loader and filed two scoped issues'
+    ],
+    technologies: ['Opus 4.8', 'Rhino MCP', 'rhino3dm', 'matplotlib', 'Mesh Analysis'],
+    categories: ['software'],
+    metrics: { primary: '2', secondary: 'Issues Filed' },
+    gallery: [
+      {
+        src: 'images/agentic-mesh-audit_issue-5.png',
+        caption: 'Autonomous output: GitHub issue #5 as the agent wrote it — root cause, the two affected links, and acceptance criteria, ready for a human to triage.'
+      },
+      {
+        src: 'images/agentic-mesh-audit_face-orientation.png',
+        caption: "Audit output: the agent's matplotlib face-orientation map of the ABB IRB 6720 — each link shaded by outward-facing fraction, flagging sublayer 1 (36% outward) as inside-out."
+      }
+    ]
+  },
   'vertico-slicer': {
     title: 'Vertico Slicer Plugin',
     subtitle: 'Vertico — Software Development',
