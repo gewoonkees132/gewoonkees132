@@ -1,7 +1,7 @@
 # Web Design & Branding Portfolio Category — Design
 
 **Date:** 2026-09-27
-**Status:** Approved (pending spec review)
+**Status:** Approved
 **Pages:** `cv/portfolio.html`
 
 ## Problem
@@ -11,7 +11,7 @@ The portfolio filters projects into Engineering, Software & Tool development, an
 ## Scope
 
 1. A fourth filter pill, **Web Design & Branding**.
-2. Two new projects in it: **L2. Photography** and **B&L Sprinkler Inspecties**.
+2. Two new projects in it: **B&L Sprinkler Inspecties** and **L2. Photography**.
 3. The existing **VaseCreator Web App** also joins the category.
 4. An optional `url` field on projects, rendered as a "Visit live site ↗" link in the modal.
 5. Screenshots of both new sites for the cards and galleries.
@@ -36,11 +36,29 @@ Category key: `web`. Filtering already matches on each project's `categories`, s
 
 ## 2. Project entries (`cv/project-data.js`)
 
-Both entries go directly after `vasecreator-web-platform`, under a new header comment `// CATEGORY: WEB DESIGN & BRANDING`, in this order: L2, then B&L. The three web projects then sit together in the "All Projects" grid.
+Both entries go directly after `vasecreator-web-platform`, under a new header comment `// CATEGORY: WEB DESIGN & BRANDING`, in this order: B&L, then L2. The three web projects then sit together in the "All Projects" grid.
 
 Copy follows the existing pattern: the description runs problem → work → result, three impact bullets, five technologies. Every factual claim is checked against the live site before committing.
 
-### 2a. `l2-photography`
+### 2a. `bl-sprinkler-inspecties`
+
+Client: B&L Duikbedrijf Zuid, a diving company in Sint-Michielsgestel (founded 1989). Kees designed the brand and logo, built the original Wix site, and later rebuilt it as a hand-written static site that keeps the brand colours.
+
+- **title:** `B&L Sprinkler Inspecties`
+- **subtitle:** `B&L Duikbedrijf Zuid — Brand & Website`
+- **year:** `2018–2026`
+- **url:** `https://sprinklertankinspectie.com/`
+- **image / alt:** `images/bl-sprinkler_desktop.webp` — "The B&L Sprinkler Inspecties homepage: navy hero with the B&L logo, tagline, and a free-quote button."
+- **metrics:** `{ primary: '50%+', secondary: 'Revenue from Inspections' }`
+- **description:** "A diving company earned its living from project-based underwater work, while sprinkler tanks must be inspected under TB67B every five years. Created the B&L Sprinkler Inspecties brand, logo, and first Wix site to win that recurring work, then rebuilt it as a hand-written static site with 20 search-focused pages. Over five years, inspections grew to more than half of the company's revenue."
+- **impact:**
+  - "Shifted 50%+ of company revenue to sprinkler tank inspections over five years"
+  - "Won recurring work: each inspected tank returns on a five-year cycle"
+  - "Designed the brand and logo, launched on Wix, then rebuilt as a 20-page hand-coded site"
+- **technologies:** `['Brand Identity', 'Logo Design', 'Wix', 'HTML/CSS/JS', 'Local SEO']`
+- **categories:** `['web']`
+
+### 2b. `l2-photography`
 
 - **title:** `L2. Photography`
 - **subtitle:** `Independent Project — Brand & Website`
@@ -54,24 +72,6 @@ Copy follows the existing pattern: the description runs problem → work → res
   - "121 photographs in six collections, laid out on an 88 px module grid"
   - "No framework: hand-written HTML, CSS, and JavaScript, served as WebP via GitHub Pages and Cloudflare"
 - **technologies:** `['Brand Identity', 'Art Direction', 'JavaScript', 'HTML/CSS', 'Cloudflare']`
-- **categories:** `['web']`
-
-### 2b. `bl-sprinkler-inspecties`
-
-Client: B&L Duikbedrijf Zuid, a diving company in Sint-Michielsgestel (founded 1989). Kees designed the brand and logo, built the original Wix site, and later rebuilt it as a hand-written static site that keeps the brand colours.
-
-- **title:** `B&L Sprinkler Inspecties`
-- **subtitle:** `B&L Duikbedrijf Zuid — Brand & Website`
-- **year:** `2021–2026`
-- **url:** `https://sprinklertankinspectie.com/`
-- **image / alt:** `images/bl-sprinkler_desktop.webp` — "The B&L Sprinkler Inspecties homepage: navy hero with the B&L logo, tagline, and a free-quote button."
-- **metrics:** `{ primary: '50%+', secondary: 'Revenue from Inspections' }`
-- **description:** "A diving company earned its living from project-based underwater work, while sprinkler tanks must be inspected under TB67B every five years. Created the B&L Sprinkler Inspecties brand, logo, and first Wix site to win that recurring work, then rebuilt it as a hand-written static site with 20 search-focused pages. Over five years, inspections grew to more than half of the company's revenue."
-- **impact:**
-  - "Shifted 50%+ of company revenue to sprinkler tank inspections over five years"
-  - "Won recurring work: each inspected tank returns on a five-year cycle"
-  - "Designed the brand and logo, launched on Wix, then rebuilt as a 20-page hand-coded site"
-- **technologies:** `['Brand Identity', 'Logo Design', 'Wix', 'HTML/CSS/JS', 'Local SEO']`
 - **categories:** `['web']`
 
 ### 2c. `vasecreator-web-platform` (edit)
