@@ -228,6 +228,17 @@
       setText('[data-modal-year]', data.year);
       setText('[data-modal-description]', data.description);
 
+      // Live Site Link (optional per project)
+      const liveLink = fragment.querySelector('[data-modal-link]');
+      if (liveLink) {
+        if (data.url) {
+          liveLink.href = data.url;
+          liveLink.hidden = false;
+        } else {
+          liveLink.remove();
+        }
+      }
+
       // Impact List
       const impactList = fragment.querySelector('[data-modal-impact]');
       if (impactList) {

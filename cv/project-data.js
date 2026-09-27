@@ -210,6 +210,7 @@ export const projectData = {
     title: 'VaseCreator Web App',
     subtitle: 'Independent Project — Web App',
     year: '2025',
+    url: 'https://vasecreator.com/',
     image: 'images/vasecreator-web-platform_ui-render.gif',
     alt: 'User interface of a web-based parametric design tool displaying a generated 3D vase geometry.',
     description: 'Most people with a 3D printer download models instead of designing them; CAD is the barrier. Built a free browser tool that generates printable vases: an HTML/JavaScript site with a custom geometry engine, Three.js for rendering only, and no backend, exporting watertight STL files. Used by 5,500 people this year, ranking top 3 on Google for six vase-design searches.',
@@ -219,7 +220,7 @@ export const projectData = {
       'Runs fully in the browser with no backend, including on mid-range phones'
     ],
     technologies: ['JavaScript', 'Three.js', 'Procedural Geometry', 'HTML/CSS', 'SEO'],
-    categories: ['software'],
+    categories: ['software', 'web'],
     metrics: { primary: '5,500', secondary: 'Users This Year' }
   },
     
