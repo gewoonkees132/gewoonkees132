@@ -232,7 +232,7 @@ export const projectData = {
     year: '2018–2026',
     url: 'https://sprinklertankinspectie.com/',
     image: 'images/bl-sprinkler_desktop.webp',
-    alt: 'The B&L Sprinkler Inspecties homepage: navy hero with the B&L logo, tagline, and a free-quote button.',
+    alt: 'The B&L Sprinkler Inspecties homepage: the B&L logo in the header above a navy hero with the tagline and a free-quote button.',
     description: "A diving company earned its living from project-based underwater work, while sprinkler tanks must be inspected under TB67B every five years. Created the B&L Sprinkler Inspecties brand, logo, and first Wix site to win that recurring work, then rebuilt it as a hand-written static site with 20 search-focused pages. Over five years, inspections grew to more than half of the company's revenue.",
     impact: [
       'Shifted 50%+ of company revenue to sprinkler tank inspections over five years',
@@ -288,7 +288,7 @@ export const projectData = {
       },
       {
         src: 'images/l2-photography_focus.webp',
-        caption: 'Focus: the photograph you reach sharpens automatically; click its name to open the plate with the common and Latin name.'
+        caption: 'Focus: the photograph you reach sharpens, and its name opens a plate with the common and Latin names.'
       },
       {
         src: 'images/l2-photography_collection.webp',
@@ -300,11 +300,14 @@ export const projectData = {
       },
       {
         src: 'images/l2-photography_mobile.webp',
-        caption: 'Mobile: a separate single-column edition, one collection at a time in a vertical scroll from a corner menu.'
+        caption: 'Mobile: a separate single-column edition that scrolls one collection at a time, chosen from a corner menu.'
       }
     ]
   },
 
+  // -------------------------------------------------------------------------
+  // CATEGORY: SOFTWARE & TOOLS (continued)
+  // -------------------------------------------------------------------------
   'earthy-vault': {
     title: 'Earthy Vault Optimization',
     subtitle: 'TU Delft — Humanitarian Design',
