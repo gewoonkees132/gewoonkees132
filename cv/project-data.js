@@ -265,6 +265,45 @@ export const projectData = {
       }
     ]
   },
+  'l2-photography': {
+    title: 'L2. Photography',
+    subtitle: 'Independent Project — Brand & Website',
+    year: '2026',
+    url: 'https://l2fotografie.nl/',
+    image: 'images/l2-photography_desktop.webp',
+    alt: 'The L2. Photography website: photographs arranged on a pannable plane, with the L2. logo and collection navigation.',
+    description: "A photography portfolio is usually a grid you scroll past; this brand asks the viewer to slow down. Built L2. Photography around one line, 'Look twice.': name, logo, and a blue-on-field palette in the spirit of Munich '72, then a vanilla-JavaScript site where 121 photographs sit on a hand-arranged plane you pan through, each coming into focus as you reach it.",
+    impact: [
+      "Designed the identity end to end: name, 'Look twice.' line, logo, and palette",
+      '121 photographs in six collections, laid out on an 88 px module grid',
+      'No framework: hand-written HTML, CSS, and JavaScript, served as WebP via GitHub Pages and Cloudflare'
+    ],
+    technologies: ['Brand Identity', 'Art Direction', 'JavaScript', 'HTML/CSS', 'Cloudflare'],
+    categories: ['web'],
+    metrics: { primary: '121', secondary: 'Photographs Arranged' },
+    gallery: [
+      {
+        src: 'images/l2-photography_desktop.webp',
+        caption: 'Opening view: photographs hand-arranged on a pannable plane, with the L2. logo and collections.'
+      },
+      {
+        src: 'images/l2-photography_focus.webp',
+        caption: 'Focus: the photograph you reach sharpens automatically; click its name to open the plate with the common and Latin name.'
+      },
+      {
+        src: 'images/l2-photography_collection.webp',
+        caption: 'Architecture: one of six collections, each with its own hand-made arrangement.'
+      },
+      {
+        src: 'images/l2-photography_rates.webp',
+        caption: 'Rates: shoot and print pricing in a panel that opens from a single pill.'
+      },
+      {
+        src: 'images/l2-photography_mobile.webp',
+        caption: 'Mobile: a separate single-column edition, one collection at a time in a vertical scroll from a corner menu.'
+      }
+    ]
+  },
 
   'earthy-vault': {
     title: 'Earthy Vault Optimization',
