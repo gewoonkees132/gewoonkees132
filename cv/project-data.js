@@ -223,7 +223,49 @@ export const projectData = {
     categories: ['software', 'web'],
     metrics: { primary: '5,500', secondary: 'Users This Year' }
   },
-    
+  // -------------------------------------------------------------------------
+  // CATEGORY: WEB DESIGN & BRANDING
+  // -------------------------------------------------------------------------
+  'bl-sprinkler-inspecties': {
+    title: 'B&L Sprinkler Inspecties',
+    subtitle: 'B&L Duikbedrijf Zuid — Brand & Website',
+    year: '2018–2026',
+    url: 'https://sprinklertankinspectie.com/',
+    image: 'images/bl-sprinkler_desktop.webp',
+    alt: 'The B&L Sprinkler Inspecties homepage: navy hero with the B&L logo, tagline, and a free-quote button.',
+    description: "A diving company earned its living from project-based underwater work, while sprinkler tanks must be inspected under TB67B every five years. Created the B&L Sprinkler Inspecties brand, logo, and first Wix site to win that recurring work, then rebuilt it as a hand-written static site with 20 search-focused pages. Over five years, inspections grew to more than half of the company's revenue.",
+    impact: [
+      'Shifted 50%+ of company revenue to sprinkler tank inspections over five years',
+      'Won recurring work: each inspected tank returns on a five-year cycle',
+      'Designed the brand and logo, launched on Wix, then rebuilt as a 20-page hand-coded site'
+    ],
+    technologies: ['Brand Identity', 'Logo Design', 'Wix', 'HTML/CSS/JS', 'Local SEO'],
+    categories: ['web'],
+    metrics: { primary: '50%+', secondary: 'Revenue from Inspections' },
+    gallery: [
+      {
+        src: 'images/bl-sprinkler_desktop.webp',
+        caption: 'Homepage: the B&L brand in navy and blue, leading straight to a free quote or the services.'
+      },
+      {
+        src: 'images/bl-sprinkler_logo.jpg',
+        caption: 'Brand: the B&L Sprinkler Inspecties logo, designed with the first Wix site.'
+      },
+      {
+        src: 'images/bl-sprinkler_services.webp',
+        caption: 'Services: five numbered services, each with its own page written around what clients search for.'
+      },
+      {
+        src: 'images/bl-sprinkler_knowledge.webp',
+        caption: 'TB67B page: the inspection regime explained in plain Dutch, one of the knowledge pages that bring in search traffic.'
+      },
+      {
+        src: 'images/bl-sprinkler_mobile.webp',
+        caption: 'Mobile: call and WhatsApp buttons stay within reach on every page.'
+      }
+    ]
+  },
+
   'earthy-vault': {
     title: 'Earthy Vault Optimization',
     subtitle: 'TU Delft — Humanitarian Design',
