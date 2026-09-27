@@ -343,6 +343,45 @@ export const projectData = {
       }
     ]
   },
+  'evapmargin': {
+    title: 'EvapMargin',
+    subtitle: 'Vertico — Interactive Engineering Tools',
+    year: '2026',
+    url: 'https://evapmargin.pages.dev/',
+    image: 'images/evapmargin_desktop.webp',
+    alt: 'The EvapMargin ACI 305 tool: print-condition controls in the sidebar beside a four-panel nomograph whose blue construction line ends at 0.613 kg/m²/h, marked Shrinkage risk.',
+    description: 'An evaporation formula returns a single number and hides the relationships behind it: which input drives the result, and how far conditions can drift before a printed layer is at risk. Built EvapMargin for Vertico to make those relationships visible, turning the ACI 305 equation and a water-loss model into interactive nomographs where one line carries each input through the calculation. Dashed lines mark the value at which every input changes the verdict, so the way back under the threshold can be read off the chart.',
+    impact: [
+      'Rebuilt the ACI 305 paper chart as a live nomograph that redraws as each input changes',
+      'Drew a five-step mass-transfer model as five linked panels, ending in the longest safe layer cycle',
+      'Explained both in six-chapter guides: every symbol, each model step, and the limits of accuracy'
+    ],
+    technologies: ['Information Design', 'Nomography', 'JavaScript', 'SVG', 'ACI 305R'],
+    categories: ['software', 'fabrication', 'web'],
+    metrics: { primary: '2', secondary: 'Formulas Made Visual' },
+    gallery: [
+      {
+        src: 'images/evapmargin_desktop.webp',
+        caption: 'ACI 305 tool: one line carries the four inputs through the equation, and dashed lines mark where each input would change the verdict; this reading gives 0.613 kg/m²/h.'
+      },
+      {
+        src: 'images/evapmargin_water-loss.webp',
+        caption: 'Water-loss tool: the five steps of the model as five linked panels, ending in the layer cycle; here the bond threshold is reached after 2.9 minutes.'
+      },
+      {
+        src: 'images/evapmargin_background.webp',
+        caption: 'Background: the physics in one diagram, the same air acting on cast concrete and on a printed wall.'
+      },
+      {
+        src: 'images/evapmargin_model.webp',
+        caption: 'The model: the equation behind the chart, with every symbol and unit spelled out.'
+      },
+      {
+        src: 'images/evapmargin_mobile.webp',
+        caption: 'Mobile: the full nomograph at phone width, with the reading and the controls kept in a bar at the bottom.'
+      }
+    ]
+  },
 
   // -------------------------------------------------------------------------
   // CATEGORY: SOFTWARE & TOOLS (continued)
