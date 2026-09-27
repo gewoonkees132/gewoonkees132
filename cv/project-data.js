@@ -304,6 +304,45 @@ export const projectData = {
       }
     ]
   },
+  'burnout-help': {
+    title: 'Burnout Help',
+    subtitle: 'Fysio Jaap — Brand, Website & SEO',
+    year: '2025–2026',
+    url: 'https://burnout-help.nl/',
+    image: 'images/burnout-help_desktop.webp',
+    alt: 'The Burnout Help homepage: an illustrated avatar and the Burnout Help name in the sidebar, the headline "Voel je je overspannen?" on warm cream, a Start zelfreflectie button, and a practice summary panel.',
+    description: 'About one in five Dutch employees reports burnout complaints, yet many cannot get professional help: mental-health waiting times exceed their norms, and basic insurance does not cover burnout treatment. Created the Burnout Help brand and a hand-coded site for psychosomatic physiotherapist Jaap Leemeijer, built around a free self-reflection and 27 free recovery exercises. Grew it to 82 indexed pages in under a year, marked up with medical structured data and backed by 200+ cited research sources.',
+    impact: [
+      'A three-question self-reflection matches visitors to one of five burnout patterns, answers kept in the browser',
+      '27 free recovery exercises in five themes, each with steps, reflection questions, and cited research',
+      '82 indexed pages in under a year, with schema.org medical and author markup site-wide'
+    ],
+    technologies: ['Brand Identity', 'HTML/CSS/JS', 'Content SEO', 'Structured Data', 'Cloudflare Pages'],
+    categories: ['web'],
+    metrics: { primary: '27', secondary: 'Free Recovery Exercises' },
+    gallery: [
+      {
+        src: 'images/burnout-help_desktop.webp',
+        caption: 'Homepage: forest green on warm cream, with the free self-reflection one click from the headline and the BIG registration in the practice panel.'
+      },
+      {
+        src: 'images/burnout-help_mobile.webp',
+        caption: 'Self-reflection on mobile: three questions, each answered by tapping the sentence you recognise first.'
+      },
+      {
+        src: 'images/burnout-help_inzichten.webp',
+        caption: 'Result: the answers point to one of five burnout patterns, summarised back to the visitor, with three exercises to start with.'
+      },
+      {
+        src: 'images/burnout-help_oefeningen.webp',
+        caption: 'Knowledge base: 27 free exercises in five themes, each tagged by depth and duration.'
+      },
+      {
+        src: 'images/burnout-help_artikel.webp',
+        caption: 'Pillar article: author, BIG registration, NHG guideline, and update date sit above the fold, for readers and search engines alike.'
+      }
+    ]
+  },
 
   // -------------------------------------------------------------------------
   // CATEGORY: SOFTWARE & TOOLS (continued)
