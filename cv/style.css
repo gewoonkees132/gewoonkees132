@@ -1159,6 +1159,7 @@ li::marker {
   font-weight: var(--font-weight-bold);
   margin-block: 0 var(--space-xs);
   line-height: var(--line-height-tight);
+  color: inherit;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
